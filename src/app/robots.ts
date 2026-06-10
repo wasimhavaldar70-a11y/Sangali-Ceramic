@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: '/admin',
     },
-    sitemap: 'https://ceramicapremiumtiles.vercel.app/sitemap.xml',
+    sitemap: 'https://sangliceramicapremiumtiles.vercel.app/sitemap.xml',
   };
 }

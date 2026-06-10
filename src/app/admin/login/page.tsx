@@ -39,7 +39,7 @@ export default function LoginPage() {
         <div className="text-center mb-8">
           <Compass className="w-12 h-12 text-primary-gold mx-auto mb-3" />
           <h1 className="font-display text-2xl font-bold tracking-widest text-gold-gradient">ADMINISTRATOR ACCESS</h1>
-          <p className="text-white/40 text-xs tracking-wider uppercase mt-1">Ceramica Premium CMS Portal</p>
+          <p className="text-white/40 text-xs tracking-wider uppercase mt-1">Sangli Ceramica Premium CMS Portal</p>
         </div>
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
@@ -49,7 +49,7 @@ export default function LoginPage() {
               required 
               value={email} 
               onChange={e => setEmail(e.target.value)} 
-              placeholder="admin@ceramicapremium.com" 
+              placeholder="admin@sangliceramica.com" 
               className="w-full bg-dark-black border border-white/10 px-4 py-3 text-sm text-white focus:outline-none focus:border-primary-gold tracking-wide rounded-lg" 
             />
           </div>

@@ -1,4 +1,4 @@
--- SQL DDL schema for Ceramica Premium Tiles database
+-- SQL DDL schema for Sangli Ceramica Premium Tiles database
 
 -- Enable UUID extension if not enabled
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";

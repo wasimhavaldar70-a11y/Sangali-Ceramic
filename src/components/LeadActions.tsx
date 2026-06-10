@@ -168,7 +168,7 @@ export default function LeadActions() {
 
         {/* WhatsApp Chat */}
         <a
-          href="https://wa.me/919876543210?text=Hi!%20I%27m%20interested%20in%20Ceramica%20Premium%20Tiles.%20Could%20you%20please%20share%20the%20latest%20pricing%20and%20catalogue?"
+          href="https://wa.me/919876543210?text=Hi!%20I%27m%20interested%20in%20Sangli%20Ceramica%20Premium%20Tiles.%20Could%20you%20please%20share%20the%20latest%20pricing%20and%20catalogue?"
           target="_blank"
           rel="noopener noreferrer"
           className="w-14 h-14 bg-[#25D366] text-white rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-110 relative group"
@@ -201,7 +201,7 @@ export default function LeadActions() {
                 <CheckCircle className="w-16 h-16 text-primary-gold mx-auto mb-4 animate-bounce" />
                 <h3 className="font-display text-2xl text-gold-gradient mb-2">Inquiry Submitted!</h3>
                 <p className="text-white/60 text-sm mb-6">
-                  Thank you for choosing Ceramica. Our luxury consultants will contact you within 24 hours.
+                  Thank you for choosing Sangli Ceramica. Our luxury consultants will contact you within 24 hours.
                 </p>
                 <button
                   onClick={() => {

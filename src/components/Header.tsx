@@ -130,8 +130,8 @@ export default function Header() {
           <Link href="/" className="flex items-center gap-2 group">
             <Compass className="w-8 h-8 text-primary-gold group-hover:rotate-45 transition-transform duration-500" />
             <div className="flex flex-col">
-              <span className="font-display text-xl font-bold tracking-widest text-gold-gradient">
-                CERAMICA
+              <span className="font-display text-lg md:text-xl font-bold tracking-widest text-gold-gradient">
+                SANGLI CERAMICA
               </span>
               <span className="text-[9px] tracking-[0.3em] text-white/90 -mt-1">
                 PREMIUM TILES
@@ -293,7 +293,7 @@ export default function Header() {
             <ArrowRight className="w-4 h-4" />
           </button>
           <p className="text-[10px] text-center text-white/70 tracking-widest">
-            © 2026 Ceramica Tiles. Luxury Vitrified Collection.
+            © 2026 Sangli Ceramica Tiles. Luxury Vitrified Collection.
           </p>
         </div>
       </div>

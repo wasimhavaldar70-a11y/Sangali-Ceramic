@@ -5,7 +5,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const products = await dbService.getProducts();
   
   const productEntries = products.map((prod) => ({
-    url: `https://ceramicapremiumtiles.vercel.app/products/${prod.id}`,
+    url: `https://sangliceramicapremiumtiles.vercel.app/products/${prod.id}`,
     lastModified: new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.8,
@@ -13,19 +13,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     {
-      url: 'https://ceramicapremiumtiles.vercel.app',
+      url: 'https://sangliceramicapremiumtiles.vercel.app',
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 1.0,
     },
     {
-      url: 'https://ceramicapremiumtiles.vercel.app/visualizer',
+      url: 'https://sangliceramicapremiumtiles.vercel.app/visualizer',
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.9,
     },
     {
-      url: 'https://ceramicapremiumtiles.vercel.app/dealer-network',
+      url: 'https://sangliceramicapremiumtiles.vercel.app/dealer-network',
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.8,

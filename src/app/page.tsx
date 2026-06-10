@@ -1124,7 +1124,7 @@ export default function HomePage() {
                   <span className="text-primary-gold">SLABS</span>
                 </h3>
                 <p className="text-white/70 text-xs tracking-wider uppercase mt-4 border-t border-white/15 pt-4 w-28 font-bold">
-                  Ceramica Luxury
+                  Sangli Ceramica Luxury
                 </p>
               </div>
             </div>
