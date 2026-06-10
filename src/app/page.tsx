@@ -586,7 +586,7 @@ export default function HomePage() {
                 rel="noopener noreferrer"
                 className="inline-block px-4 py-2 bg-white/10 hover:bg-[#25D366] hover:text-white text-white text-[9px] font-semibold uppercase tracking-wider transition-all duration-300 border border-white/15 hover:border-[#25D366] text-center"
               >
-                Inquire Tata Doors
+                Explore Tata Doors
               </a>
             </div>
           </div>
