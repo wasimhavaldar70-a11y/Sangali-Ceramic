@@ -646,12 +646,11 @@ export default function HomePage() {
             { name: 'Water Heaters', url: 'https://images.unsplash.com/photo-1584622781564-1d987f7333c1?auto=format&fit=crop&w=400&q=80' },
             { name: 'Bath Accessories', url: 'https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=400&q=80' },
           ].map((cat) => (
-            <button
+            <a
               key={cat.name}
-              onClick={() => {
-                // Open WhatsApp inquiry for this specific category
-                window.open(`https://wa.me/919876543210?text=Hi!%20I%27m%20interested%20in%20Jaquar%20Group%20Bath%20Fittings%20-%20${encodeURIComponent(cat.name)}.%20Could%20you%20please%20share%20the%20brochure%20and%20pricing?`, '_blank');
-              }}
+              href={`https://wa.me/919876543210?text=Hi!%20I%27m%20interested%20in%20Jaquar%20Group%20Bath%20Fittings%20-%20${encodeURIComponent(cat.name)}.%20Could%20you%20please%20share%20the%20brochure%20and%20pricing?`}
+              target="_blank"
+              rel="noopener noreferrer"
               className="group relative h-48 w-full overflow-hidden flex flex-col justify-end text-left border border-white/15"
             >
               <div className="absolute inset-0 bg-gradient-to-t from-dark-black via-dark-black/40 to-transparent z-10 group-hover:from-dark-black/95 transition-all duration-300" />
@@ -668,13 +667,13 @@ export default function HomePage() {
                   Inquire Category <ArrowRight className="w-3 h-3" />
                 </span>
               </div>
-            </button>
+            </a>
           ))}
         </div>
 
         {/* Doors Explorer Section */}
         <div id="doors-explorer" className="pt-16 scroll-mt-24 mb-10 text-center border-t border-white/5 mt-16">
-          <span className="text-primary-gold text-xs tracking-[0.25em] uppercase font-semibold">Tata Pravesh</span>
+          <span className="text-primary-gold text-xs tracking-[0.25em] uppercase font-semibold">Tata Pravesh Doors</span>
           <h3 className="font-display text-2xl md:text-3xl font-bold mt-2">Filter Doors & Windows by Category</h3>
         </div>
 
@@ -687,12 +686,11 @@ export default function HomePage() {
             { name: 'Steel Windows', url: 'https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=400&q=80' },
             { name: 'Double Leaf Doors', url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=400&q=80' },
           ].map((cat) => (
-            <button
+            <a
               key={cat.name}
-              onClick={() => {
-                // Open WhatsApp inquiry for this specific category
-                window.open(`https://wa.me/919876543210?text=Hi!%20I%27m%20interested%20in%20Tata%20Pravesh%20Doors%20-%20${encodeURIComponent(cat.name)}.%20Could%20you%20please%20share%20the%20brochure%20and%20pricing?`, '_blank');
-              }}
+              href={`https://wa.me/919876543210?text=Hi!%20I%27m%20interested%20in%20Tata%20Pravesh%20Doors%20-%20${encodeURIComponent(cat.name)}.%20Could%20you%20please%20share%20the%20brochure%20and%20pricing?`}
+              target="_blank"
+              rel="noopener noreferrer"
               className="group relative h-48 w-full overflow-hidden flex flex-col justify-end text-left border border-white/15"
             >
               <div className="absolute inset-0 bg-gradient-to-t from-dark-black via-dark-black/40 to-transparent z-10 group-hover:from-dark-black/95 transition-all duration-300" />
@@ -709,7 +707,7 @@ export default function HomePage() {
                   Inquire Category <ArrowRight className="w-3 h-3" />
                 </span>
               </div>
-            </button>
+            </a>
           ))}
         </div>
       </section>
