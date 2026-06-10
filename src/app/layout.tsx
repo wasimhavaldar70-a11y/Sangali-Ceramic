@@ -1,8 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import LeadActions from '@/components/LeadActions';
+import LayoutWrapper from '@/components/LayoutWrapper';
 
 export const metadata: Metadata = {
   title: 'Ceramica Premium Tiles | Luxury Ceramic & Vitrified Tiles Website',
@@ -44,12 +42,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased bg-dark-black text-white min-h-screen flex flex-col font-sans">
-        <Header />
-        <main className="flex-grow">
+        <LayoutWrapper>
           {children}
-        </main>
-        <Footer />
-        <LeadActions />
+        </LayoutWrapper>
       </body>
     </html>
   );
