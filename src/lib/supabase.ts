@@ -494,9 +494,33 @@ export const dbService = {
     const idx = leads.findIndex(l => l.id === id);
     if (idx >= 0) {
       leads[idx].status = status;
-      setLocalStorageData('sangli_leads', leads);
       return true;
     }
     return false;
+  },
+
+  // Admin Credentials
+  async verifyAdminPasscode(passcode: string): Promise<boolean> {
+    if (isSupabaseConfigured && supabase) {
+      const { data, error } = await supabase.from('settings').select('value').eq('key', 'admin_passcode').single();
+      if (!error && data) {
+        return data.value === passcode;
+      }
+      // If no passcode is set in DB yet, fallback to default 'admin123' and check
+      if (error && error.code === 'PGRST116') {
+        return passcode === 'admin123' || passcode === 'admin';
+      }
+    }
+    const stored = getLocalStorageData('sangli_admin_passcode', 'admin123');
+    return passcode === stored || (stored === 'admin123' && passcode === 'admin');
+  },
+
+  async updateAdminPasscode(newPasscode: string): Promise<boolean> {
+    if (isSupabaseConfigured && supabase) {
+      const { error } = await supabase.from('settings').upsert({ key: 'admin_passcode', value: newPasscode });
+      if (!error) return true;
+    }
+    setLocalStorageData('sangli_admin_passcode', newPasscode);
+    return true;
   }
 };
