@@ -111,7 +111,7 @@ export default function AdminPage() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-dark-black flex items-center justify-center p-6 pt-28">
+      <div className="min-h-screen bg-dark-black flex items-center justify-center p-6">
         <Toast show={toast.show} message={toast.msg} type={toast.type} onClose={() => setToast(prev => ({...prev, show: false}))} />
         <div className="w-full max-w-md bg-charcoal border border-primary-gold/20 p-8 shadow-2xl rounded-xl backdrop-blur-md">
           <div className="text-center mb-8">
@@ -137,7 +137,7 @@ export default function AdminPage() {
   const closedLeadsCount = leads.filter(l => l.status === 'closed').length;
 
   return (
-    <div className="bg-dark-black min-h-screen text-white pt-28 pb-20">
+    <div className="bg-dark-black min-h-screen text-white pt-12 pb-20">
       <Toast show={toast.show} message={toast.msg} type={toast.type} onClose={() => setToast(prev => ({...prev, show: false}))} />
       
       <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/5 pb-6 mb-8 gap-4">

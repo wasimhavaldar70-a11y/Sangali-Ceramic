@@ -33,7 +33,7 @@ export function ProjectsTab({ projects, refreshData, showToast }: ProjectsTabPro
     } else {
       setEditingProject(null);
       setTitle('');
-      setCategory('Residential');
+      setCategory('Villas');
       setLocation('');
       setYear(new Date().getFullYear());
       setImage('');
@@ -158,7 +158,18 @@ export function ProjectsTab({ projects, refreshData, showToast }: ProjectsTabPro
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block uppercase tracking-wider text-white/50 mb-1">Category *</label>
-                    <input type="text" required value={category} onChange={e => setCategory(e.target.value)} className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold rounded outline-none" placeholder="e.g. Residential, Commercial" />
+                    <select
+                      required
+                      value={category}
+                      onChange={e => setCategory(e.target.value)}
+                      className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold rounded outline-none"
+                    >
+                      <option value="Villas">Villas</option>
+                      <option value="Apartments">Apartments</option>
+                      <option value="Hotels">Hotels</option>
+                      <option value="Offices">Offices</option>
+                      <option value="Restaurants">Restaurants</option>
+                    </select>
                   </div>
                   <div>
                     <label className="block uppercase tracking-wider text-white/50 mb-1">Location *</label>
