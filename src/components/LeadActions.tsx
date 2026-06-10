@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { Phone, MessageSquare, X, ArrowRight, CheckCircle, FileText } from 'lucide-react';
 import { dbService } from '@/lib/supabase';
 
 export default function LeadActions() {
+  const pathname = usePathname();
   // Modals state
   const [quoteOpen, setQuoteOpen] = useState(false);
   const [catalogueOpen, setCatalogueOpen] = useState(false);
@@ -46,6 +48,10 @@ export default function LeadActions() {
       window.removeEventListener('open-catalogue-modal', handleOpenCatalogue);
     };
   }, []);
+
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
 
   const resetForm = () => {
     setName('');

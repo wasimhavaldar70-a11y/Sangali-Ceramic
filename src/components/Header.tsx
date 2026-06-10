@@ -69,6 +69,10 @@ export default function Header() {
     setSearchOpen(false);
   }, [pathname]);
 
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
+
   const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'Collections', path: '/#collections' },
