@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { Phone, MessageSquare, X, ArrowRight, CheckCircle, FileText } from 'lucide-react';
 import { dbService } from '@/lib/supabase';
+import { leadSchema } from '@/lib/validations/lead';
 
 export default function LeadActions() {
   const pathname = usePathname();
@@ -19,6 +20,7 @@ export default function LeadActions() {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     // Listen for custom events to trigger modals from other components
@@ -59,11 +61,23 @@ export default function LeadActions() {
     setPhone('');
     setMessage('');
     setLoading(false);
+    setValidationErrors({});
   };
 
   const handleQuoteSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !phone) return;
+    setValidationErrors({});
+    
+    const result = leadSchema.safeParse({ name, email, phone, message });
+    if (!result.success) {
+      const errs: Record<string, string> = {};
+      result.error.issues.forEach(issue => {
+        if (issue.path[0]) errs[issue.path[0].toString()] = issue.message;
+      });
+      setValidationErrors(errs);
+      return;
+    }
+
     setLoading(true);
     try {
       await dbService.insertLead({
@@ -88,7 +102,18 @@ export default function LeadActions() {
 
   const handleCatalogueSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !phone) return;
+    setValidationErrors({});
+    
+    const result = leadSchema.safeParse({ name, email, phone });
+    if (!result.success) {
+      const errs: Record<string, string> = {};
+      result.error.issues.forEach(issue => {
+        if (issue.path[0]) errs[issue.path[0].toString()] = issue.message;
+      });
+      setValidationErrors(errs);
+      return;
+    }
+
     setLoading(true);
     try {
       await dbService.insertLead({
@@ -195,8 +220,9 @@ export default function LeadActions() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="e.g. Devendra Architect"
-                      className="w-full bg-dark-black border border-white/10 px-4 py-3 text-sm text-white focus:outline-none focus:border-primary-gold focus:ring-1 focus:ring-primary-gold"
+                      className={`w-full bg-dark-black border px-4 py-3 text-sm text-white focus:outline-none focus:ring-1 ${validationErrors.name ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-white/10 focus:border-primary-gold focus:ring-primary-gold'}`}
                     />
+                    {validationErrors.name && <p className="text-red-500 text-[10px] mt-1">{validationErrors.name}</p>}
                   </div>
                   <div>
                     <label className="block text-xs uppercase tracking-widest text-white/70 mb-1">
@@ -208,8 +234,9 @@ export default function LeadActions() {
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="e.g. +91 98765 43210"
-                      className="w-full bg-dark-black border border-white/10 px-4 py-3 text-sm text-white focus:outline-none focus:border-primary-gold focus:ring-1 focus:ring-primary-gold"
+                      className={`w-full bg-dark-black border px-4 py-3 text-sm text-white focus:outline-none focus:ring-1 ${validationErrors.phone ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-white/10 focus:border-primary-gold focus:ring-primary-gold'}`}
                     />
+                    {validationErrors.phone && <p className="text-red-500 text-[10px] mt-1">{validationErrors.phone}</p>}
                   </div>
                   <div>
                     <label className="block text-xs uppercase tracking-widest text-white/70 mb-1">
@@ -220,8 +247,9 @@ export default function LeadActions() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="e.g. info@studio.com"
-                      className="w-full bg-dark-black border border-white/10 px-4 py-3 text-sm text-white focus:outline-none focus:border-primary-gold focus:ring-1 focus:ring-primary-gold"
+                      className={`w-full bg-dark-black border px-4 py-3 text-sm text-white focus:outline-none focus:ring-1 ${validationErrors.email ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-white/10 focus:border-primary-gold focus:ring-primary-gold'}`}
                     />
+                    {validationErrors.email && <p className="text-red-500 text-[10px] mt-1">{validationErrors.email}</p>}
                   </div>
                   <div>
                     <label className="block text-xs uppercase tracking-widest text-white/70 mb-1">
@@ -232,8 +260,9 @@ export default function LeadActions() {
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       placeholder="Specify size, square footage, design collection requirements..."
-                      className="w-full bg-dark-black border border-white/10 px-4 py-3 text-sm text-white focus:outline-none focus:border-primary-gold focus:ring-1 focus:ring-primary-gold resize-none"
+                      className={`w-full bg-dark-black border px-4 py-3 text-sm text-white focus:outline-none focus:ring-1 resize-none ${validationErrors.message ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-white/10 focus:border-primary-gold focus:ring-primary-gold'}`}
                     ></textarea>
+                    {validationErrors.message && <p className="text-red-500 text-[10px] mt-1">{validationErrors.message}</p>}
                   </div>
 
                   <button
@@ -293,8 +322,9 @@ export default function LeadActions() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="e.g. Alisha Architect"
-                      className="w-full bg-dark-black border border-white/10 px-4 py-3 text-sm text-white focus:outline-none focus:border-primary-gold focus:ring-1 focus:ring-primary-gold"
+                      className={`w-full bg-dark-black border px-4 py-3 text-sm text-white focus:outline-none focus:ring-1 ${validationErrors.name ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-white/10 focus:border-primary-gold focus:ring-primary-gold'}`}
                     />
+                    {validationErrors.name && <p className="text-red-500 text-[10px] mt-1">{validationErrors.name}</p>}
                   </div>
                   <div>
                     <label className="block text-xs uppercase tracking-widest text-white/70 mb-1">
@@ -306,8 +336,9 @@ export default function LeadActions() {
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="e.g. +91 98765 43210"
-                      className="w-full bg-dark-black border border-white/10 px-4 py-3 text-sm text-white focus:outline-none focus:border-primary-gold focus:ring-1 focus:ring-primary-gold"
+                      className={`w-full bg-dark-black border px-4 py-3 text-sm text-white focus:outline-none focus:ring-1 ${validationErrors.phone ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-white/10 focus:border-primary-gold focus:ring-primary-gold'}`}
                     />
+                    {validationErrors.phone && <p className="text-red-500 text-[10px] mt-1">{validationErrors.phone}</p>}
                   </div>
                   <div>
                     <label className="block text-xs uppercase tracking-widest text-white/70 mb-1">
@@ -318,8 +349,9 @@ export default function LeadActions() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="e.g. designer@agency.com"
-                      className="w-full bg-dark-black border border-white/10 px-4 py-3 text-sm text-white focus:outline-none focus:border-primary-gold focus:ring-1 focus:ring-primary-gold"
+                      className={`w-full bg-dark-black border px-4 py-3 text-sm text-white focus:outline-none focus:ring-1 ${validationErrors.email ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-white/10 focus:border-primary-gold focus:ring-primary-gold'}`}
                     />
+                    {validationErrors.email && <p className="text-red-500 text-[10px] mt-1">{validationErrors.email}</p>}
                   </div>
 
                   <button

@@ -7,6 +7,7 @@ import {
   CheckCircle2, ArrowRight, UserPlus, Info
 } from 'lucide-react';
 import { dbService, Dealer } from '@/lib/supabase';
+import { leadSchema } from '@/lib/validations/lead';
 
 export default function DealerNetworkPage() {
   const [dealers, setDealers] = useState<Dealer[]>([]);
@@ -24,6 +25,7 @@ export default function DealerNetworkPage() {
   const [msg, setMsg] = useState('');
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     const fetchDealers = async () => {
@@ -52,7 +54,18 @@ export default function DealerNetworkPage() {
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!compName || !phone) return;
+    setValidationErrors({});
+
+    const result = leadSchema.safeParse({ name: contactPerson, email, phone, message: msg });
+    if (!result.success) {
+      const errs: Record<string, string> = {};
+      result.error.issues.forEach(issue => {
+        if (issue.path[0]) errs[issue.path[0].toString()] = issue.message;
+      });
+      setValidationErrors(errs);
+      return;
+    }
+
     setLoading(true);
     try {
       await dbService.insertLead({
@@ -72,6 +85,7 @@ export default function DealerNetworkPage() {
       setState('');
       setCity('');
       setMsg('');
+      setValidationErrors({});
     } catch (err) {
       console.error(err);
     } finally {
@@ -330,8 +344,9 @@ export default function DealerNetworkPage() {
                       value={contactPerson}
                       onChange={(e) => setContactPerson(e.target.value)}
                       placeholder="e.g. Ramesh Patil"
-                      className="w-full bg-dark-black border border-white/5 px-3 py-2 text-xs focus:outline-none focus:border-primary-gold"
+                      className={`w-full bg-dark-black border px-3 py-2 text-xs focus:outline-none focus:border-primary-gold ${validationErrors.name ? 'border-red-500' : 'border-white/5'}`}
                     />
+                    {validationErrors.name && <p className="text-red-500 text-[10px] mt-1">{validationErrors.name}</p>}
                   </div>
                 </div>
 
@@ -344,8 +359,9 @@ export default function DealerNetworkPage() {
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="e.g. +91 98765 43210"
-                      className="w-full bg-dark-black border border-white/5 px-3 py-2 text-xs focus:outline-none focus:border-primary-gold"
+                      className={`w-full bg-dark-black border px-3 py-2 text-xs focus:outline-none focus:border-primary-gold ${validationErrors.phone ? 'border-red-500' : 'border-white/5'}`}
                     />
+                    {validationErrors.phone && <p className="text-red-500 text-[10px] mt-1">{validationErrors.phone}</p>}
                   </div>
                   <div>
                     <label className="block text-[9px] uppercase tracking-wider text-white/50 mb-1">Email</label>
@@ -354,8 +370,9 @@ export default function DealerNetworkPage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="e.g. info@firm.com"
-                      className="w-full bg-dark-black border border-white/5 px-3 py-2 text-xs focus:outline-none focus:border-primary-gold"
+                      className={`w-full bg-dark-black border px-3 py-2 text-xs focus:outline-none focus:border-primary-gold ${validationErrors.email ? 'border-red-500' : 'border-white/5'}`}
                     />
+                    {validationErrors.email && <p className="text-red-500 text-[10px] mt-1">{validationErrors.email}</p>}
                   </div>
                 </div>
 
@@ -391,8 +408,9 @@ export default function DealerNetworkPage() {
                     value={msg}
                     onChange={(e) => setMsg(e.target.value)}
                     placeholder="Specify showroom size, current marble/tiles brands distributed..."
-                    className="w-full bg-dark-black border border-white/5 px-3 py-2 text-xs focus:outline-none focus:border-primary-gold resize-none"
+                    className={`w-full bg-dark-black border px-3 py-2 text-xs focus:outline-none focus:border-primary-gold resize-none ${validationErrors.message ? 'border-red-500' : 'border-white/5'}`}
                   ></textarea>
+                  {validationErrors.message && <p className="text-red-500 text-[10px] mt-1">{validationErrors.message}</p>}
                 </div>
 
                 <button

@@ -8,6 +8,7 @@ import {
   ShieldAlert, RefreshCw, LayoutGrid, CheckCircle2, ChevronLeft
 } from 'lucide-react';
 import { dbService, Product } from '@/lib/supabase';
+import { leadSchema } from '@/lib/validations/lead';
 
 export default function ProductDetailPage() {
   const { id } = useParams();
@@ -29,6 +30,7 @@ export default function ProductDetailPage() {
   const [msg, setMsg] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     const fetchProductData = async () => {
@@ -98,7 +100,18 @@ export default function ProductDetailPage() {
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !phone) return;
+    setValidationErrors({});
+
+    const result = leadSchema.safeParse({ name, email, phone, message: msg });
+    if (!result.success) {
+      const errs: Record<string, string> = {};
+      result.error.issues.forEach(issue => {
+        if (issue.path[0]) errs[issue.path[0].toString()] = issue.message;
+      });
+      setValidationErrors(errs);
+      return;
+    }
+
     setLoading(true);
     try {
       await dbService.insertLead({
@@ -116,6 +129,7 @@ export default function ProductDetailPage() {
       setEmail('');
       setQuantity('');
       setMsg('');
+      setValidationErrors({});
     } catch (err) {
       console.error(err);
     } finally {
@@ -370,8 +384,9 @@ export default function ProductDetailPage() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="e.g. Vikram Sharma"
-                      className="w-full bg-charcoal border border-white/5 px-4 py-3 text-sm focus:outline-none focus:border-primary-gold"
+                      className={`w-full bg-charcoal border px-4 py-3 text-sm focus:outline-none focus:border-primary-gold ${validationErrors.name ? 'border-red-500' : 'border-white/5'}`}
                     />
+                    {validationErrors.name && <p className="text-red-500 text-[10px] mt-1">{validationErrors.name}</p>}
                   </div>
                   <div>
                     <label className="block text-[10px] uppercase tracking-wider text-white/50 mb-1">Phone Number *</label>
@@ -381,8 +396,9 @@ export default function ProductDetailPage() {
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="e.g. +91 98765 43210"
-                      className="w-full bg-charcoal border border-white/5 px-4 py-3 text-sm focus:outline-none focus:border-primary-gold"
+                      className={`w-full bg-charcoal border px-4 py-3 text-sm focus:outline-none focus:border-primary-gold ${validationErrors.phone ? 'border-red-500' : 'border-white/5'}`}
                     />
+                    {validationErrors.phone && <p className="text-red-500 text-[10px] mt-1">{validationErrors.phone}</p>}
                   </div>
                 </div>
 
@@ -394,8 +410,9 @@ export default function ProductDetailPage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="e.g. design@studio.com"
-                      className="w-full bg-charcoal border border-white/5 px-4 py-3 text-sm focus:outline-none focus:border-primary-gold"
+                      className={`w-full bg-charcoal border px-4 py-3 text-sm focus:outline-none focus:border-primary-gold ${validationErrors.email ? 'border-red-500' : 'border-white/5'}`}
                     />
+                    {validationErrors.email && <p className="text-red-500 text-[10px] mt-1">{validationErrors.email}</p>}
                   </div>
                   <div>
                     <label className="block text-[10px] uppercase tracking-wider text-white/50 mb-1">Est. Quantity (Sq. Ft)</label>
@@ -416,8 +433,9 @@ export default function ProductDetailPage() {
                     value={msg}
                     onChange={(e) => setMsg(e.target.value)}
                     placeholder="Specify project site, customization required, shipping coordinates..."
-                    className="w-full bg-charcoal border border-white/5 px-4 py-3 text-sm focus:outline-none focus:border-primary-gold resize-none"
+                    className={`w-full bg-charcoal border px-4 py-3 text-sm focus:outline-none focus:border-primary-gold resize-none ${validationErrors.message ? 'border-red-500' : 'border-white/5'}`}
                   ></textarea>
+                  {validationErrors.message && <p className="text-red-500 text-[10px] mt-1">{validationErrors.message}</p>}
                 </div>
 
                 <button

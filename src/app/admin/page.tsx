@@ -92,7 +92,7 @@ export default function AdminPage() {
   };
 
   const newLeadsCount = leads.filter(l => l.status === 'new').length;
-  const closedLeadsCount = leads.filter(l => l.status === 'closed').length;
+  const wonLeadsCount = leads.filter(l => l.status === 'won').length;
 
   return (
     <div className="bg-dark-black min-h-screen text-white pt-12 pb-20">
@@ -127,7 +127,7 @@ export default function AdminPage() {
           {/* Subtle background glow effect */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-primary-gold/5 blur-[100px] rounded-full pointer-events-none"></div>
 
-          {activeTab === 'analytics' && <AnalyticsTab data={{ products: products.length, dealers: dealers.length, newLeads: newLeadsCount, closedLeads: closedLeadsCount }} />}
+          {activeTab === 'analytics' && <AnalyticsTab data={{ products: products.length, dealers: dealers.length, newLeads: newLeadsCount, closedLeads: wonLeadsCount }} />}
           {activeTab === 'products' && <ProductsTab products={products} refreshData={loadDashboardData} showToast={showToast} />}
           {activeTab === 'dealers' && <DealersTab dealers={dealers} refreshData={loadDashboardData} showToast={showToast} />}
           {activeTab === 'projects' && <ProjectsTab projects={projects} refreshData={loadDashboardData} showToast={showToast} />}
