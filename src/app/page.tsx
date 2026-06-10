@@ -355,7 +355,7 @@ export default function HomePage() {
   return (
     <div className="relative">
       {/* HERO SECTION */}
-      <section className="relative h-screen w-full overflow-hidden flex items-center justify-center">
+      <section id="hero" className="relative h-screen w-full overflow-hidden flex items-center justify-center">
         {/* Background Slider */}
         {heroImages.map((image, idx) => (
           <div

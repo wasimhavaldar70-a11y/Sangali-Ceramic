@@ -10,6 +10,7 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeSection, setActiveSection] = useState('hero');
   const pathname = usePathname();
 
   useEffect(() => {
@@ -23,6 +24,44 @@ export default function Header() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Intersection Observer to detect scroll sections on the homepage
+  useEffect(() => {
+    if (pathname !== '/') {
+      setActiveSection('');
+      return;
+    }
+
+    const sections = ['hero', 'collections', 'projects', 'catalogues'];
+    const activeObservers = sections.map((id) => {
+      const el = document.getElementById(id);
+      if (!el) return null;
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              setActiveSection(id);
+            }
+          });
+        },
+        {
+          rootMargin: '-30% 0px -40% 0px', // detects when section is in active center view
+          threshold: 0.15,
+        }
+      );
+      observer.observe(el);
+      return { observer, el };
+    });
+
+    return () => {
+      activeObservers.forEach((item) => {
+        if (item) {
+          item.observer.unobserve(item.el);
+        }
+      });
+    };
+  }, [pathname]);
 
   // Close menus when route changes
   useEffect(() => {
@@ -43,6 +82,34 @@ export default function Header() {
   const triggerQuoteModal = () => {
     // Dispatch custom event to trigger the quote modal inside LeadActions
     window.dispatchEvent(new CustomEvent('open-quote-modal'));
+  };
+
+  // Check active state dynamically
+  const checkIsActive = (path: string) => {
+    if (pathname === '/') {
+      if (path === '/') return activeSection === 'hero';
+      if (path.startsWith('/#')) {
+        const hash = path.substring(2);
+        return activeSection === hash;
+      }
+      return false;
+    }
+    // Sub-pages check
+    return pathname === path;
+  };
+
+  // Smooth scroll handler for anchor links
+  const handleNavLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
+    if (path.startsWith('/#') && pathname === '/') {
+      e.preventDefault();
+      const targetId = path.substring(2);
+      const el = document.getElementById(targetId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+        // Update URL hash without reload
+        window.history.pushState(null, '', path);
+      }
+    }
   };
 
   return (
@@ -71,14 +138,15 @@ export default function Header() {
           {/* Desktop Navigation */}
           <nav className="hidden xl:flex items-center gap-6">
             {navLinks.map((link) => {
-              const isActive = pathname === link.path;
+              const isActive = checkIsActive(link.path);
               return (
                 <Link
                   key={link.name}
                   href={link.path}
+                  onClick={(e) => handleNavLinkClick(e, link.path)}
                   className={`text-xs tracking-widest uppercase transition-all duration-300 relative py-1 ${
                     isActive
-                      ? 'text-primary-gold font-medium'
+                      ? 'text-primary-gold font-bold'
                       : 'text-neutral-100 hover:text-white'
                   }`}
                 >
@@ -188,16 +256,26 @@ export default function Header() {
         } flex flex-col justify-between p-8 pt-28`}
       >
         <div className="flex flex-col gap-6">
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              href={link.path}
-              onClick={() => setMobileMenuOpen(false)}
-              className="font-display text-2xl tracking-widest text-white hover:text-primary-gold transition-colors py-2 border-b border-white/15"
-            >
-              {link.name}
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const isActive = checkIsActive(link.path);
+            return (
+              <Link
+                key={link.name}
+                href={link.path}
+                onClick={(e) => {
+                  setMobileMenuOpen(false);
+                  handleNavLinkClick(e, link.path);
+                }}
+                className={`font-display text-2xl tracking-widest transition-colors py-2 border-b border-white/15 ${
+                  isActive
+                    ? 'text-primary-gold font-bold'
+                    : 'text-white hover:text-primary-gold'
+                }`}
+              >
+                {link.name}
+              </Link>
+            );
+          })}
         </div>
         <div className="flex flex-col gap-4">
           <button
