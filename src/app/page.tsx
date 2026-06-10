@@ -475,11 +475,135 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* SPACE EXPLORER SECTION */}
+      {/* SPACE EXPLORER & DIVISIONS SECTION */}
       <section id="spaces" className="pt-10 pb-20 bg-dark-black max-w-7xl mx-auto px-6 md:px-12 border-b border-white/5">
         <div className="text-center mb-16">
-          <span className="text-primary-gold text-xs tracking-[0.35em] uppercase font-semibold">Explore by Space</span>
-          <h2 className="font-display text-3xl md:text-5xl font-bold mt-2">Find The Perfect Tile For Every Space</h2>
+          <span className="text-primary-gold text-xs tracking-[0.35em] uppercase font-semibold">Our Offerings</span>
+          <h2 className="font-display text-3xl md:text-5xl font-bold mt-2">Explore Our Product Divisions</h2>
+          <p className="text-white/60 text-sm md:text-base max-w-2xl mx-auto mt-4">
+            From world-class vitrified surfaces to luxury bath settings and high-security doors, we supply the finest materials for premium designs.
+          </p>
+        </div>
+
+        {/* 3 Core Divisions Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-20">
+          {/* Division 1: Tiles */}
+          <div className="group relative h-[420px] w-full overflow-hidden flex flex-col justify-end text-left border border-white/10 luxury-card">
+            <div className="absolute inset-0 bg-gradient-to-t from-dark-black via-dark-black/55 to-transparent z-10 group-hover:from-dark-black/90 transition-all duration-500" />
+            <img
+              src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80"
+              alt="Tiles Division"
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+            />
+            <div className="absolute top-5 left-5 z-20">
+              <span className="px-3 py-1 bg-primary-gold text-dark-black text-[9px] tracking-widest uppercase font-bold">
+                Core Collection
+              </span>
+            </div>
+            <div className="relative z-20 p-6 w-full">
+              <span className="text-primary-gold text-xs tracking-widest uppercase font-semibold block mb-1">
+                Premium Tiles
+              </span>
+              <h3 className="font-display text-xl text-white font-bold mb-2">
+                Find The Perfect Tile For Every Space
+              </h3>
+              <p className="text-white/75 text-xs leading-relaxed mb-5 max-h-0 opacity-0 group-hover:max-h-24 group-hover:opacity-100 transition-all duration-500 overflow-hidden">
+                Discover our curated vitrified slabs, marble textures, and designer ceramic collections crafted for modern spaces and elite architectures.
+              </p>
+              <button
+                onClick={() => {
+                  const el = document.getElementById('spaces-explorer');
+                  if (el) {
+                    const headerOffset = 96;
+                    const elementPosition = el.getBoundingClientRect().top + window.scrollY;
+                    const offsetPosition = elementPosition - headerOffset;
+                    window.scrollTo({
+                      top: offsetPosition,
+                      behavior: 'smooth'
+                    });
+                  }
+                }}
+                className="px-4 py-2 bg-white/10 hover:bg-primary-gold hover:text-dark-black text-white text-[9px] font-semibold uppercase tracking-wider transition-all duration-300 border border-white/15 hover:border-primary-gold flex items-center gap-1.5 text-left"
+              >
+                Explore Tiles
+                <ArrowRight className="w-3 h-3" />
+              </button>
+            </div>
+          </div>
+
+          {/* Division 2: Bath */}
+          <div className="group relative h-[420px] w-full overflow-hidden flex flex-col justify-end text-left border border-white/10 luxury-card">
+            <div className="absolute inset-0 bg-gradient-to-t from-dark-black via-dark-black/55 to-transparent z-10 group-hover:from-dark-black/90 transition-all duration-500" />
+            <img
+              src="https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=800&q=80"
+              alt="Bath Fittings Division"
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+            />
+            <div className="absolute top-5 left-5 z-20">
+              <span className="px-3 py-1 bg-white/95 text-dark-black text-[9px] tracking-widest uppercase font-bold">
+                Authorized Seller
+              </span>
+            </div>
+            <div className="relative z-20 p-6 w-full">
+              <span className="text-primary-gold text-xs tracking-widest uppercase font-semibold block mb-1">
+                Luxury Sanitaryware
+              </span>
+              <h3 className="font-display text-xl text-white font-bold mb-2">
+                Authorized Seller of Jaquar Group
+              </h3>
+              <p className="text-white/75 text-xs leading-relaxed mb-5 max-h-0 opacity-0 group-hover:max-h-24 group-hover:opacity-100 transition-all duration-500 overflow-hidden">
+                Upgrade your spaces with luxury sanitaryware, wellness systems, designer showers, and sleek fittings from the premium Jaquar Group.
+              </p>
+              <a
+                href="https://wa.me/919876543210?text=Hi!%20I%27m%20interested%20in%20Jaquar%20Group%20Bath%20Fittings.%20Could%20you%20please%20share%20details?"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block px-4 py-2 bg-white/10 hover:bg-[#25D366] hover:text-white text-white text-[9px] font-semibold uppercase tracking-wider transition-all duration-300 border border-white/15 hover:border-[#25D366] text-center"
+              >
+                Inquire Jaquar Fittings
+              </a>
+            </div>
+          </div>
+
+          {/* Division 3: Doors */}
+          <div className="group relative h-[420px] w-full overflow-hidden flex flex-col justify-end text-left border border-white/10 luxury-card">
+            <div className="absolute inset-0 bg-gradient-to-t from-dark-black via-dark-black/55 to-transparent z-10 group-hover:from-dark-black/90 transition-all duration-500" />
+            <img
+              src="https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80"
+              alt="Tata Doors Division"
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+            />
+            <div className="absolute top-5 left-5 z-20">
+              <span className="px-3 py-1 bg-white/95 text-dark-black text-[9px] tracking-widest uppercase font-bold">
+                Official Distributor
+              </span>
+            </div>
+            <div className="relative z-20 p-6 w-full">
+              <span className="text-primary-gold text-xs tracking-widest uppercase font-semibold block mb-1">
+                Tata Pravesh Doors
+              </span>
+              <h3 className="font-display text-xl text-white font-bold mb-2">
+                Distributor in Western Maharashtra & Goa
+              </h3>
+              <p className="text-white/75 text-xs leading-relaxed mb-5 max-h-0 opacity-0 group-hover:max-h-24 group-hover:opacity-100 transition-all duration-500 overflow-hidden">
+                Official distributor of Tata Pravesh doors in Western Maharashtra and Goa. Experience the unyielding strength of steel combined with the elegant wooden finish.
+              </p>
+              <a
+                href="https://wa.me/919876543210?text=Hi!%20I%27m%20interested%20in%20Tata%20Pravesh%20Doors.%20Could%20you%20please%20share%20details?"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block px-4 py-2 bg-white/10 hover:bg-[#25D366] hover:text-white text-white text-[9px] font-semibold uppercase tracking-wider transition-all duration-300 border border-white/15 hover:border-[#25D366] text-center"
+              >
+                Inquire Tata Doors
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Space Explorer Title */}
+        <div id="spaces-explorer" className="pt-10 scroll-mt-24 mb-10 text-center">
+          <span className="text-primary-gold text-xs tracking-[0.25em] uppercase font-semibold">Explore by Space</span>
+          <h3 className="font-display text-2xl md:text-3xl font-bold mt-2">Filter Tiles by Room Application</h3>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
@@ -494,7 +618,7 @@ export default function HomePage() {
             <button
               key={space.name}
               onClick={() => handleSpaceSelect(space.name)}
-              className="group relative h-72 w-full overflow-hidden flex flex-col justify-end text-left border border-white/15"
+              className="group relative h-48 w-full overflow-hidden flex flex-col justify-end text-left border border-white/15"
             >
               <div className="absolute inset-0 bg-gradient-to-t from-dark-black via-dark-black/40 to-transparent z-10 group-hover:from-dark-black/95 transition-all duration-300" />
               <img
@@ -502,12 +626,12 @@ export default function HomePage() {
                 alt={space.name}
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               />
-              <div className="relative z-20 p-5 w-full">
-                <h3 className="font-display text-lg text-white font-bold group-hover:text-primary-gold transition-colors duration-300">
+              <div className="relative z-20 p-4 w-full">
+                <h4 className="font-display text-base text-white font-bold group-hover:text-primary-gold transition-colors duration-300">
                   {space.name}
-                </h3>
-                <span className="text-[10px] text-white tracking-widest uppercase flex items-center gap-1 mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-semibold">
-                  View Products <ArrowRight className="w-3 h-3" />
+                </h4>
+                <span className="text-[9px] text-white tracking-widest uppercase flex items-center gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-semibold">
+                  View Tiles <ArrowRight className="w-3 h-3" />
                 </span>
               </div>
             </button>
