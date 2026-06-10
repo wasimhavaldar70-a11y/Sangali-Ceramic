@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Compass, LogIn, ShieldAlert, ArrowUpRight } from 'lucide-react';
-import { dbService, Product, Dealer, Lead, Project, isSupabaseConfigured } from '@/lib/supabase';
+import { useRouter } from 'next/navigation';
+import { ArrowUpRight } from 'lucide-react';
+import { dbService, Product, Dealer, Lead, Project } from '@/lib/supabase';
 
 // Components
 import { Toast } from '@/components/admin/Toast';
@@ -16,9 +17,7 @@ import { LeadsTab, ProfileTab, AnalyticsTab } from '@/components/admin/tabs/Othe
 type Tab = 'analytics' | 'products' | 'dealers' | 'projects' | 'leads' | 'profile';
 
 export default function AdminPage() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [passcode, setPasscode] = useState('');
-  const [authError, setAuthError] = useState('');
+  const router = useRouter();
 
   // Dashboard Data
   const [products, setProducts] = useState<Product[]>([]);
@@ -38,52 +37,35 @@ export default function AdminPage() {
   };
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const isAuth = sessionStorage.getItem('admin_auth') === 'true';
-      if (isAuth) {
-        setIsAuthenticated(true);
-        loadDashboardData();
-      }
-    }
+    loadDashboardData();
   }, []);
 
   const loadDashboardData = async () => {
-    const prods = await dbService.getProducts();
-    const deals = await dbService.getDealers();
-    const projs = await dbService.getProjects();
-    const lds = await dbService.getLeads();
-
-    setProducts(prods);
-    setDealers(deals);
-    setProjects(projs);
-    setLeads(lds);
-  };
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const isValid = await dbService.verifyAdminPasscode(passcode);
-    if (isValid) {
-      setIsAuthenticated(true);
-      setAuthError('');
-      sessionStorage.setItem('admin_auth', 'true');
-      loadDashboardData();
-      showToast('Successfully authenticated.');
-    } else {
-      setAuthError('Invalid administrator passcode.');
+    try {
+      const [prods, deals, projs, lds] = await Promise.all([
+        dbService.getProducts(),
+        dbService.getDealers(),
+        dbService.getProjects(),
+        dbService.getLeads()
+      ]);
+      setProducts(prods);
+      setDealers(deals);
+      setProjects(projs);
+      setLeads(lds);
+    } catch (e) {
+      console.error(e);
+      showToast('Error loading data', 'error');
     }
   };
 
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    sessionStorage.removeItem('admin_auth');
-    setPasscode('');
-    showToast('Logged out successfully.');
+  const handleLogout = async () => {
+    await dbService.logout();
+    router.push('/admin/login');
   };
 
   const handleBulkImport = async () => {
-    const batchImport: Product[] = [
+    const batchImport: Partial<Product>[] = [
       {
-        id: `prod-travertine-${Date.now()}`,
         name: 'Travertine Classic',
         slug: 'travertine-classic',
         sku: 'TR-CL-007',
@@ -109,30 +91,6 @@ export default function AdminPage() {
     }
   };
 
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-dark-black flex items-center justify-center p-6">
-        <Toast show={toast.show} message={toast.msg} type={toast.type} onClose={() => setToast(prev => ({...prev, show: false}))} />
-        <div className="w-full max-w-md bg-charcoal border border-primary-gold/20 p-8 shadow-2xl rounded-xl backdrop-blur-md">
-          <div className="text-center mb-8">
-            <Compass className="w-12 h-12 text-primary-gold mx-auto mb-3" />
-            <h1 className="font-display text-2xl font-bold tracking-widest text-gold-gradient">ADMINISTRATOR ACCESS</h1>
-            <p className="text-white/40 text-xs tracking-wider uppercase mt-1">Ceramica Premium CMS Portal</p>
-          </div>
-          <form onSubmit={handleLogin} className="space-y-6">
-            <div>
-              <label className="block text-xs uppercase tracking-widest text-white/70 mb-2">Administrator Passcode</label>
-              <input type="password" required value={passcode} onChange={e => setPasscode(e.target.value)} placeholder="Enter passcode" className="w-full bg-dark-black border border-white/10 px-4 py-3 text-sm text-white focus:outline-none focus:border-primary-gold text-center tracking-widest rounded-lg" />
-            </div>
-            {authError && <p className="text-xs text-red-400 bg-red-950/30 border border-red-900/50 p-3 flex gap-2 items-center rounded-lg"><ShieldAlert className="w-4 h-4 shrink-0" /> {authError}</p>}
-            <button type="submit" className="w-full py-3 bg-gold-gradient text-dark-black font-semibold uppercase tracking-wider text-xs flex justify-center items-center gap-2 hover:bg-gold-gradient-hover transition-all hover:scale-[1.02] rounded-lg shadow-xl"><LogIn className="w-4 h-4" /> Authenticate Portal</button>
-          </form>
-          <Link href="/" className="block text-center text-xs text-white/40 hover:text-primary-gold mt-6 transition-colors">← Back to Public Website</Link>
-        </div>
-      </div>
-    );
-  }
-
   const newLeadsCount = leads.filter(l => l.status === 'new').length;
   const closedLeadsCount = leads.filter(l => l.status === 'closed').length;
 
@@ -145,11 +103,7 @@ export default function AdminPage() {
           <span className="text-primary-gold text-[10px] tracking-widest uppercase font-semibold">Protected Management Console</span>
           <div className="flex items-center gap-3 mt-1">
             <h1 className="font-display text-3xl font-bold text-gold-gradient">Control Dashboard</h1>
-            {isSupabaseConfigured ? (
-              <span className="px-2 py-0.5 bg-green-500/10 border border-green-500/30 text-green-400 text-[9px] uppercase font-bold tracking-widest rounded shadow-sm">DB Connected</span>
-            ) : (
-              <span className="px-2 py-0.5 bg-yellow-500/10 border border-yellow-500/30 text-yellow-500 text-[9px] uppercase font-bold tracking-widest rounded shadow-sm" title="Using local browser storage">Local Mode</span>
-            )}
+            <span className="px-2 py-0.5 bg-green-500/10 border border-green-500/30 text-green-400 text-[9px] uppercase font-bold tracking-widest rounded shadow-sm">DB Connected</span>
           </div>
         </div>
         <div className="flex gap-4">
