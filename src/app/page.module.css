@@ -1,0 +1,50 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-12) var(--space-4);
+  text-align: center;
+  background-color: var(--color-primary);
+  color: var(--color-secondary);
+  overflow: hidden;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+}
+
+.heroTitle {
+  font-size: clamp(3rem, 5vw, 5rem);
+  line-height: 1.1;
+  margin-bottom: var(--space-4);
+  color: var(--color-secondary);
+}
+
+.heroAccent {
+  color: var(--color-accent);
+  font-style: italic;
+}
+
+.heroSubtitle {
+  font-size: clamp(1.125rem, 2vw, 1.25rem);
+  color: var(--color-border);
+  line-height: 1.6;
+  max-width: 600px;
+  margin: 0 auto var(--space-6);
+}
+
+.estimatorSection {
+  padding: var(--space-8) var(--space-4);
+  background-color: var(--color-secondary);
+  display: flex;
+  justify-content: center;
+}
