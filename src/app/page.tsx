@@ -512,16 +512,7 @@ export default function HomePage() {
               </p>
               <button
                 onClick={() => {
-                  const el = document.getElementById('spaces-explorer');
-                  if (el) {
-                    const headerOffset = 96;
-                    const elementPosition = el.getBoundingClientRect().top + window.scrollY;
-                    const offsetPosition = elementPosition - headerOffset;
-                    window.scrollTo({
-                      top: offsetPosition,
-                      behavior: 'smooth'
-                    });
-                  }
+                  window.open('/#spaces-explorer', '_blank');
                 }}
                 className="px-4 py-2 bg-white/10 hover:bg-primary-gold hover:text-dark-black text-white text-[9px] font-semibold uppercase tracking-wider transition-all duration-300 border border-white/15 hover:border-primary-gold flex items-center gap-1.5 text-left"
               >
@@ -556,16 +547,7 @@ export default function HomePage() {
               </p>
               <button
                 onClick={() => {
-                  const el = document.getElementById('bath-explorer');
-                  if (el) {
-                    const headerOffset = 96;
-                    const elementPosition = el.getBoundingClientRect().top + window.scrollY;
-                    const offsetPosition = elementPosition - headerOffset;
-                    window.scrollTo({
-                      top: offsetPosition,
-                      behavior: 'smooth'
-                    });
-                  }
+                  window.open('/#bath-explorer', '_blank');
                 }}
                 className="px-4 py-2 bg-white/10 hover:bg-primary-gold hover:text-dark-black text-white text-[9px] font-semibold uppercase tracking-wider transition-all duration-300 border border-white/15 hover:border-primary-gold flex items-center gap-1.5 text-left"
               >
