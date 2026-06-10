@@ -8,7 +8,7 @@ export function LeadsTab({ leads, refreshData, showToast }: { leads: Lead[], ref
   const toggleStatus = async (id: string, currentStatus: string) => {
     const nextStatus = currentStatus === 'new' ? 'contacted' : currentStatus === 'contacted' ? 'closed' : 'new';
     try {
-      await dbService.updateLeadStatus(id, nextStatus as any);
+      await dbService.updateLeadStatus(id, nextStatus as 'new' | 'contacted' | 'closed');
       refreshData();
       showToast(`Lead marked as ${nextStatus}.`);
     } catch {

@@ -24,11 +24,11 @@ export function ProjectsTab({ projects, refreshData, showToast }: ProjectsTabPro
   const openForm = (proj: Project | null = null) => {
     if (proj) {
       setEditingProject(proj);
-      setTitle(proj.title);
-      setCategory(proj.category);
-      setLocation(proj.location);
-      setYear(proj.year);
-      setImage(proj.image);
+      setTitle(proj.title || '');
+      setCategory(proj.category || '');
+      setLocation(proj.location || '');
+      setYear(proj.year || new Date().getFullYear());
+      setImage(proj.image || '');
       setDescription(proj.description || '');
     } else {
       setEditingProject(null);
@@ -47,13 +47,11 @@ export function ProjectsTab({ projects, refreshData, showToast }: ProjectsTabPro
     const projData: Project = {
       id: editingProject ? editingProject.id : `proj-${Date.now()}`,
       title,
-      slug: title.toLowerCase().replace(/ /g, '-'),
-      category,
+      category: category as 'Villas' | 'Apartments' | 'Hotels' | 'Offices' | 'Restaurants',
       location,
       year,
       image,
-      description,
-      status: 'active'
+      description
     };
     
     try {

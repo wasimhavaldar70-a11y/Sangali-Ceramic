@@ -510,15 +510,15 @@ export default function HomePage() {
               <p className="text-white/75 text-xs leading-relaxed mb-5 max-h-0 opacity-0 group-hover:max-h-24 group-hover:opacity-100 transition-all duration-500 overflow-hidden">
                 Discover our curated vitrified slabs, marble textures, and designer ceramic collections crafted for modern spaces and elite architectures.
               </p>
-              <button
-                onClick={() => {
-                  window.open('/#spaces-explorer', '_blank');
-                }}
-                className="px-4 py-2 bg-white/10 hover:bg-primary-gold hover:text-dark-black text-white text-[9px] font-semibold uppercase tracking-wider transition-all duration-300 border border-white/15 hover:border-primary-gold flex items-center gap-1.5 text-left"
+              <a
+                href="/#spaces-explorer"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex px-4 py-2 bg-white/10 hover:bg-primary-gold hover:text-dark-black text-white text-[9px] font-semibold uppercase tracking-wider transition-all duration-300 border border-white/15 hover:border-primary-gold items-center gap-1.5 text-left"
               >
                 Explore Tiles
                 <ArrowRight className="w-3 h-3" />
-              </button>
+              </a>
             </div>
           </div>
 
@@ -545,15 +545,15 @@ export default function HomePage() {
               <p className="text-white/75 text-xs leading-relaxed mb-5 max-h-0 opacity-0 group-hover:max-h-24 group-hover:opacity-100 transition-all duration-500 overflow-hidden">
                 Upgrade your spaces with luxury sanitaryware, wellness systems, designer showers, and sleek fittings from the premium Jaquar Group.
               </p>
-              <button
-                onClick={() => {
-                  window.open('/#bath-explorer', '_blank');
-                }}
-                className="px-4 py-2 bg-white/10 hover:bg-primary-gold hover:text-dark-black text-white text-[9px] font-semibold uppercase tracking-wider transition-all duration-300 border border-white/15 hover:border-primary-gold flex items-center gap-1.5 text-left"
+              <a
+                href="/#bath-explorer"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex px-4 py-2 bg-white/10 hover:bg-primary-gold hover:text-dark-black text-white text-[9px] font-semibold uppercase tracking-wider transition-all duration-300 border border-white/15 hover:border-primary-gold items-center gap-1.5 text-left"
               >
                 Explore Bath
                 <ArrowRight className="w-3 h-3" />
-              </button>
+              </a>
             </div>
           </div>
 
@@ -580,15 +580,15 @@ export default function HomePage() {
               <p className="text-white/75 text-xs leading-relaxed mb-5 max-h-0 opacity-0 group-hover:max-h-24 group-hover:opacity-100 transition-all duration-500 overflow-hidden">
                 Official distributor of Tata Pravesh doors in Western Maharashtra and Goa. Experience the unyielding strength of steel combined with the elegant wooden finish.
               </p>
-              <button
-                onClick={() => {
-                  window.open('/#doors-explorer', '_blank');
-                }}
-                className="px-4 py-2 bg-white/10 hover:bg-primary-gold hover:text-dark-black text-white text-[9px] font-semibold uppercase tracking-wider transition-all duration-300 border border-white/15 hover:border-primary-gold flex items-center gap-1.5 text-left"
+              <a
+                href="/#doors-explorer"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex px-4 py-2 bg-white/10 hover:bg-primary-gold hover:text-dark-black text-white text-[9px] font-semibold uppercase tracking-wider transition-all duration-300 border border-white/15 hover:border-primary-gold items-center gap-1.5 text-left"
               >
                 Explore Tata Doors
                 <ArrowRight className="w-3 h-3" />
-              </button>
+              </a>
             </div>
           </div>
         </div>
