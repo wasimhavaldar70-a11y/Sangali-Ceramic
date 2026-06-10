@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { 
   ArrowLeft, Upload, RefreshCw, Layers, ZoomIn, Compass,
   Sliders, Download, Check, Save, Share2, HelpCircle, LayoutGrid
@@ -184,18 +185,18 @@ export default function VisualizerPage() {
             <div className="absolute inset-0">
               {activeRoomId === 'upload' ? (
                 uploadedImage && (
-                  <img
+                  <Image
                     src={uploadedImage}
                     alt="Before"
-                    className="w-full h-full object-cover pointer-events-none"
+                    fill className="w-full h-full object-cover pointer-events-none"
                   />
                 )
               ) : (
                 activeRoom?.defaultUrl && (
-                  <img
+                  <Image
                     src={activeRoom.defaultUrl}
                     alt="Before"
-                    className="w-full h-full object-cover pointer-events-none"
+                    fill className="w-full h-full object-cover pointer-events-none"
                   />
                 )
               )}
@@ -212,10 +213,10 @@ export default function VisualizerPage() {
               <div className="absolute inset-0 w-[840px] md:w-[1280px] h-[520px] pointer-events-none">
                 {/* Background Room */}
                 {getAppliedRoomImage() && (
-                  <img
+                  <Image
                     src={getAppliedRoomImage()}
                     alt="Applied Tile Room"
-                    className="w-full h-full object-cover"
+                    fill className="w-full h-full object-cover"
                   />
                 )}
 
@@ -390,7 +391,7 @@ export default function VisualizerPage() {
                   }`}
                 >
                   <div className="w-14 h-14 bg-dark-black shrink-0 overflow-hidden border border-white/10">
-                    <img src={tile.images[0]} alt={tile.name} className="w-full h-full object-cover" />
+                    <Image src={tile.images[0]} alt={tile.name} fill className="w-full h-full object-cover" />
                   </div>
                   <div className="flex-grow flex flex-col justify-between">
                     <div>

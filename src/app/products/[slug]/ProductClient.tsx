@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useState, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { 
   ArrowLeft, Check, Compass, MessageSquare, Phone, ChevronRight,
   ShieldAlert, RefreshCw, LayoutGrid, CheckCircle2, ChevronLeft
@@ -170,10 +171,10 @@ export default function ProductClient({ initialProduct, relatedProducts }: { ini
               </div>
             ) : (
               // Standard high res image view
-              <img
+              <Image
                 src={product.images[activeImage]}
                 alt={product.name}
-                className="w-full h-full object-cover"
+                fill className="w-full h-full object-cover"
               />
             )}
 
@@ -219,7 +220,7 @@ export default function ProductClient({ initialProduct, relatedProducts }: { ini
                     idx === activeImage ? 'border-primary-gold' : 'border-white/5 hover:border-white/20'
                   }`}
                 >
-                  <img src={img} alt={`Thumbnail ${idx}`} className="w-full h-full object-cover" />
+                  <Image src={img} alt={`Thumbnail ${idx}`} fill className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>
@@ -436,10 +437,10 @@ export default function ProductClient({ initialProduct, relatedProducts }: { ini
                 className="group bg-charcoal border border-white/5 hover:border-primary-gold/20 transition-all duration-300 flex flex-col h-full overflow-hidden"
               >
                 <div className="relative h-60 w-full overflow-hidden bg-dark-black">
-                  <img
+                  <Image
                     src={prod.images[0]}
                     alt={prod.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    fill className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                   <div className="absolute top-3 left-3 bg-dark-black/75 px-2 py-0.5 text-[9px] uppercase tracking-widest text-primary-gold border border-primary-gold/20">
                     {prod.finish}

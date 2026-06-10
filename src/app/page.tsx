@@ -366,10 +366,10 @@ export default function HomePage() {
             style={{ transitionProperty: 'opacity, transform' }}
           >
             <div className="absolute inset-0 bg-dark-black/75 z-10" />
-            <img
+            <Image
               src={image.url}
               alt={image.title}
-              className="w-full h-full object-cover object-center"
+              fill className="w-full h-full object-cover object-center"
             />
           </div>
         ))}
@@ -490,10 +490,10 @@ export default function HomePage() {
           {/* Division 1: Tiles */}
           <div className="group relative h-[420px] w-full overflow-hidden flex flex-col justify-end text-left border border-white/10 luxury-card">
             <div className="absolute inset-0 bg-gradient-to-t from-dark-black via-dark-black/55 to-transparent z-10 group-hover:from-dark-black/90 transition-all duration-500" />
-            <img
+            <Image
               src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80"
               alt="Tiles Division"
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+              fill className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
             />
             <div className="absolute top-5 left-5 z-20">
               <span className="px-3 py-1 bg-primary-gold text-dark-black text-[9px] tracking-widest uppercase font-bold">
@@ -525,10 +525,10 @@ export default function HomePage() {
           {/* Division 2: Bath */}
           <div className="group relative h-[420px] w-full overflow-hidden flex flex-col justify-end text-left border border-white/10 luxury-card">
             <div className="absolute inset-0 bg-gradient-to-t from-dark-black via-dark-black/55 to-transparent z-10 group-hover:from-dark-black/90 transition-all duration-500" />
-            <img
+            <Image
               src="https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=800&q=80"
               alt="Bath Fittings Division"
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+              fill className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
             />
             <div className="absolute top-5 left-5 z-20">
               <span className="px-3 py-1 bg-white/95 text-dark-black text-[9px] tracking-widest uppercase font-bold">
@@ -560,10 +560,10 @@ export default function HomePage() {
           {/* Division 3: Doors */}
           <div className="group relative h-[420px] w-full overflow-hidden flex flex-col justify-end text-left border border-white/10 luxury-card">
             <div className="absolute inset-0 bg-gradient-to-t from-dark-black via-dark-black/55 to-transparent z-10 group-hover:from-dark-black/90 transition-all duration-500" />
-            <img
+            <Image
               src="https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80"
               alt="Tata Doors Division"
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+              fill className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
             />
             <div className="absolute top-5 left-5 z-20">
               <span className="px-3 py-1 bg-white/95 text-dark-black text-[9px] tracking-widest uppercase font-bold">
@@ -614,10 +614,10 @@ export default function HomePage() {
               className="group relative h-48 w-full overflow-hidden flex flex-col justify-end text-left border border-white/15"
             >
               <div className="absolute inset-0 bg-gradient-to-t from-dark-black via-dark-black/40 to-transparent z-10 group-hover:from-dark-black/95 transition-all duration-300" />
-              <img
+              <Image
                 src={space.url}
                 alt={space.name}
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                fill className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               />
               <div className="relative z-20 p-4 w-full">
                 <h4 className="font-display text-base text-white font-bold group-hover:text-primary-gold transition-colors duration-300">
@@ -654,10 +654,10 @@ export default function HomePage() {
               className="group relative h-48 w-full overflow-hidden flex flex-col justify-end text-left border border-white/15"
             >
               <div className="absolute inset-0 bg-gradient-to-t from-dark-black via-dark-black/40 to-transparent z-10 group-hover:from-dark-black/95 transition-all duration-300" />
-              <img
+              <Image
                 src={cat.url}
                 alt={cat.name}
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                fill className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               />
               <div className="relative z-20 p-4 w-full">
                 <h4 className="font-display text-base text-white font-bold group-hover:text-primary-gold transition-colors duration-300">
@@ -694,10 +694,10 @@ export default function HomePage() {
               className="group relative h-48 w-full overflow-hidden flex flex-col justify-end text-left border border-white/15"
             >
               <div className="absolute inset-0 bg-gradient-to-t from-dark-black via-dark-black/40 to-transparent z-10 group-hover:from-dark-black/95 transition-all duration-300" />
-              <img
+              <Image
                 src={cat.url}
                 alt={cat.name}
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                fill className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               />
               <div className="relative z-20 p-4 w-full">
                 <h4 className="font-display text-base text-white font-bold group-hover:text-primary-gold transition-colors duration-300">
@@ -727,10 +727,10 @@ export default function HomePage() {
                 className="group relative h-96 overflow-hidden border border-white/5 flex flex-col justify-end p-8"
               >
                 <div className="absolute inset-0 bg-gradient-to-t from-dark-black via-dark-black/30 to-transparent z-10 group-hover:from-dark-black/90 transition-all duration-500" />
-                <img
+                <Image
                   src={col.image || 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=800&q=80'}
                   alt={col.name}
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                  fill className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                 />
                 <div className="relative z-20">
                   <h3 className="font-display text-2xl font-extrabold text-primary-gold mb-2">
@@ -813,10 +813,10 @@ export default function HomePage() {
             >
               {/* Before Image (Raw Room) */}
               <div className="absolute inset-0">
-                <img
+                <Image
                   src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1200&q=80"
                   alt="Original Living Room"
-                  className="w-full h-full object-cover pointer-events-none"
+                  fill className="w-full h-full object-cover pointer-events-none"
                 />
                 <div className="absolute bottom-4 left-4 z-20 bg-dark-black/60 px-3 py-1 text-xs uppercase tracking-wider text-white">
                   Original
@@ -828,7 +828,7 @@ export default function HomePage() {
                 className="absolute inset-0 overflow-hidden"
                 style={{ width: `${sliderPos}%` }}
               >
-                <img
+                <Image fill
                   src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80"
                   alt="Applied Calacatta Tile Room"
                   className="absolute left-0 top-0 w-full h-[450px] object-cover max-w-none pointer-events-none"
@@ -926,10 +926,10 @@ export default function HomePage() {
                 >
                   {/* Image wrapper */}
                   <div className="relative h-72 w-full overflow-hidden bg-dark-black">
-                    <img
+                    <Image
                       src={prod.images[0]}
                       alt={prod.name}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      fill className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                     <div className="absolute top-4 left-4 bg-dark-black/90 px-2.5 py-1 text-[10px] uppercase tracking-widest text-primary-gold border border-primary-gold/40 font-bold">
                       {prod.finish}
@@ -1009,10 +1009,10 @@ export default function HomePage() {
                 className="group relative h-80 overflow-hidden border border-white/10 flex flex-col justify-end p-6 luxury-card"
               >
                 <div className="absolute inset-0 bg-gradient-to-t from-dark-black via-dark-black/40 to-transparent z-10 group-hover:from-dark-black/95 transition-all duration-500" />
-                <img
+                <Image
                   src={proj.image}
                   alt={proj.title}
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                  fill className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                 />
                 <div className="relative z-20">
                   <span className="text-[10px] text-primary-gold tracking-widest uppercase font-bold">{proj.category}</span>
@@ -1049,10 +1049,10 @@ export default function HomePage() {
               <div className="absolute top-6 left-8 text-7xl text-primary-gold/10 font-serif pointer-events-none">“</div>
               <div className="flex flex-col items-center">
                 <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-primary-gold mb-6">
-                  <img
-                    src={testimonials[testimonialIndex]?.image_url}
-                    alt={testimonials[testimonialIndex]?.name}
-                    className="w-full h-full object-cover"
+                  <Image
+                    src={testimonials[testimonialIndex]?.image_url || 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=80'}
+                    alt={testimonials[testimonialIndex]?.name || 'Testimonial'}
+                    fill className="w-full h-full object-cover"
                   />
                 </div>
                 <div className="flex gap-1 mb-4">
@@ -1111,10 +1111,10 @@ export default function HomePage() {
               <div className="absolute inset-y-0 left-0 w-3 bg-gradient-to-r from-dark-black/95 to-transparent z-20 border-r border-white/15" />
               <div className="absolute inset-0 bg-gradient-to-t from-dark-black/95 to-transparent z-10" />
               
-              <img
+              <Image
                 src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=400&q=80"
                 alt="Catalogue Booklet Cover"
-                className="absolute inset-0 w-full h-full object-cover opacity-60"
+                fill className="absolute inset-0 w-full h-full object-cover opacity-60"
               />
 
               <div className="relative z-20 text-center flex flex-col items-center">
@@ -1173,10 +1173,10 @@ export default function HomePage() {
 
             {/* Left Image */}
             <div className="relative h-80 md:h-[400px] w-full bg-dark-black overflow-hidden border border-white/5">
-              <img
+              <Image
                 src={quickViewProduct.images[0]}
                 alt={quickViewProduct.name}
-                className="w-full h-full object-cover"
+                fill className="w-full h-full object-cover"
               />
             </div>
 

@@ -126,11 +126,26 @@ export default function LeadActions() {
       });
       setSubmitted(true);
       resetForm();
-      // Simulate pdf download trigger
-      setTimeout(() => {
+      
+      // Fetch latest catalogue and trigger download
+      try {
+        const cats = await dbService.getCatalogues();
+        if (cats && cats.length > 0) {
+          const latest = cats[0];
+          setTimeout(() => {
+            setCatalogueOpen(false);
+            window.open(latest.pdf_url, '_blank');
+          }, 1500);
+        } else {
+          setTimeout(() => {
+            setCatalogueOpen(false);
+            alert('Brochure is currently being updated. We will email it to you shortly!');
+          }, 1500);
+        }
+      } catch (err) {
+        console.error('Failed to fetch catalogue', err);
         setCatalogueOpen(false);
-        alert('Your download has started automatically! (Seed Brochure PDF)');
-      }, 1500);
+      }
     } catch (err) {
       console.error(err);
     } finally {

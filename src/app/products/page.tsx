@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { 
   ArrowRight, Search, SlidersHorizontal, Eye, ShieldAlert,
   Compass, ArrowLeft, RefreshCw, Layers, Check, ChevronRight
@@ -383,10 +384,10 @@ export default function ProductsPage() {
                 {/* Image */}
                 <div className="relative h-64 w-full overflow-hidden bg-dark-black">
                   {prod.images[0] && (
-                    <img
+                    <Image
                       src={prod.images[0]}
                       alt={prod.name}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      fill className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                   )}
                   <div className="absolute top-4 left-4 bg-dark-black/90 px-2.5 py-1 text-[10px] uppercase tracking-widest text-primary-gold border border-primary-gold/40 font-bold">
@@ -449,10 +450,10 @@ export default function ProductsPage() {
             {/* Left Image */}
             <div className="relative h-64 md:h-[360px] w-full bg-dark-black overflow-hidden border border-white/5">
               {quickViewProduct.images[0] && (
-                <img
+                <Image
                   src={quickViewProduct.images[0]}
                   alt={quickViewProduct.name}
-                  className="w-full h-full object-cover"
+                  fill className="w-full h-full object-cover"
                 />
               )}
             </div>

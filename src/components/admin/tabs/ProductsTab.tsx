@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingBag, Plus, Edit2, Trash2, X, Save, Search, AlertTriangle } from 'lucide-react';
 import { Product, dbService } from '@/lib/supabase';
@@ -176,7 +177,7 @@ export function ProductsTab({ products, refreshData, showToast }: ProductsTabPro
               <tr key={prod.id} className="hover:bg-white/5 transition-colors">
                 <td className="p-4 flex items-center gap-3">
                   <div className="w-10 h-10 bg-dark-black overflow-hidden border border-white/10 shrink-0 rounded">
-                    <img src={prod.images[0]} alt={prod.name} className="w-full h-full object-cover" />
+                    <Image src={prod.images[0]} alt={prod.name} fill className="w-full h-full object-cover" />
                   </div>
                   <span className="font-bold text-white text-sm">{prod.name}</span>
                 </td>
@@ -270,7 +271,7 @@ export function ProductsTab({ products, refreshData, showToast }: ProductsTabPro
                       <div className="grid grid-cols-3 gap-2">
                         {pImages.map((img, idx) => (
                           <div key={idx} className="relative w-full h-20 bg-dark-black border border-white/5 rounded flex items-center justify-center overflow-hidden group">
-                            <img src={img} alt={`Preview ${idx}`} className="w-full h-full object-cover" />
+                            <Image src={img} alt={`Preview ${idx}`} fill className="w-full h-full object-cover" />
                             <button 
                               type="button" 
                               onClick={() => removeImage(idx)}

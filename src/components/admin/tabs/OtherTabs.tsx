@@ -149,35 +149,13 @@ export function LeadsTab({ leads, refreshData, showToast }: { leads: Lead[], ref
 
 // --- PROFILE TAB ---
 export function ProfileTab({ showToast }: { showToast: (msg: string, type?: 'success'|'error') => void }) {
-  const [current, setCurrent] = useState('');
-  const [newPass, setNewPass] = useState('');
-  const [confirm, setConfirm] = useState('');
-
-  const handleUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const isValid = await dbService.verifyAdminPasscode(current);
-    if (!isValid) return showToast('Current passcode is incorrect.', 'error');
-    if (newPass !== confirm) return showToast('New passcodes do not match.', 'error');
-    if (newPass.length < 5) return showToast('Passcode must be at least 5 characters.', 'error');
-    
-    await dbService.updateAdminPasscode(newPass);
-    showToast('Passcode updated successfully.');
-    setCurrent(''); setNewPass(''); setConfirm('');
-  };
-
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 max-w-lg">
       <h2 className="font-display text-xl font-bold uppercase tracking-wider text-gold-gradient mb-6 flex items-center gap-2">
         <ShieldAlert className="w-5 h-5 text-primary-gold" /> Admin Security Profile
       </h2>
       <div className="bg-dark-black/40 border border-white/5 p-6 rounded-xl backdrop-blur-sm shadow-xl">
-        <h3 className="text-sm font-semibold uppercase tracking-widest mb-4 border-b border-white/5 pb-2">Change Access Passcode</h3>
-        <form onSubmit={handleUpdate} className="space-y-4">
-          <div><label className="block text-xs uppercase tracking-widest text-white/50 mb-1">Current Passcode</label><input type="password" required value={current} onChange={e => setCurrent(e.target.value)} className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white text-xs focus:border-primary-gold rounded outline-none" /></div>
-          <div><label className="block text-xs uppercase tracking-widest text-white/50 mb-1">New Passcode</label><input type="password" required value={newPass} onChange={e => setNewPass(e.target.value)} className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white text-xs focus:border-primary-gold rounded outline-none" /></div>
-          <div><label className="block text-xs uppercase tracking-widest text-white/50 mb-1">Confirm New Passcode</label><input type="password" required value={confirm} onChange={e => setConfirm(e.target.value)} className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white text-xs focus:border-primary-gold rounded outline-none" /></div>
-          <button type="submit" className="w-full py-3 mt-2 bg-gold-gradient text-dark-black font-semibold uppercase tracking-wider text-xs hover:bg-gold-gradient-hover flex justify-center items-center gap-1.5 rounded transition-all hover:scale-[1.02] shadow-lg"><Save className="w-4 h-4" /> Update Passcode</button>
-        </form>
+        <p className="text-sm text-white/60">Passcode management has been migrated to Supabase Auth. Please use the Supabase Dashboard to reset your password.</p>
       </div>
     </motion.div>
   );
