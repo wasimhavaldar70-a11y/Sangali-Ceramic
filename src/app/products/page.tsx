@@ -60,14 +60,14 @@ export default function ProductsPage() {
   const [showMoreApps, setShowMoreApps] = useState(false);
   const productsGridRef = useRef<HTMLDivElement>(null);
 
-  // Load products
+  // Load products with debounced search
   useEffect(() => {
-    const fetchProducts = async () => {
-      const data = await dbService.getProducts();
+    const timer = setTimeout(async () => {
+      const data = await dbService.getProducts(searchQuery);
       setProducts(data);
-    };
-    fetchProducts();
-  }, []);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   const triggerQuote = (product?: Product) => {
     window.dispatchEvent(new CustomEvent('open-quote-modal', { detail: product }));
@@ -89,13 +89,6 @@ export default function ProductsPage() {
 
   // Filter Data
   const filteredProducts = products.filter(prod => {
-    // Search Query matching
-    const matchesSearch = prod.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          prod.finish.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          prod.sku.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    if (!matchesSearch) return false;
-
     // Directory filter matching
     if (activeFilter) {
       const { type, value } = activeFilter;

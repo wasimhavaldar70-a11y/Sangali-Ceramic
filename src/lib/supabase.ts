@@ -146,9 +146,13 @@ export const dbService = {
   },
 
   // Products
-  async getProducts(): Promise<Product[]> {
+  async getProducts(query?: string): Promise<Product[]> {
     const supabase = createClient();
-    const { data, error } = await supabase.from('products').select('*');
+    let dbQuery = supabase.from('products').select('*');
+    if (query) {
+      dbQuery = dbQuery.or(`name.ilike.%${query}%,sku.ilike.%${query}%,finish.ilike.%${query}%`);
+    }
+    const { data, error } = await dbQuery;
     if (error) console.error(error);
     return data || [];
   },

@@ -26,6 +26,7 @@ export function ProjectsTab({ projects, refreshData, showToast }: ProjectsTabPro
   const [year, setYear] = useState<number>(new Date().getFullYear());
   const [image, setImage] = useState('');
   const [description, setDescription] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
 
   const openForm = (proj: Project | null = null) => {
     if (proj) {
@@ -68,6 +69,18 @@ export function ProjectsTab({ projects, refreshData, showToast }: ProjectsTabPro
     } catch (err) {
       showToast('Error saving project.', 'error');
     }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    setIsUploading(true);
+    const file = e.target.files[0];
+    const path = `project_${Date.now()}_${file.name}`;
+    const url = await dbService.uploadFile('projects', file, path);
+    if (url) {
+      setImage(url);
+    }
+    setIsUploading(false);
   };
 
   const executeDelete = async () => {
@@ -227,8 +240,15 @@ export function ProjectsTab({ projects, refreshData, showToast }: ProjectsTabPro
                   {/* Right Column */}
                   <div className="space-y-4">
                     <div>
-                      <label className="block uppercase tracking-wider text-white/50 mb-1">Featured Image URL *</label>
-                      <input type="text" required value={image} onChange={e => setImage(e.target.value)} className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold rounded outline-none" />
+                      <label className="block uppercase tracking-wider text-white/50 mb-1">Featured Image (Supabase) *</label>
+                      <input 
+                        type="file" 
+                        accept="image/*"
+                        onChange={handleImageUpload} 
+                        disabled={isUploading}
+                        className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold rounded outline-none text-xs file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:uppercase file:tracking-wider file:font-semibold file:bg-primary-gold file:text-dark-black hover:file:bg-gold-gradient-hover" 
+                      />
+                      {isUploading && <p className="text-[10px] text-primary-gold mt-1 animate-pulse">Uploading to Supabase Storage...</p>}
                     </div>
                     {/* Image Preview */}
                     <div className="w-full h-24 bg-dark-black border border-white/5 rounded flex items-center justify-center overflow-hidden">

@@ -24,8 +24,9 @@ export function ProductsTab({ products, refreshData, showToast }: ProductsTabPro
   const [pSize, setPSize] = useState('');
   const [pFinish, setPFinish] = useState('');
   const [pPrice, setPPrice] = useState(0);
-  const [pImage, setPImage] = useState('');
+  const [pImages, setPImages] = useState<string[]>([]);
   const [pDesc, setPDesc] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
 
   const openForm = (prod: Product | null = null) => {
     if (prod) {
@@ -35,7 +36,7 @@ export function ProductsTab({ products, refreshData, showToast }: ProductsTabPro
       setPSize(prod.size);
       setPFinish(prod.finish);
       setPPrice(prod.price);
-      setPImage(prod.images[0] || '');
+      setPImages(prod.images || []);
       setPDesc(prod.description || '');
     } else {
       setEditingProduct(null);
@@ -44,7 +45,7 @@ export function ProductsTab({ products, refreshData, showToast }: ProductsTabPro
       setPSize('600x1200 mm');
       setPFinish('Glossy');
       setPPrice(1200);
-      setPImage('https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=800&q=80');
+      setPImages([]);
       setPDesc('');
     }
     setModalOpen(true);
@@ -62,7 +63,7 @@ export function ProductsTab({ products, refreshData, showToast }: ProductsTabPro
       price: Number(pPrice),
       category_id: pFinish.toLowerCase() === 'matte' ? 'cat-matte' : 'cat-glossy',
       collection_id: pFinish.toLowerCase() === 'matte' ? 'col-matte' : 'col-marble',
-      images: [pImage],
+      images: pImages,
       description: pDesc,
       status: 'active',
       tech_specs: editingProduct?.tech_specs || { water_absorption: '< 0.05%', hardness: '6 Mohs', thickness: '9.5 mm' }
@@ -76,6 +77,28 @@ export function ProductsTab({ products, refreshData, showToast }: ProductsTabPro
     } catch (err) {
       showToast('Error saving product.', 'error');
     }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    setIsUploading(true);
+    
+    const newImages = [...pImages];
+    for (const file of Array.from(e.target.files)) {
+      // create a unique path
+      const path = `product_${Date.now()}_${file.name}`;
+      const url = await dbService.uploadFile('products', file, path);
+      if (url) {
+        newImages.push(url);
+      }
+    }
+    
+    setPImages(newImages);
+    setIsUploading(false);
+  };
+  
+  const removeImage = (idx: number) => {
+    setPImages(pImages.filter((_, i) => i !== idx));
   };
 
   const executeDelete = async () => {
@@ -231,17 +254,34 @@ export function ProductsTab({ products, refreshData, showToast }: ProductsTabPro
                   {/* Right Column */}
                   <div className="space-y-4">
                     <div>
-                      <label className="block uppercase tracking-wider text-white/50 mb-1">Image URL *</label>
-                      <input type="text" required value={pImage} onChange={e => setPImage(e.target.value)} className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold rounded outline-none" placeholder="https://" />
+                      <label className="block uppercase tracking-wider text-white/50 mb-1">Upload Images (Supabase)</label>
+                      <input 
+                        type="file" 
+                        multiple 
+                        accept="image/*"
+                        onChange={handleImageUpload} 
+                        disabled={isUploading}
+                        className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold rounded outline-none text-xs file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:uppercase file:tracking-wider file:font-semibold file:bg-primary-gold file:text-dark-black hover:file:bg-gold-gradient-hover" 
+                      />
+                      {isUploading && <p className="text-[10px] text-primary-gold mt-1 animate-pulse">Uploading to Supabase Storage...</p>}
                     </div>
                     {/* Image Preview */}
-                    <div className="w-full h-32 bg-dark-black border border-white/5 rounded flex items-center justify-center overflow-hidden">
-                      {pImage ? (
-                        <img src={pImage} alt="Preview" className="w-full h-full object-cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
-                      ) : (
-                        <span className="text-white/20 italic">No image preview</span>
-                      )}
-                    </div>
+                    {pImages.length > 0 && (
+                      <div className="grid grid-cols-3 gap-2">
+                        {pImages.map((img, idx) => (
+                          <div key={idx} className="relative w-full h-20 bg-dark-black border border-white/5 rounded flex items-center justify-center overflow-hidden group">
+                            <img src={img} alt={`Preview ${idx}`} className="w-full h-full object-cover" />
+                            <button 
+                              type="button" 
+                              onClick={() => removeImage(idx)}
+                              className="absolute inset-0 bg-dark-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white/80 hover:text-red-500 transition-all"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                     <div>
                       <label className="block uppercase tracking-wider text-white/50 mb-1">Description</label>
                       <textarea rows={3} value={pDesc} onChange={e => setPDesc(e.target.value)} className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold resize-none rounded outline-none"></textarea>

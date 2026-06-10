@@ -10,12 +10,10 @@ import {
 import { dbService, Product } from '@/lib/supabase';
 import { leadSchema } from '@/lib/validations/lead';
 
-export default function ProductDetailPage() {
-  const { id } = useParams();
+export default function ProductClient({ initialProduct, relatedProducts }: { initialProduct: Product, relatedProducts: Product[] }) {
   const router = useRouter();
 
-  const [product, setProduct] = useState<Product | null>(null);
-  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+  const [product, setProduct] = useState<Product>(initialProduct);
   const [activeImage, setActiveImage] = useState(0);
   const [view360, setView360] = useState(false);
   const [rotation, setRotation] = useState({ x: 15, y: -15 });
@@ -32,32 +30,8 @@ export default function ProductDetailPage() {
   const [loading, setLoading] = useState(false);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
 
-  useEffect(() => {
-    const fetchProductData = async () => {
-      if (!id) return;
-      const prodId = id as string;
-      const data = await dbService.getProductById(prodId);
-      if (data) {
-        setProduct(data);
-        const allProds = await dbService.getProducts();
-        // Get products in same category/collection
-        const filtered = allProds.filter(
-          p => p.id !== data.id && (p.category_id === data.category_id || p.collection_id === data.collection_id)
-        );
-        setRelatedProducts(filtered.slice(0, 3));
-      }
-    };
-    fetchProductData();
-  }, [id]);
+  // No fetch needed, using props
 
-  if (!product) {
-    return (
-      <div className="min-h-screen bg-dark-black flex flex-col items-center justify-center pt-24">
-        <Compass className="w-12 h-12 text-primary-gold animate-spin mb-4" />
-        <p className="text-white/60">Loading luxury details...</p>
-      </div>
-    );
-  }
 
   // 360 dragging calculations
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -475,14 +449,14 @@ export default function ProductDetailPage() {
                   <div>
                     <span className="text-[9px] text-white/40 tracking-widest uppercase">{prod.sku}</span>
                     <h4 className="font-display text-base font-bold text-white mt-1 hover:text-primary-gold transition-colors duration-300">
-                      <Link href={`/products/${prod.id}`}>{prod.name}</Link>
+                      <Link href={`/products/${prod.slug}`}>{prod.name}</Link>
                     </h4>
                     <p className="text-primary-gold text-xs font-semibold mt-2">
                       ₹{prod.price.toLocaleString('en-IN')} / sq.ft
                     </p>
                   </div>
                   <Link
-                    href={`/products/${prod.id}`}
+                    href={`/products/${prod.slug}`}
                     className="mt-4 py-2 border border-white/10 text-white text-center text-xs uppercase tracking-widest hover:bg-white hover:text-dark-black transition-colors"
                   >
                     View Product
