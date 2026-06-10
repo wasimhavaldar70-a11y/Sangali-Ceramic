@@ -1,6 +1,7 @@
+'use client';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FolderOpen, Plus, Edit2, Trash2, X, Save } from 'lucide-react';
+import { FolderOpen, Plus, Edit2, Trash2, X, Save, Search, AlertTriangle } from 'lucide-react';
 import { Project, dbService } from '@/lib/supabase';
 
 interface ProjectsTabProps {
@@ -12,6 +13,11 @@ interface ProjectsTabProps {
 export function ProjectsTab({ projects, refreshData, showToast }: ProjectsTabProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+
+  // Search Filter
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterCategory, setFilterCategory] = useState('All');
 
   // Form states
   const [title, setTitle] = useState('');
@@ -64,30 +70,61 @@ export function ProjectsTab({ projects, refreshData, showToast }: ProjectsTabPro
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (confirm('Delete this portfolio project?')) {
-      try {
-        await dbService.deleteProject(id);
-        refreshData();
-        showToast('Project deleted successfully.');
-      } catch (err) {
-        showToast('Error deleting project.', 'error');
-      }
+  const executeDelete = async () => {
+    if (!confirmDelete) return;
+    try {
+      await dbService.deleteProject(confirmDelete);
+      refreshData();
+      showToast('Project deleted successfully.');
+    } catch (err) {
+      showToast('Error deleting project.', 'error');
+    } finally {
+      setConfirmDelete(null);
     }
   };
 
+  const filteredProjects = projects.filter(p => {
+    const matchesSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) || p.location?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = filterCategory === 'All' || p.category === filterCategory;
+    return matchesSearch && matchesCategory;
+  });
+
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
         <h2 className="font-display text-xl font-bold uppercase tracking-wider text-gold-gradient flex items-center gap-2">
           <FolderOpen className="w-5 h-5 text-primary-gold" /> Portfolio Galleries
         </h2>
-        <button
-          onClick={() => openForm(null)}
-          className="px-4 py-2 bg-gold-gradient text-dark-black text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5 hover:bg-gold-gradient-hover rounded shadow-lg shadow-primary-gold/20 transition-all hover:scale-105"
-        >
-          <Plus className="w-4 h-4" /> Add Project
-        </button>
+        <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+          <div className="relative w-full sm:w-48">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
+            <input 
+              type="text" 
+              placeholder="Search projects..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9 pr-4 py-2 w-full bg-dark-black/50 border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-primary-gold transition-colors"
+            />
+          </div>
+          <select 
+            value={filterCategory}
+            onChange={(e) => setFilterCategory(e.target.value)}
+            className="px-3 py-2 bg-dark-black/50 border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-primary-gold"
+          >
+            <option value="All">All Categories</option>
+            <option value="Villas">Villas</option>
+            <option value="Apartments">Apartments</option>
+            <option value="Hotels">Hotels</option>
+            <option value="Offices">Offices</option>
+            <option value="Restaurants">Restaurants</option>
+          </select>
+          <button
+            onClick={() => openForm(null)}
+            className="px-4 py-2 bg-gold-gradient text-dark-black text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-1.5 hover:bg-gold-gradient-hover rounded-lg shadow-lg shadow-primary-gold/20 transition-all hover:scale-105 whitespace-nowrap"
+          >
+            <Plus className="w-4 h-4" /> Add Project
+          </button>
+        </div>
       </div>
 
       <div className="overflow-x-auto border border-white/5 rounded-lg bg-dark-black/40 backdrop-blur-sm">
@@ -102,11 +139,11 @@ export function ProjectsTab({ projects, refreshData, showToast }: ProjectsTabPro
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5">
-            {projects.length === 0 ? (
+            {filteredProjects.length === 0 ? (
               <tr>
-                <td colSpan={5} className="p-8 text-center text-white/40 italic">No projects found. Create one above.</td>
+                <td colSpan={5} className="p-8 text-center text-white/40 italic">No projects found matching criteria.</td>
               </tr>
-            ) : projects.map(proj => (
+            ) : filteredProjects.map(proj => (
               <tr key={proj.id} className="hover:bg-white/5 transition-colors">
                 <td className="p-4 flex items-center gap-3">
                   <div className="w-10 h-10 bg-dark-black overflow-hidden border border-white/10 shrink-0 rounded">
@@ -114,15 +151,17 @@ export function ProjectsTab({ projects, refreshData, showToast }: ProjectsTabPro
                   </div>
                   <span className="font-bold text-white text-sm">{proj.title}</span>
                 </td>
-                <td className="p-4">{proj.category}</td>
-                <td className="p-4">{proj.location}</td>
-                <td className="p-4">{proj.year}</td>
+                <td className="p-4">
+                  <span className="px-2 py-0.5 bg-white/5 border border-white/10 text-white/80 rounded text-[10px] uppercase">{proj.category}</span>
+                </td>
+                <td className="p-4 text-white/80">{proj.location}</td>
+                <td className="p-4 font-mono text-white/50">{proj.year}</td>
                 <td className="p-4 text-center">
                   <div className="flex justify-center gap-3">
                     <button onClick={() => openForm(proj)} className="text-white/60 hover:text-primary-gold transition-colors p-1" aria-label="Edit">
                       <Edit2 className="w-4 h-4" />
                     </button>
-                    <button onClick={() => handleDelete(proj.id)} className="text-white/60 hover:text-red-400 transition-colors p-1" aria-label="Delete">
+                    <button onClick={() => setConfirmDelete(proj.id)} className="text-white/60 hover:text-red-400 transition-colors p-1" aria-label="Delete">
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
@@ -140,7 +179,7 @@ export function ProjectsTab({ projects, refreshData, showToast }: ProjectsTabPro
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-lg bg-charcoal border border-primary-gold/30 p-8 shadow-2xl rounded-xl"
+              className="relative w-full max-w-2xl bg-charcoal border border-primary-gold/30 p-8 shadow-2xl rounded-xl max-h-[90vh] overflow-y-auto"
             >
               <button onClick={() => setModalOpen(false)} className="absolute top-4 right-4 text-white/50 hover:text-white transition-colors">
                 <X className="w-6 h-6" />
@@ -151,50 +190,87 @@ export function ProjectsTab({ projects, refreshData, showToast }: ProjectsTabPro
               </h3>
 
               <form onSubmit={handleSave} className="space-y-4 text-xs">
-                <div>
-                  <label className="block uppercase tracking-wider text-white/50 mb-1">Project Title *</label>
-                  <input type="text" required value={title} onChange={e => setTitle(e.target.value)} className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold rounded outline-none" />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block uppercase tracking-wider text-white/50 mb-1">Category *</label>
-                    <select
-                      required
-                      value={category}
-                      onChange={e => setCategory(e.target.value)}
-                      className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold rounded outline-none"
-                    >
-                      <option value="Villas">Villas</option>
-                      <option value="Apartments">Apartments</option>
-                      <option value="Hotels">Hotels</option>
-                      <option value="Offices">Offices</option>
-                      <option value="Restaurants">Restaurants</option>
-                    </select>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Left Column */}
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block uppercase tracking-wider text-white/50 mb-1">Project Title *</label>
+                      <input type="text" required value={title} onChange={e => setTitle(e.target.value)} className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold rounded outline-none" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block uppercase tracking-wider text-white/50 mb-1">Category *</label>
+                        <select
+                          required
+                          value={category}
+                          onChange={e => setCategory(e.target.value)}
+                          className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold rounded outline-none"
+                        >
+                          <option value="Villas">Villas</option>
+                          <option value="Apartments">Apartments</option>
+                          <option value="Hotels">Hotels</option>
+                          <option value="Offices">Offices</option>
+                          <option value="Restaurants">Restaurants</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block uppercase tracking-wider text-white/50 mb-1">Year *</label>
+                        <input type="number" required value={year} onChange={e => setYear(Number(e.target.value))} className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold rounded outline-none" />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block uppercase tracking-wider text-white/50 mb-1">Location *</label>
+                      <input type="text" required value={location} onChange={e => setLocation(e.target.value)} className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold rounded outline-none" />
+                    </div>
                   </div>
-                  <div>
-                    <label className="block uppercase tracking-wider text-white/50 mb-1">Location *</label>
-                    <input type="text" required value={location} onChange={e => setLocation(e.target.value)} className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold rounded outline-none" />
+
+                  {/* Right Column */}
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block uppercase tracking-wider text-white/50 mb-1">Featured Image URL *</label>
+                      <input type="text" required value={image} onChange={e => setImage(e.target.value)} className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold rounded outline-none" />
+                    </div>
+                    {/* Image Preview */}
+                    <div className="w-full h-24 bg-dark-black border border-white/5 rounded flex items-center justify-center overflow-hidden">
+                      {image ? (
+                        <img src={image} alt="Preview" className="w-full h-full object-cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
+                      ) : (
+                        <span className="text-white/20 italic">No image preview</span>
+                      )}
+                    </div>
+                    <div>
+                      <label className="block uppercase tracking-wider text-white/50 mb-1">Description</label>
+                      <textarea rows={2} value={description} onChange={e => setDescription(e.target.value)} className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold rounded outline-none resize-none"></textarea>
+                    </div>
                   </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block uppercase tracking-wider text-white/50 mb-1">Year *</label>
-                    <input type="number" required value={year} onChange={e => setYear(Number(e.target.value))} className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold rounded outline-none" />
-                  </div>
-                  <div>
-                    <label className="block uppercase tracking-wider text-white/50 mb-1">Featured Image URL *</label>
-                    <input type="text" required value={image} onChange={e => setImage(e.target.value)} className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold rounded outline-none" />
-                  </div>
-                </div>
-                <div>
-                  <label className="block uppercase tracking-wider text-white/50 mb-1">Description</label>
-                  <textarea rows={3} value={description} onChange={e => setDescription(e.target.value)} className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold rounded outline-none resize-none"></textarea>
                 </div>
 
-                <button type="submit" className="w-full py-3 mt-4 bg-gold-gradient text-dark-black font-semibold uppercase tracking-wider flex justify-center items-center gap-2 rounded shadow-lg hover:shadow-primary-gold/20 transition-all hover:-translate-y-0.5">
+                <button type="submit" className="w-full py-3 mt-6 bg-gold-gradient text-dark-black font-semibold uppercase tracking-wider flex justify-center items-center gap-2 rounded shadow-lg hover:shadow-primary-gold/20 transition-all hover:-translate-y-0.5">
                   <Save className="w-4 h-4" /> Save Project
                 </button>
               </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* CONFIRM DELETE MODAL */}
+      <AnimatePresence>
+        {confirmDelete && (
+          <div className="fixed inset-0 z-[130] flex items-center justify-center p-4 bg-dark-black/90 backdrop-blur-md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-charcoal border border-red-500/30 p-6 rounded-xl max-w-sm w-full text-center shadow-2xl"
+            >
+              <AlertTriangle className="w-12 h-12 text-red-500 mx-auto mb-4 opacity-80" />
+              <h3 className="text-lg font-bold text-white mb-2">Delete Project?</h3>
+              <p className="text-xs text-white/60 mb-6">Are you sure you want to permanently delete this portfolio project from the gallery?</p>
+              <div className="flex gap-3 justify-center">
+                <button onClick={() => setConfirmDelete(null)} className="px-4 py-2 bg-dark-black border border-white/10 text-white/80 rounded hover:bg-white/5 transition-colors text-xs uppercase tracking-wider font-semibold">Cancel</button>
+                <button onClick={executeDelete} className="px-4 py-2 bg-red-500/20 text-red-400 border border-red-500/30 rounded hover:bg-red-500/30 transition-colors text-xs uppercase tracking-wider font-semibold">Delete Permanently</button>
+              </div>
             </motion.div>
           </div>
         )}

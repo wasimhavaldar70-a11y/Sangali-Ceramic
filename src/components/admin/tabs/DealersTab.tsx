@@ -1,6 +1,7 @@
+'use client';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Plus, Edit2, Trash2, X, Save } from 'lucide-react';
+import { MapPin, Plus, Edit2, Trash2, X, Save, Search, AlertTriangle } from 'lucide-react';
 import { Dealer, dbService } from '@/lib/supabase';
 
 interface DealersTabProps {
@@ -12,6 +13,10 @@ interface DealersTabProps {
 export function DealersTab({ dealers, refreshData, showToast }: DealersTabProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingDealer, setEditingDealer] = useState<Dealer | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+
+  // Search Filter
+  const [searchQuery, setSearchQuery] = useState('');
 
   const [dName, setDName] = useState('');
   const [dState, setDState] = useState('');
@@ -64,30 +69,49 @@ export function DealersTab({ dealers, refreshData, showToast }: DealersTabProps)
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (confirm('Delete this dealer outlet registration?')) {
-      try {
-        await dbService.deleteDealer(id);
-        refreshData();
-        showToast('Showroom deleted successfully.');
-      } catch (err) {
-        showToast('Error deleting showroom.', 'error');
-      }
+  const executeDelete = async () => {
+    if (!confirmDelete) return;
+    try {
+      await dbService.deleteDealer(confirmDelete);
+      refreshData();
+      showToast('Showroom deleted successfully.');
+    } catch (err) {
+      showToast('Error deleting showroom.', 'error');
+    } finally {
+      setConfirmDelete(null);
     }
   };
 
+  const filteredDealers = dealers.filter(d => 
+    d.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    d.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    d.state.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
         <h2 className="font-display text-xl font-bold uppercase tracking-wider text-gold-gradient flex items-center gap-2">
           <MapPin className="w-5 h-5 text-primary-gold" /> Dealer Network
         </h2>
-        <button
-          onClick={() => openForm(null)}
-          className="px-4 py-2 bg-gold-gradient text-dark-black text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5 hover:bg-gold-gradient-hover rounded shadow-lg transition-all hover:scale-105"
-        >
-          <Plus className="w-4 h-4" /> Register Showroom
-        </button>
+        <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+          <div className="relative w-full sm:w-64">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
+            <input 
+              type="text" 
+              placeholder="Search by Name, City or State..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9 pr-4 py-2 w-full bg-dark-black/50 border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-primary-gold transition-colors"
+            />
+          </div>
+          <button
+            onClick={() => openForm(null)}
+            className="px-4 py-2 bg-gold-gradient text-dark-black text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-1.5 hover:bg-gold-gradient-hover rounded-lg shadow-lg transition-all hover:scale-105 whitespace-nowrap"
+          >
+            <Plus className="w-4 h-4" /> Register Showroom
+          </button>
+        </div>
       </div>
 
       <div className="overflow-x-auto border border-white/5 rounded-lg bg-dark-black/40 backdrop-blur-sm">
@@ -102,16 +126,20 @@ export function DealersTab({ dealers, refreshData, showToast }: DealersTabProps)
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5">
-            {dealers.map(deal => (
+            {filteredDealers.length === 0 ? (
+              <tr><td colSpan={5} className="p-8 text-center text-white/40 italic">No dealers found matching your search.</td></tr>
+            ) : filteredDealers.map(deal => (
               <tr key={deal.id} className="hover:bg-white/5 transition-colors">
                 <td className="p-4 font-bold text-white">{deal.name}</td>
-                <td className="p-4">{deal.state}</td>
+                <td className="p-4">
+                  <span className="px-2 py-0.5 bg-white/5 border border-white/10 text-white/80 rounded text-[10px] uppercase">{deal.state}</span>
+                </td>
                 <td className="p-4">{deal.city}</td>
-                <td className="p-4">{deal.phone}</td>
+                <td className="p-4 font-mono text-white/80">{deal.phone}</td>
                 <td className="p-4 text-center">
                   <div className="flex justify-center gap-3">
                     <button onClick={() => openForm(deal)} className="text-white/60 hover:text-primary-gold p-1 transition-colors"><Edit2 className="w-4 h-4" /></button>
-                    <button onClick={() => handleDelete(deal.id)} className="text-white/60 hover:text-red-400 p-1 transition-colors"><Trash2 className="w-4 h-4" /></button>
+                    <button onClick={() => setConfirmDelete(deal.id)} className="text-white/60 hover:text-red-400 p-1 transition-colors"><Trash2 className="w-4 h-4" /></button>
                   </div>
                 </td>
               </tr>
@@ -120,6 +148,7 @@ export function DealersTab({ dealers, refreshData, showToast }: DealersTabProps)
         </table>
       </div>
 
+      {/* EDIT MODAL */}
       <AnimatePresence>
         {modalOpen && (
           <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-dark-black/90 backdrop-blur-md">
@@ -143,7 +172,7 @@ export function DealersTab({ dealers, refreshData, showToast }: DealersTabProps)
                   </div>
                   <div>
                     <label className="block uppercase tracking-wider text-white/50 mb-1">Phone *</label>
-                    <input type="tel" required value={dPhone} onChange={e => setDPhone(e.target.value)} className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold rounded outline-none" />
+                    <input type="tel" required value={dPhone} onChange={e => setDPhone(e.target.value)} className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold rounded outline-none font-mono" />
                   </div>
                 </div>
                 <div className="grid grid-cols-3 gap-4">
@@ -168,6 +197,28 @@ export function DealersTab({ dealers, refreshData, showToast }: DealersTabProps)
                   <Save className="w-4 h-4" /> Save Showroom
                 </button>
               </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* CONFIRM DELETE MODAL */}
+      <AnimatePresence>
+        {confirmDelete && (
+          <div className="fixed inset-0 z-[130] flex items-center justify-center p-4 bg-dark-black/90 backdrop-blur-md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-charcoal border border-red-500/30 p-6 rounded-xl max-w-sm w-full text-center shadow-2xl"
+            >
+              <AlertTriangle className="w-12 h-12 text-red-500 mx-auto mb-4 opacity-80" />
+              <h3 className="text-lg font-bold text-white mb-2">Remove Showroom?</h3>
+              <p className="text-xs text-white/60 mb-6">Are you sure you want to permanently remove this dealer from the network map?</p>
+              <div className="flex gap-3 justify-center">
+                <button onClick={() => setConfirmDelete(null)} className="px-4 py-2 bg-dark-black border border-white/10 text-white/80 rounded hover:bg-white/5 transition-colors text-xs uppercase tracking-wider font-semibold">Cancel</button>
+                <button onClick={executeDelete} className="px-4 py-2 bg-red-500/20 text-red-400 border border-red-500/30 rounded hover:bg-red-500/30 transition-colors text-xs uppercase tracking-wider font-semibold">Delete Permanently</button>
+              </div>
             </motion.div>
           </div>
         )}
