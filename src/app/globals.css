@@ -60,6 +60,7 @@ html {
   scroll-behavior: smooth;
   background-color: #080808;
   color: #FFFFFF;
+  scroll-padding-top: 96px; /* Offset to prevent fixed header overlap */
 }
 
 body {
