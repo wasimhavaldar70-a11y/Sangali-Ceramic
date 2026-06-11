@@ -12,6 +12,22 @@ export function DivisionsTab({ divisions, refreshData, showToast }: DivisionsTab
   const [editingDivision, setEditingDivision] = useState<Partial<ProductDivision> | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    setIsUploading(true);
+    const file = e.target.files[0];
+    const path = `division_${Date.now()}_${file.name}`;
+    // Using 'products' bucket as it is configured and public
+    const url = await dbService.uploadFile('products', file, path);
+    if (url) {
+      setEditingDivision(prev => prev ? { ...prev, image_url: url } : null);
+    } else {
+      showToast('Failed to upload image.', 'error');
+    }
+    setIsUploading(false);
+  };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -147,15 +163,25 @@ export function DivisionsTab({ divisions, refreshData, showToast }: DivisionsTab
             </div>
 
             <div>
-              <label className="block text-xs uppercase tracking-widest text-white/60 mb-2">Image URL</label>
+              <label className="block text-xs uppercase tracking-widest text-white/60 mb-2">Image (Supabase)</label>
               <input 
-                type="text" 
-                value={editingDivision.image_url || ''}
-                onChange={e => setEditingDivision({...editingDivision, image_url: e.target.value})}
-                placeholder="https://..."
-                className="w-full bg-dark-black border border-white/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-primary-gold transition-colors"
-                required
+                type="file" 
+                accept="image/*"
+                onChange={handleImageUpload}
+                disabled={isUploading}
+                className="w-full bg-dark-black border border-white/10 px-4 py-2.5 text-white focus:outline-none focus:border-primary-gold transition-colors rounded-lg text-xs file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:uppercase file:tracking-wider file:font-semibold file:bg-primary-gold file:text-dark-black hover:file:bg-gold-gradient-hover"
               />
+              {isUploading && <p className="text-[10px] text-primary-gold mt-1 animate-pulse">Uploading to Supabase Storage...</p>}
+            </div>
+
+            {/* Image Preview */}
+            <div className="w-full h-32 bg-dark-black border border-white/5 rounded-lg flex items-center justify-center overflow-hidden">
+              {editingDivision.image_url ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={editingDivision.image_url} alt="Preview" className="w-full h-full object-cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
+              ) : (
+                <span className="text-white/20 italic text-xs">No image uploaded</span>
+              )}
             </div>
 
             <div>
