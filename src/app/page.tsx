@@ -590,48 +590,7 @@ export default function HomePage() {
 
       </section>
 
-      {/* TILE COLLECTIONS */}
-      <section id="collections" className="pt-10 pb-20 bg-[#0F0F0F] border-b border-white/5">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="text-center mb-16">
-            <span className="text-primary-gold text-xs tracking-[0.35em] uppercase font-semibold">Our Collections</span>
-            <h2 className="font-display text-3xl md:text-5xl font-bold mt-2">Curated Collections For Stylish Spaces</h2>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {collections.map((col) => (
-              <div
-                key={col.id}
-                className="group relative h-96 overflow-hidden border border-white/5 flex flex-col justify-end p-8"
-              >
-                <div className="absolute inset-0 bg-gradient-to-t from-dark-black via-dark-black/30 to-transparent z-10 group-hover:from-dark-black/90 transition-all duration-500" />
-                <Image
-                  src={col.image || 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=800&q=80'}
-                  alt={col.name}
-                  fill className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-                />
-                <div className="relative z-20">
-                  <h3 className="font-display text-2xl font-extrabold text-primary-gold mb-2">
-                    {col.name}
-                  </h3>
-                  <p className="text-white text-sm font-normal leading-relaxed mb-6 max-w-sm line-clamp-2">
-                    {col.description || 'Premium architectural styling and finishes.'}
-                  </p>
-                  <a
-                    href="#products"
-                    onClick={() => {
-                      setActiveCategory(col.name.split(' ')[0]); // Map e.g. "Marble Collection" -> "Marble" / "Glossy" etc
-                    }}
-                    className="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-white/90 font-semibold border-b border-primary-gold/40 pb-1 group-hover:border-primary-gold transition-colors duration-300"
-                  >
-                    View Collection <ArrowRight className="w-3.5 h-3.5" />
-                  </a>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* WHY CHOOSE US */}
       <section className="pt-10 pb-20 bg-dark-black max-w-7xl mx-auto px-6 md:px-12 border-b border-white/5">

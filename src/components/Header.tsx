@@ -32,7 +32,7 @@ export default function Header() {
       return;
     }
 
-    const sections = ['hero', 'collections', 'projects', 'catalogues'];
+    const sections = ['hero', 'projects', 'catalogues'];
     const activeObservers = sections.map((id) => {
       const el = document.getElementById(id);
       if (!el) return null;
@@ -75,7 +75,7 @@ export default function Header() {
 
   const navLinks = [
     { name: 'Home', path: '/' },
-    { name: 'Collections', path: '/#collections' },
+
     { name: 'Products', path: '/products' },
     { name: 'Visualizer', path: '/visualizer' },
     { name: 'Projects', path: '/#projects' },
