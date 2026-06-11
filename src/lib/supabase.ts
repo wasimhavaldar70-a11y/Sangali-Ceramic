@@ -99,6 +99,19 @@ export interface Lead {
   last_contacted_at?: string;
 }
 
+export interface ProductDivision {
+  id: string;
+  badge_text: string;
+  title: string;
+  heading: string;
+  description: string;
+  link_text: string;
+  link_url: string;
+  image_url: string;
+  display_order: number;
+  created_at?: string;
+}
+
 // Database APIs
 export const dbService = {
   // Authentication (Uses Supabase SSR)
@@ -280,6 +293,32 @@ export const dbService = {
     if (notes !== undefined) updatePayload.notes = notes;
     
     const { error } = await supabase.from('leads').update(updatePayload).eq('id', id);
+    if (error) console.error(error);
+    return !error;
+  },
+
+  // Product Divisions
+  async getDivisions(): Promise<ProductDivision[]> {
+    const supabase = createClient();
+    const { data, error } = await supabase.from('product_divisions').select('*').order('display_order', { ascending: true });
+    if (error) console.error(error);
+    return data || [];
+  },
+
+  async saveDivision(division: Partial<ProductDivision>): Promise<ProductDivision | null> {
+    const supabase = createClient();
+    if (division.id && division.id.startsWith('div-')) delete division.id;
+    const { data, error } = await supabase.from('product_divisions').upsert(division).select().single();
+    if (error) {
+      console.error(error);
+      return null;
+    }
+    return data;
+  },
+
+  async deleteDivision(id: string): Promise<boolean> {
+    const supabase = createClient();
+    const { error } = await supabase.from('product_divisions').delete().eq('id', id);
     if (error) console.error(error);
     return !error;
   }

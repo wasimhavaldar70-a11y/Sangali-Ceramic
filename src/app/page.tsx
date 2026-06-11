@@ -7,7 +7,7 @@ import {
   ArrowRight, Search, SlidersHorizontal, Eye, FileText, Star,
   Shield, Droplet, Flame, Settings, Zap, Truck, MessageSquare, Phone, MapPin, Check
 } from 'lucide-react';
-import { dbService, Product, Collection, Project, Testimonial, Catalogue } from '@/lib/supabase';
+import { dbService, Product, Collection, Project, Testimonial, Catalogue, ProductDivision } from '@/lib/supabase';
 
 const BRAND_LOGOS = [
   {
@@ -172,6 +172,7 @@ export default function HomePage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [catalogues, setCatalogues] = useState<Catalogue[]>([]);
+  const [divisions, setDivisions] = useState<ProductDivision[]>([]);
 
   // UI Filtering/Sorting States
   const [activeCategory, setActiveCategory] = useState('All');
@@ -226,12 +227,14 @@ export default function HomePage() {
       const projs = await dbService.getProjects();
       const tests = await dbService.getTestimonials();
       const cats = await dbService.getCatalogues();
+      const divs = await dbService.getDivisions();
 
       setProducts(prods);
       setCollections(cols);
       setProjects(projs);
       setTestimonials(tests);
       setCatalogues(cats);
+      setDivisions(divs);
     };
     fetchData();
 
@@ -485,106 +488,45 @@ export default function HomePage() {
           </p>
         </div>
 
-        {/* 3 Core Divisions Grid */}
+        {/* Dynamic Divisions Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-20">
-          {/* Division 1: Tiles */}
-          <div className="group relative h-[420px] w-full overflow-hidden flex flex-col justify-end text-left border border-white/10 luxury-card">
-            <div className="absolute inset-0 bg-gradient-to-t from-dark-black via-dark-black/55 to-transparent z-10 group-hover:from-dark-black/90 transition-all duration-500" />
-            <Image
-              src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80"
-              alt="Tiles Division"
-              fill className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-            />
-            <div className="absolute top-5 left-5 z-20">
-              <span className="px-3 py-1 bg-primary-gold text-dark-black text-[9px] tracking-widest uppercase font-bold">
-                Core Collection
-              </span>
+          {divisions.length > 0 ? divisions.map((div) => (
+            <div key={div.id} className="group relative h-[420px] w-full overflow-hidden flex flex-col justify-end text-left border border-white/10 luxury-card">
+              <div className="absolute inset-0 bg-gradient-to-t from-dark-black via-dark-black/55 to-transparent z-10 group-hover:from-dark-black/90 transition-all duration-500" />
+              <Image
+                src={div.image_url}
+                alt={div.title}
+                fill className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+              />
+              <div className="absolute top-5 left-5 z-20">
+                <span className="px-3 py-1 bg-white/95 text-dark-black text-[9px] tracking-widest uppercase font-bold">
+                  {div.badge_text}
+                </span>
+              </div>
+              <div className="relative z-20 p-6 w-full">
+                <span className="text-primary-gold text-xs tracking-widest uppercase font-semibold block mb-1">
+                  {div.title}
+                </span>
+                <h3 className="font-display text-xl text-white font-bold mb-2">
+                  {div.heading}
+                </h3>
+                <p className="text-white/75 text-xs leading-relaxed mb-5 max-h-0 opacity-0 group-hover:max-h-24 group-hover:opacity-100 transition-all duration-500 overflow-hidden">
+                  {div.description}
+                </p>
+                <Link
+                  href={div.link_url}
+                  className="inline-flex px-4 py-2 bg-white/10 hover:bg-primary-gold hover:text-dark-black text-white text-[9px] font-semibold uppercase tracking-wider transition-all duration-300 border border-white/15 hover:border-primary-gold items-center gap-1.5 text-left"
+                >
+                  {div.link_text}
+                  <ArrowRight className="w-3 h-3" />
+                </Link>
+              </div>
             </div>
-            <div className="relative z-20 p-6 w-full">
-              <span className="text-primary-gold text-xs tracking-widest uppercase font-semibold block mb-1">
-                Premium Tiles
-              </span>
-              <h3 className="font-display text-xl text-white font-bold mb-2">
-                Find The Perfect Tile For Every Space
-              </h3>
-              <p className="text-white/75 text-xs leading-relaxed mb-5 max-h-0 opacity-0 group-hover:max-h-24 group-hover:opacity-100 transition-all duration-500 overflow-hidden">
-                Discover our curated vitrified slabs, marble textures, and designer ceramic collections crafted for modern spaces and elite architectures.
-              </p>
-              <Link
-                href="/tiles"
-                className="inline-flex px-4 py-2 bg-white/10 hover:bg-primary-gold hover:text-dark-black text-white text-[9px] font-semibold uppercase tracking-wider transition-all duration-300 border border-white/15 hover:border-primary-gold items-center gap-1.5 text-left"
-              >
-                Explore Tiles
-                <ArrowRight className="w-3 h-3" />
-              </Link>
+          )) : (
+            <div className="col-span-3 text-center py-20 border border-white/5 bg-white/5">
+              <p className="text-white/50 text-sm">No product divisions currently available.</p>
             </div>
-          </div>
-
-          {/* Division 2: Bath */}
-          <div className="group relative h-[420px] w-full overflow-hidden flex flex-col justify-end text-left border border-white/10 luxury-card">
-            <div className="absolute inset-0 bg-gradient-to-t from-dark-black via-dark-black/55 to-transparent z-10 group-hover:from-dark-black/90 transition-all duration-500" />
-            <Image
-              src="https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=800&q=80"
-              alt="Bath Fittings Division"
-              fill className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-            />
-            <div className="absolute top-5 left-5 z-20">
-              <span className="px-3 py-1 bg-white/95 text-dark-black text-[9px] tracking-widest uppercase font-bold">
-                Authorized Seller
-              </span>
-            </div>
-            <div className="relative z-20 p-6 w-full">
-              <span className="text-primary-gold text-xs tracking-widest uppercase font-semibold block mb-1">
-                Luxury Sanitaryware
-              </span>
-              <h3 className="font-display text-xl text-white font-bold mb-2">
-                Authorized Seller of Jaquar Group
-              </h3>
-              <p className="text-white/75 text-xs leading-relaxed mb-5 max-h-0 opacity-0 group-hover:max-h-24 group-hover:opacity-100 transition-all duration-500 overflow-hidden">
-                Upgrade your spaces with luxury sanitaryware, wellness systems, designer showers, and sleek fittings from the premium Jaquar Group.
-              </p>
-              <Link
-                href="/bath-fittings"
-                className="inline-flex px-4 py-2 bg-white/10 hover:bg-primary-gold hover:text-dark-black text-white text-[9px] font-semibold uppercase tracking-wider transition-all duration-300 border border-white/15 hover:border-primary-gold items-center gap-1.5 text-left"
-              >
-                Explore Bath
-                <ArrowRight className="w-3 h-3" />
-              </Link>
-            </div>
-          </div>
-
-          {/* Division 3: Doors */}
-          <div className="group relative h-[420px] w-full overflow-hidden flex flex-col justify-end text-left border border-white/10 luxury-card">
-            <div className="absolute inset-0 bg-gradient-to-t from-dark-black via-dark-black/55 to-transparent z-10 group-hover:from-dark-black/90 transition-all duration-500" />
-            <Image
-              src="https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80"
-              alt="Tata Doors Division"
-              fill className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-            />
-            <div className="absolute top-5 left-5 z-20">
-              <span className="px-3 py-1 bg-white/95 text-dark-black text-[9px] tracking-widest uppercase font-bold">
-                Official Distributor
-              </span>
-            </div>
-            <div className="relative z-20 p-6 w-full">
-              <span className="text-primary-gold text-xs tracking-widest uppercase font-semibold block mb-1">
-                Tata Pravesh Doors
-              </span>
-              <h3 className="font-display text-xl text-white font-bold mb-2">
-                Distributor in Western Maharashtra & Goa
-              </h3>
-              <p className="text-white/75 text-xs leading-relaxed mb-5 max-h-0 opacity-0 group-hover:max-h-24 group-hover:opacity-100 transition-all duration-500 overflow-hidden">
-                Official distributor of Tata Pravesh doors in Western Maharashtra and Goa. Experience the unyielding strength of steel combined with the elegant wooden finish.
-              </p>
-              <Link
-                href="/doors"
-                className="inline-flex px-4 py-2 bg-white/10 hover:bg-primary-gold hover:text-dark-black text-white text-[9px] font-semibold uppercase tracking-wider transition-all duration-300 border border-white/15 hover:border-primary-gold items-center gap-1.5 text-left"
-              >
-                Explore Tata Doors
-                <ArrowRight className="w-3 h-3" />
-              </Link>
-            </div>
-          </div>
+          )}
         </div>
 
 

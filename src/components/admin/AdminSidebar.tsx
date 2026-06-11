@@ -1,9 +1,9 @@
-import { LayoutDashboard, ShoppingBag, MapPin, FolderOpen, Users, ShieldAlert, Database } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, MapPin, FolderOpen, Users, ShieldAlert, Database, Layers } from 'lucide-react';
 import { Product, Dealer, Project, Lead } from '@/lib/supabase';
 
 interface AdminSidebarProps {
-  activeTab: 'analytics' | 'products' | 'dealers' | 'projects' | 'leads' | 'profile';
-  setActiveTab: (tab: 'analytics' | 'products' | 'dealers' | 'projects' | 'leads' | 'profile') => void;
+  activeTab: 'analytics' | 'products' | 'dealers' | 'projects' | 'leads' | 'divisions' | 'profile';
+  setActiveTab: (tab: 'analytics' | 'products' | 'dealers' | 'projects' | 'leads' | 'divisions' | 'profile') => void;
   products: Product[];
   dealers: Dealer[];
   projects: Project[];
@@ -30,6 +30,9 @@ export function AdminSidebar({
       </button>
       <button onClick={() => setActiveTab('products')} className={getTabClass('products')}>
         <span className="flex items-center gap-3"><ShoppingBag className="w-4 h-4" /> Products ({products.length})</span>
+      </button>
+      <button onClick={() => setActiveTab('divisions')} className={getTabClass('divisions')}>
+        <span className="flex items-center gap-3"><Layers className="w-4 h-4" /> Divisions</span>
       </button>
       <button onClick={() => setActiveTab('dealers')} className={getTabClass('dealers')}>
         <span className="flex items-center gap-3"><MapPin className="w-4 h-4" /> Showroom Dealers ({dealers.length})</span>

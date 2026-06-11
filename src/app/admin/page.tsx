@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ArrowUpRight } from 'lucide-react';
-import { dbService, Product, Dealer, Lead, Project } from '@/lib/supabase';
+import { dbService, Product, Dealer, Lead, Project, ProductDivision } from '@/lib/supabase';
 
 // Components
 import { Toast } from '@/components/admin/Toast';
@@ -12,9 +12,10 @@ import { AdminSidebar } from '@/components/admin/AdminSidebar';
 import { ProductsTab } from '@/components/admin/tabs/ProductsTab';
 import { DealersTab } from '@/components/admin/tabs/DealersTab';
 import { ProjectsTab } from '@/components/admin/tabs/ProjectsTab';
+import { DivisionsTab } from '@/components/admin/tabs/DivisionsTab';
 import { LeadsTab, ProfileTab, AnalyticsTab } from '@/components/admin/tabs/OtherTabs';
 
-type Tab = 'analytics' | 'products' | 'dealers' | 'projects' | 'leads' | 'profile';
+type Tab = 'analytics' | 'products' | 'dealers' | 'projects' | 'leads' | 'divisions' | 'profile';
 
 export default function AdminPage() {
   const router = useRouter();
@@ -24,6 +25,7 @@ export default function AdminPage() {
   const [dealers, setDealers] = useState<Dealer[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [leads, setLeads] = useState<Lead[]>([]);
+  const [divisions, setDivisions] = useState<ProductDivision[]>([]);
 
   // Navigation
   const [activeTab, setActiveTab] = useState<Tab>('analytics');
@@ -42,16 +44,18 @@ export default function AdminPage() {
 
   const loadDashboardData = async () => {
     try {
-      const [prods, deals, projs, lds] = await Promise.all([
+      const [prods, deals, projs, lds, divs] = await Promise.all([
         dbService.getProducts(),
         dbService.getDealers(),
         dbService.getProjects(),
-        dbService.getLeads()
+        dbService.getLeads(),
+        dbService.getDivisions()
       ]);
       setProducts(prods);
       setDealers(deals);
       setProjects(projs);
       setLeads(lds);
+      setDivisions(divs);
     } catch (e) {
       console.error(e);
       showToast('Error loading data', 'error');
@@ -129,6 +133,7 @@ export default function AdminPage() {
 
           {activeTab === 'analytics' && <AnalyticsTab data={{ products: products.length, dealers: dealers.length, newLeads: newLeadsCount, closedLeads: wonLeadsCount }} />}
           {activeTab === 'products' && <ProductsTab products={products} refreshData={loadDashboardData} showToast={showToast} />}
+          {activeTab === 'divisions' && <DivisionsTab divisions={divisions} refreshData={loadDashboardData} showToast={showToast} />}
           {activeTab === 'dealers' && <DealersTab dealers={dealers} refreshData={loadDashboardData} showToast={showToast} />}
           {activeTab === 'projects' && <ProjectsTab projects={projects} refreshData={loadDashboardData} showToast={showToast} />}
           {activeTab === 'leads' && <LeadsTab leads={leads} refreshData={loadDashboardData} showToast={showToast} />}
