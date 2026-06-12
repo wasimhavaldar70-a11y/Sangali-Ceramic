@@ -201,10 +201,10 @@ export function ProductsTab({ products, divisions = [], divisionCategories = [],
                 <td className="p-4">
                   {prod.division_category_id ? (() => {
                     const cat = divisionCategories.find(c => c.id === prod.division_category_id);
-                    const div = divisions.find(d => d.page_slug === cat?.page_slug);
+                    const div = divisions.find(d => d.link_url === '/' + cat?.page_slug);
                     return (
                       <div className="flex flex-col">
-                        <span className="text-white/80">{div?.name || 'Unknown Division'}</span>
+                        <span className="text-white/80">{div?.title || 'Unknown Division'}</span>
                         <span className="text-white/40 text-[10px] uppercase">{cat?.name || 'Unknown Subcategory'}</span>
                       </div>
                     );
