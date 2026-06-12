@@ -31,8 +31,6 @@ function ProductsContent() {
     urlCategory ? { type: 'division_category', value: urlCategory, label: urlName || 'Category' } : null
   );
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
-  
-  const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const productsGridRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
