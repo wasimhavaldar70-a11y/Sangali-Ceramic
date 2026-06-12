@@ -10,47 +10,6 @@ import {
 } from 'lucide-react';
 import { dbService, Product } from '@/lib/supabase';
 
-// SVG Logos for Categories
-function EternityLogo() {
-  return (
-    <span className="inline-flex items-center gap-1 ml-2 px-1.5 py-0.5 bg-[#003B7C]/5 border border-[#003B7C]/10 text-[9px] font-serif font-black tracking-widest text-[#003B7C] select-none rounded-sm">
-      ETERNITY
-    </span>
-  );
-}
-
-function GresLogo() {
-  return (
-    <span className="inline-flex items-center ml-2 px-1.5 py-0.5 bg-[#00609C] text-white text-[8px] font-black tracking-wider uppercase select-none rounded-sm">
-      GRÈS
-    </span>
-  );
-}
-
-function VitroniteLogo() {
-  return (
-    <span className="inline-flex items-center gap-0.5 ml-2 px-1.5 py-0.5 bg-[#004B87] text-white text-[8px] font-extrabold tracking-widest uppercase select-none rounded-sm">
-      <span className="w-1.5 h-1.5 bg-white rounded-t-xs shrink-0" />
-      VITRONITE
-    </span>
-  );
-}
-
-function KerovitLogo() {
-  return (
-    <span className="inline-flex items-center ml-2 px-1.5 py-0.5 bg-[#1F2937] text-white text-[8px] font-sans font-bold tracking-tight uppercase select-none rounded-sm">
-      KEROVIT
-    </span>
-  );
-}
-
-function GresbondLogo() {
-  return (
-    <span className="inline-flex items-center gap-0.5 ml-2 px-1.5 py-0.5 bg-[#0F355C] text-[#FFF0D0] text-[8px] font-bold tracking-wide uppercase select-none rounded-sm">
-      🛡️ GRÈSBOND
-    </span>
-  );
-}
 
 export default function ProductsPage() {
   return (
@@ -73,7 +32,7 @@ function ProductsContent() {
   );
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   
-  const [showMoreApps, setShowMoreApps] = useState(false);
+  const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const productsGridRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -177,162 +136,7 @@ function ProductsContent() {
         </div>
       </div>
 
-      {/* THREE-COLUMN DIRECTORY SLAB - LIGHT MARBLE CAROUSEL */}
-      <div className="max-w-7xl mx-auto px-6 md:px-12 mb-20 relative z-20">
-        <div 
-          className="relative bg-white rounded-none shadow-2xl p-8 md:p-12 border border-primary-gold/25 overflow-hidden transition-all duration-500"
-          style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundBlendMode: 'overlay',
-          }}
-        >
-          {/* Subtle light overlay to guarantee text legibility */}
-          <div className="absolute inset-0 bg-white/94 z-0" />
 
-          {/* Golden Corner Details */}
-          <div className="absolute top-3 left-3 w-4 h-4 border-t-2 border-l-2 border-primary-gold/40 z-10" />
-          <div className="absolute top-3 right-3 w-4 h-4 border-t-2 border-r-2 border-primary-gold/40 z-10" />
-          <div className="absolute bottom-3 left-3 w-4 h-4 border-b-2 border-l-2 border-primary-gold/40 z-10" />
-          <div className="absolute bottom-3 right-3 w-4 h-4 border-b-2 border-r-2 border-primary-gold/40 z-10" />
-
-          <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-4 md:divide-x divide-neutral-200">
-            
-            {/* COLUMN 1: CATEGORIES */}
-            <div className="flex flex-col gap-6 md:pr-8">
-              <h2 className="font-display text-3xl font-bold text-neutral-900 border-b border-neutral-200 pb-3 tracking-wide">
-                Categories
-              </h2>
-              <ul className="flex flex-col gap-4">
-                {[
-                  { label: 'Glazed Vitrified Tiles', val: 'eternity', logo: <EternityLogo /> },
-                  { label: 'Gres Tiles', val: 'gres', logo: <GresLogo /> },
-                  { label: 'Polished Vitrified Tiles', val: 'vitronite', logo: <VitroniteLogo /> },
-                  { label: 'Ceramic Wall Tiles', val: 'wall', logo: null },
-                  { label: 'Faucets and Sanitaryware', val: 'faucets', logo: <KerovitLogo /> },
-                  { label: 'Tile Adhesive', val: 'adhesive', logo: <GresbondLogo /> }
-                ].map((cat, idx) => (
-                  <li key={idx} className="group">
-                    <button
-                      onClick={() => handleFilterClick('category', cat.val, cat.label)}
-                      className={`w-full text-left font-sans text-sm font-medium tracking-wide flex items-center justify-between py-1 transition-all duration-300 ${
-                        activeFilter?.type === 'category' && activeFilter?.value === cat.val
-                          ? 'text-[#004B87] font-bold translate-x-1.5'
-                          : 'text-neutral-700 hover:text-[#004B87] hover:translate-x-1.5'
-                      }`}
-                    >
-                      <span className="flex items-center flex-wrap">
-                        {cat.label} {cat.logo}
-                      </span>
-                      <ChevronRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-primary-gold" />
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* COLUMN 2: APPLICATIONS */}
-            <div className="flex flex-col gap-6 md:px-8">
-              <h2 className="font-display text-3xl font-bold text-neutral-900 border-b border-neutral-200 pb-3 tracking-wide">
-                Applications
-              </h2>
-              <ul className="flex flex-col gap-4">
-                {[
-                  { label: 'Bathroom', val: 'bathroom' },
-                  { label: 'Kitchen', val: 'kitchen' },
-                  { label: 'Living Room', val: 'living' },
-                  { label: 'Bedroom', val: 'bedroom' },
-                  { label: 'Outdoor', val: 'outdoor' },
-                  { label: 'Commercial Spaces', val: 'commercial' },
-                  { label: 'Staircases', val: 'staircases' }
-                ].map((app, idx) => (
-                  <li key={idx} className="group">
-                    <button
-                      onClick={() => handleFilterClick('application', app.val, app.label)}
-                      className={`w-full text-left font-sans text-sm font-medium tracking-wide flex items-center justify-between py-1 transition-all duration-300 ${
-                        activeFilter?.type === 'application' && activeFilter?.value === app.val
-                          ? 'text-[#004B87] font-bold translate-x-1.5'
-                          : 'text-neutral-700 hover:text-[#004B87] hover:translate-x-1.5'
-                      }`}
-                    >
-                      <span>{app.label}</span>
-                      <ChevronRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-primary-gold" />
-                    </button>
-                  </li>
-                ))}
-
-                {/* Show more drawer */}
-                {showMoreApps && (
-                  <>
-                    {[
-                      { label: 'Parking', val: 'parking' },
-                      { label: 'Offices', val: 'offices' },
-                      { label: 'Hotels & Lobbies', val: 'hotels' }
-                    ].map((app, idx) => (
-                      <li key={`more-${idx}`} className="group animate-fade-in">
-                        <button
-                          onClick={() => handleFilterClick('application', app.val, app.label)}
-                          className={`w-full text-left font-sans text-sm font-medium tracking-wide flex items-center justify-between py-1 transition-all duration-300 ${
-                            activeFilter?.type === 'application' && activeFilter?.value === app.val
-                              ? 'text-[#004B87] font-bold translate-x-1.5'
-                              : 'text-neutral-700 hover:text-[#004B87] hover:translate-x-1.5'
-                          }`}
-                        >
-                          <span>{app.label}</span>
-                          <ChevronRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-primary-gold" />
-                        </button>
-                      </li>
-                    ))}
-                  </>
-                )}
-
-                <li>
-                  <button
-                    onClick={() => setShowMoreApps(!showMoreApps)}
-                    className="text-[10px] font-bold tracking-widest text-[#004B87] uppercase hover:underline py-1 mt-1 block"
-                  >
-                    {showMoreApps ? '- SHOW LESS' : '+ SHOW MORE'}
-                  </button>
-                </li>
-              </ul>
-            </div>
-
-            {/* COLUMN 3: COLLECTIONS */}
-            <div className="flex flex-col gap-6 md:pl-8">
-              <h2 className="font-display text-3xl font-bold text-neutral-900 border-b border-neutral-200 pb-3 tracking-wide">
-                Collections
-              </h2>
-              <ul className="flex flex-col gap-4">
-                {[
-                  { label: 'UniTerra', val: 'uniterra' },
-                  { label: 'The Ultima', val: 'ultima' },
-                  { label: 'Vitronite', val: 'vitronite' },
-                  { label: 'Grestough', val: 'grestough' },
-                  { label: 'Kasamood', val: 'kasamood' },
-                  { label: 'Duratech', val: 'duratech' },
-                  { label: 'DuRock', val: 'durock' }
-                ].map((col, idx) => (
-                  <li key={idx} className="group">
-                    <button
-                      onClick={() => handleFilterClick('collection', col.val, col.label)}
-                      className={`w-full text-left font-sans text-sm font-medium tracking-wide flex items-center justify-between py-1 transition-all duration-300 ${
-                        activeFilter?.type === 'collection' && activeFilter?.value === col.val
-                          ? 'text-[#004B87] font-bold translate-x-1.5'
-                          : 'text-neutral-700 hover:text-[#004B87] hover:translate-x-1.5'
-                      }`}
-                    >
-                      <span>{col.label}</span>
-                      <ChevronRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-primary-gold" />
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-          </div>
-        </div>
-      </div>
 
       {/* FILTERABLE PRODUCTS GRID CONTAINER */}
       <div ref={productsGridRef} className="max-w-7xl mx-auto px-6 md:px-12 pt-8">
