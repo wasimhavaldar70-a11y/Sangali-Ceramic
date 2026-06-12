@@ -24,8 +24,8 @@ export interface Product {
   size: string;
   finish: string;
   price: number;
-  category_id: string;
-  collection_id: string;
+  category_id?: string;
+  collection_id?: string;
   division_category_id?: string;
   images: string[];
   description?: string;
