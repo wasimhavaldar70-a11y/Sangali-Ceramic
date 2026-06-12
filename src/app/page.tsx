@@ -404,7 +404,7 @@ export default function HomePage() {
   return (
     <div className="relative">
       {/* HERO SECTION */}
-      <section id="hero" className="relative h-[75vh] md:h-[70vh] min-h-[580px] w-full overflow-hidden flex items-center justify-center">
+      <section id="hero" className="relative h-[60vh] md:h-[55vh] min-h-[460px] w-full overflow-hidden flex items-center justify-center">
         {/* Background Slider */}
         {heroImages.map((image, idx) => (
           <div
@@ -424,7 +424,7 @@ export default function HomePage() {
         ))}
 
         {/* Hero Content */}
-        <div className="relative z-20 text-center px-6 max-w-4xl mx-auto flex flex-col items-center pt-28 md:pt-36">
+        <div className="relative z-20 text-center px-6 max-w-4xl mx-auto flex flex-col items-center pt-24 md:pt-28">
           <span className="text-primary-gold text-xs tracking-[0.4em] uppercase mb-4 animate-fade-in font-semibold">
             Premium Ceramic & Vitrified Tiles
           </span>
@@ -452,7 +452,7 @@ export default function HomePage() {
           </div>
 
           {/* Quick Stats */}
-          <div className="grid grid-cols-3 gap-8 md:gap-16 mt-12 pt-6 border-t border-white/10 w-full max-w-3xl">
+          <div className="grid grid-cols-3 gap-8 md:gap-16 mt-8 pt-4 border-t border-white/10 w-full max-w-3xl">
             <div className="text-center">
               <h3 className="font-display text-2xl md:text-3xl font-bold text-primary-gold">25+</h3>
               <p className="text-white text-[10px] tracking-widest uppercase mt-1 font-semibold">Years Experience</p>
