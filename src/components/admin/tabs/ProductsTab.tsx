@@ -140,7 +140,7 @@ export function ProductsTab({ products, divisions = [], divisionCategories = [],
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
         <h2 className="font-display text-xl font-bold uppercase tracking-wider text-gold-gradient flex items-center gap-2">
-          <ShoppingBag className="w-5 h-5 text-primary-gold" /> Catalogue Tiles
+          <ShoppingBag className="w-5 h-5 text-primary-gold" /> Products Database
         </h2>
         
         <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
@@ -148,7 +148,7 @@ export function ProductsTab({ products, divisions = [], divisionCategories = [],
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
             <input 
               type="text" 
-              placeholder="Search tiles..." 
+              placeholder="Search products..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-9 pr-4 py-2 bg-dark-black/50 border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-primary-gold w-full sm:w-48 transition-colors"
@@ -168,7 +168,7 @@ export function ProductsTab({ products, divisions = [], divisionCategories = [],
             onClick={() => openForm(null)}
             className="px-4 py-2 bg-gold-gradient text-dark-black text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-1.5 hover:bg-gold-gradient-hover rounded-lg shadow-lg shadow-primary-gold/20 transition-all hover:scale-105 whitespace-nowrap"
           >
-            <Plus className="w-4 h-4" /> Add Premium Tile
+            <Plus className="w-4 h-4" /> Add Product
           </button>
         </div>
       </div>
@@ -177,27 +177,40 @@ export function ProductsTab({ products, divisions = [], divisionCategories = [],
         <table className="w-full text-left border-collapse text-xs">
           <thead>
             <tr className="bg-dark-black/60 border-b border-white/10 text-white/60 uppercase tracking-wider font-semibold">
-              <th className="p-4">Tile</th>
-              <th className="p-4">SKU</th>
+              <th className="p-4 w-16">Image</th>
+              <th className="p-4">Name</th>
+              <th className="p-4">Division & Subcategory</th>
+              <th className="p-4">SKU / Code</th>
               <th className="p-4">Dimensions</th>
               <th className="p-4">Finish</th>
-              <th className="p-4 text-right">Price (Sq.Ft)</th>
+              <th className="p-4 text-right">Price</th>
               <th className="p-4 text-center">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5">
             {filteredProducts.length === 0 ? (
-              <tr><td colSpan={6} className="p-8 text-center text-white/40 italic">No products found matching your criteria.</td></tr>
-            ) : filteredProducts.map(prod => (
+              <tr><td colSpan={8} className="p-8 text-center text-white/40 italic">No products found matching your criteria.</td></tr>
               <tr key={prod.id} className="hover:bg-white/5 transition-colors">
-                <td className="p-4 flex items-center gap-3">
-                  <div className="w-10 h-10 bg-dark-black overflow-hidden border border-white/10 shrink-0 rounded">
-                    <Image src={prod.images[0]} alt={prod.name} fill className="w-full h-full object-cover" />
+                <td className="p-4">
+                  <div className="w-12 h-12 bg-dark-black overflow-hidden border border-white/10 rounded flex-shrink-0 relative">
+                    <Image src={prod.images?.[0] || 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=150&q=80'} alt={prod.name} fill className="object-cover" />
                   </div>
-                  <span className="font-bold text-white text-sm">{prod.name}</span>
+                </td>
+                <td className="p-4 font-bold text-white text-sm">{prod.name}</td>
+                <td className="p-4">
+                  {prod.division_category_id ? (() => {
+                    const cat = divisionCategories.find(c => c.id === prod.division_category_id);
+                    const div = divisions.find(d => d.page_slug === cat?.page_slug);
+                    return (
+                      <div className="flex flex-col">
+                        <span className="text-white/80">{div?.name || 'Unknown Division'}</span>
+                        <span className="text-white/40 text-[10px] uppercase">{cat?.name || 'Unknown Subcategory'}</span>
+                      </div>
+                    );
+                  })() : <span className="text-white/40 italic">Unassigned</span>}
                 </td>
                 <td className="p-4 font-mono text-white/50">{prod.sku}</td>
-                <td className="p-4">{prod.size}</td>
+                <td className="p-4 text-white/80">{prod.size || '-'}</td>
                 <td className="p-4">
                   <span className={`px-2 py-0.5 border text-[9px] uppercase font-semibold rounded ${
                     prod.finish.toLowerCase() === 'glossy' ? 'bg-primary-gold/10 border-primary-gold/30 text-primary-gold' : 
@@ -233,7 +246,7 @@ export function ProductsTab({ products, divisions = [], divisionCategories = [],
                 <X className="w-6 h-6" />
               </button>
               <h3 className="font-display text-2xl font-bold text-gold-gradient mb-6">
-                {editingProduct ? 'Edit Catalogue Slab' : 'Add Premium Design'}
+                {editingProduct ? 'Edit Product' : 'Add New Product'}
               </h3>
               <form onSubmit={handleSave} className="space-y-4 text-xs">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
