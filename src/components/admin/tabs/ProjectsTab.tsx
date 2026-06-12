@@ -241,7 +241,7 @@ export function ProjectsTab({ projects, refreshData, showToast }: ProjectsTabPro
                   {/* Right Column */}
                   <div className="space-y-4">
                     <div>
-                      <label className="block uppercase tracking-wider text-white/50 mb-1">Featured Image (Supabase) *</label>
+                      <label className="block uppercase tracking-wider text-white/50 mb-1">Upload Featured Image *</label>
                       <input 
                         type="file" 
                         accept="image/*"

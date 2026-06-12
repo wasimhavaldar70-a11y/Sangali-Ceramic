@@ -172,7 +172,7 @@ export function DivisionCategoriesTab({ showToast }: { showToast: (msg: string, 
                 </div>
 
                 <div>
-                  <label className="block text-xs uppercase tracking-widest text-white/60 mb-2">Image (Supabase) *</label>
+                  <label className="block text-xs uppercase tracking-widest text-white/60 mb-2">Upload Image *</label>
                   <input 
                     type="file" 
                     accept="image/*"
