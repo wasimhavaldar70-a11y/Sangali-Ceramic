@@ -425,7 +425,7 @@ export default function HomePage() {
 
         {/* Hero Content */}
         <div className="relative z-20 text-center px-6 max-w-4xl mx-auto flex flex-col items-center pt-28 md:pt-36">
-          <span className="text-primary-gold text-xs tracking-[0.3em] uppercase mb-2 animate-fade-in font-semibold">
+          <span className="text-primary-gold text-xs tracking-[0.3em] uppercase mb-1 animate-fade-in font-semibold">
             Transforming Houses into Dream Homes
           </span>
           <h1 className="font-display text-4xl md:text-7xl font-bold tracking-tight text-white mb-3 leading-tight">
