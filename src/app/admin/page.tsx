@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ArrowUpRight } from 'lucide-react';
-import { dbService, Product, Dealer, Lead, Project, ProductDivision } from '@/lib/supabase';
+import { dbService, Product, Dealer, Lead, Project, ProductDivision, DivisionCategory } from '@/lib/supabase';
 
 // Components
 import { Toast } from '@/components/admin/Toast';
@@ -27,6 +27,7 @@ export default function AdminPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [leads, setLeads] = useState<Lead[]>([]);
   const [divisions, setDivisions] = useState<ProductDivision[]>([]);
+  const [divisionCategories, setDivisionCategories] = useState<DivisionCategory[]>([]);
 
   // Navigation
   const [activeTab, setActiveTab] = useState<Tab>('analytics');
@@ -45,18 +46,20 @@ export default function AdminPage() {
 
   const loadDashboardData = async () => {
     try {
-      const [prods, deals, projs, lds, divs] = await Promise.all([
+      const [prods, deals, projs, lds, divs, divCats] = await Promise.all([
         dbService.getProducts(),
         dbService.getDealers(),
         dbService.getProjects(),
         dbService.getLeads(),
-        dbService.getDivisions()
+        dbService.getDivisions(),
+        dbService.getDivisionCategories()
       ]);
       setProducts(prods);
       setDealers(deals);
       setProjects(projs);
       setLeads(lds);
       setDivisions(divs);
+      setDivisionCategories(divCats);
     } catch (e) {
       console.error(e);
       showToast('Error loading data', 'error');
@@ -133,7 +136,7 @@ export default function AdminPage() {
           <div className="absolute top-0 right-0 w-64 h-64 bg-primary-gold/5 blur-[100px] rounded-full pointer-events-none"></div>
 
           {activeTab === 'analytics' && <AnalyticsTab data={{ products: products.length, dealers: dealers.length, newLeads: newLeadsCount, closedLeads: wonLeadsCount }} />}
-          {activeTab === 'products' && <ProductsTab products={products} refreshData={loadDashboardData} showToast={showToast} />}
+          {activeTab === 'products' && <ProductsTab products={products} divisionCategories={divisionCategories} refreshData={loadDashboardData} showToast={showToast} />}
           {activeTab === 'divisions' && <DivisionsTab divisions={divisions} refreshData={loadDashboardData} showToast={showToast} />}
           {activeTab === 'division-categories' && <DivisionCategoriesTab showToast={showToast} />}
           {activeTab === 'dealers' && <DealersTab dealers={dealers} refreshData={loadDashboardData} showToast={showToast} />}

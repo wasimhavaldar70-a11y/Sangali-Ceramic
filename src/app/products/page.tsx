@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { 
   ArrowRight, Search, SlidersHorizontal, Eye, ShieldAlert,
@@ -52,14 +53,34 @@ function GresbondLogo() {
 }
 
 export default function ProductsPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-dark-black pt-28 pb-24 text-center text-white">Loading...</div>}>
+      <ProductsContent />
+    </Suspense>
+  );
+}
+
+function ProductsContent() {
+  const searchParams = useSearchParams();
+  const urlCategory = searchParams.get('category');
+  const urlName = searchParams.get('name');
+
   const [products, setProducts] = useState<Product[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('popular');
-  const [activeFilter, setActiveFilter] = useState<{ type: string; value: string; label: string } | null>(null);
+  const [activeFilter, setActiveFilter] = useState<{ type: string; value: string; label: string } | null>(
+    urlCategory ? { type: 'division_category', value: urlCategory, label: urlName || 'Category' } : null
+  );
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   
   const [showMoreApps, setShowMoreApps] = useState(false);
   const productsGridRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (urlCategory && !activeFilter) {
+      setActiveFilter({ type: 'division_category', value: urlCategory, label: urlName || 'Category' });
+    }
+  }, [urlCategory, urlName, activeFilter]);
 
   // Load products with debounced search
   useEffect(() => {
@@ -125,6 +146,9 @@ export default function ProductsPage() {
         if (value === 'kasamood') return prod.category_id === 'cat-wooden';
         if (value === 'duratech') return prod.finish === 'Matte';
         if (value === 'durock') return prod.category_id === 'cat-stone';
+      }
+      if (type === 'division_category') {
+        return prod.division_category_id === value;
       }
     }
     return true;

@@ -20,11 +20,9 @@ export default async function DoorsPage() {
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
         {categories.map((cat) => (
-          <a
+          <Link
             key={cat.id}
-            href={`https://wa.me/919876543210?text=Hi!%20I%27m%20interested%20in%20Tata%20Pravesh%20Doors%20-%20${encodeURIComponent(cat.name)}.%20Could%20you%20please%20share%20the%20brochure%20and%20pricing?`}
-            target="_blank"
-            rel="noopener noreferrer"
+            href={`/products?category=${cat.id}&name=${encodeURIComponent(cat.name)}`}
             className="group relative h-48 w-full overflow-hidden flex flex-col justify-end text-left border border-white/15"
           >
             <div className="absolute inset-0 bg-gradient-to-t from-dark-black via-dark-black/40 to-transparent z-10 group-hover:from-dark-black/95 transition-all duration-300" />
@@ -38,10 +36,10 @@ export default async function DoorsPage() {
                 {cat.name}
               </h4>
               <span className="text-[9px] text-white tracking-widest uppercase flex items-center gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-semibold">
-                Inquire Category <ArrowRight className="w-3 h-3" />
+                View Products <ArrowRight className="w-3 h-3" />
               </span>
             </div>
-          </a>
+          </Link>
         ))}
       </div>
       

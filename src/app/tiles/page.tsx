@@ -21,7 +21,7 @@ export default async function TilesPage() {
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
         {categories.map((space) => (
           <Link
-            href="/#products"
+            href={`/products?category=${space.id}&name=${encodeURIComponent(space.name)}`}
             key={space.id}
             className="group relative h-48 w-full overflow-hidden flex flex-col justify-end text-left border border-white/15"
           >

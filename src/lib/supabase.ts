@@ -26,6 +26,7 @@ export interface Product {
   price: number;
   category_id: string;
   collection_id: string;
+  division_category_id?: string;
   images: string[];
   description?: string;
   tech_specs?: {
@@ -168,13 +169,13 @@ export const dbService = {
   },
 
   // Products
-  async getProducts(query?: string): Promise<Product[]> {
+  async getProducts(searchQuery?: string): Promise<Product[]> {
     const supabase = createClient();
-    let dbQuery = supabase.from('products').select('*');
-    if (query) {
-      dbQuery = dbQuery.or(`name.ilike.%${query}%,sku.ilike.%${query}%,finish.ilike.%${query}%`);
+    let query = supabase.from('products').select('*');
+    if (searchQuery) {
+      query = query.or(`name.ilike.%${searchQuery}%,sku.ilike.%${searchQuery}%`);
     }
-    const { data, error } = await dbQuery;
+    const { data, error } = await query;
     if (error) console.error(error);
     return data || [];
   },
@@ -333,9 +334,13 @@ export const dbService = {
   },
 
   // Division Categories
-  async getDivisionCategories(pageSlug: string): Promise<DivisionCategory[]> {
+  async getDivisionCategories(pageSlug?: string): Promise<DivisionCategory[]> {
     const supabase = createClient();
-    const { data, error } = await supabase.from('division_categories').select('*').eq('page_slug', pageSlug).order('display_order', { ascending: true });
+    let query = supabase.from('division_categories').select('*').order('display_order', { ascending: true });
+    if (pageSlug) {
+      query = query.eq('page_slug', pageSlug);
+    }
+    const { data, error } = await query;
     if (error) console.error(error);
     return data || [];
   },

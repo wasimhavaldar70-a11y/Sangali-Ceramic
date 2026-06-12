@@ -3,15 +3,16 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingBag, Plus, Edit2, Trash2, X, Save, Search, AlertTriangle } from 'lucide-react';
-import { Product, dbService } from '@/lib/supabase';
+import { Product, dbService, DivisionCategory } from '@/lib/supabase';
 
 interface ProductsTabProps {
   products: Product[];
+  divisionCategories?: DivisionCategory[];
   refreshData: () => void;
   showToast: (msg: string, type?: 'success' | 'error') => void;
 }
 
-export function ProductsTab({ products, refreshData, showToast }: ProductsTabProps) {
+export function ProductsTab({ products, divisionCategories = [], refreshData, showToast }: ProductsTabProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
@@ -24,6 +25,7 @@ export function ProductsTab({ products, refreshData, showToast }: ProductsTabPro
   const [pSku, setPSku] = useState('');
   const [pSize, setPSize] = useState('');
   const [pFinish, setPFinish] = useState('');
+  const [pDivisionCategoryId, setPDivisionCategoryId] = useState('');
   const [pPrice, setPPrice] = useState(0);
   const [pImages, setPImages] = useState<string[]>([]);
   const [pDesc, setPDesc] = useState('');
@@ -36,6 +38,7 @@ export function ProductsTab({ products, refreshData, showToast }: ProductsTabPro
       setPSku(prod.sku);
       setPSize(prod.size);
       setPFinish(prod.finish);
+      setPDivisionCategoryId(prod.division_category_id || '');
       setPPrice(prod.price);
       setPImages(prod.images || []);
       setPDesc(prod.description || '');
@@ -45,6 +48,7 @@ export function ProductsTab({ products, refreshData, showToast }: ProductsTabPro
       setPSku(`PR-${Math.floor(100 + Math.random() * 900)}`);
       setPSize('600x1200 mm');
       setPFinish('Glossy');
+      setPDivisionCategoryId('');
       setPPrice(1200);
       setPImages([]);
       setPDesc('');
@@ -64,6 +68,7 @@ export function ProductsTab({ products, refreshData, showToast }: ProductsTabPro
       price: Number(pPrice),
       category_id: pFinish.toLowerCase() === 'matte' ? 'cat-matte' : 'cat-glossy',
       collection_id: pFinish.toLowerCase() === 'matte' ? 'col-matte' : 'col-marble',
+      division_category_id: pDivisionCategoryId || undefined,
       images: pImages,
       description: pDesc,
       status: 'active',
@@ -248,6 +253,15 @@ export function ProductsTab({ products, refreshData, showToast }: ProductsTabPro
                         <option value="Glossy">Glossy</option>
                         <option value="Matte">Matte</option>
                         <option value="Satin">Satin</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block uppercase tracking-wider text-white/50 mb-1">Page Category</label>
+                      <select value={pDivisionCategoryId} onChange={e => setPDivisionCategoryId(e.target.value)} className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold rounded outline-none">
+                        <option value="">-- No Category --</option>
+                        {divisionCategories.map(cat => (
+                          <option key={cat.id} value={cat.id}>{cat.name} ({cat.page_slug})</option>
+                        ))}
                       </select>
                     </div>
                   </div>
