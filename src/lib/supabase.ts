@@ -112,6 +112,15 @@ export interface ProductDivision {
   created_at?: string;
 }
 
+export interface DivisionCategory {
+  id: string;
+  page_slug: string;
+  name: string;
+  image_url: string;
+  display_order: number;
+  created_at?: string;
+}
+
 // Database APIs
 export const dbService = {
   // Authentication (Uses Supabase SSR)
@@ -319,6 +328,32 @@ export const dbService = {
   async deleteDivision(id: string): Promise<boolean> {
     const supabase = createClient();
     const { error } = await supabase.from('product_divisions').delete().eq('id', id);
+    if (error) console.error(error);
+    return !error;
+  },
+
+  // Division Categories
+  async getDivisionCategories(pageSlug: string): Promise<DivisionCategory[]> {
+    const supabase = createClient();
+    const { data, error } = await supabase.from('division_categories').select('*').eq('page_slug', pageSlug).order('display_order', { ascending: true });
+    if (error) console.error(error);
+    return data || [];
+  },
+
+  async saveDivisionCategory(category: Partial<DivisionCategory>): Promise<DivisionCategory | null> {
+    const supabase = createClient();
+    if (category.id && category.id.startsWith('cat-')) delete category.id;
+    const { data, error } = await supabase.from('division_categories').upsert(category).select().single();
+    if (error) {
+      console.error(error);
+      return null;
+    }
+    return data;
+  },
+
+  async deleteDivisionCategory(id: string): Promise<boolean> {
+    const supabase = createClient();
+    const { error } = await supabase.from('division_categories').delete().eq('id', id);
     if (error) console.error(error);
     return !error;
   }

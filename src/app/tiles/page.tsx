@@ -1,13 +1,12 @@
-'use client';
-
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import { dbService } from '@/lib/supabase';
 
-export default function TilesPage() {
-  const handleSpaceSelect = (spaceName: string) => {
-    window.location.href = '/#products';
-  };
+export const revalidate = 0;
+
+export default async function TilesPage() {
+  const categories = await dbService.getDivisionCategories('tiles');
 
   return (
     <div className="pt-32 pb-20 bg-dark-black max-w-7xl mx-auto px-6 md:px-12 min-h-screen">
@@ -20,22 +19,15 @@ export default function TilesPage() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-        {[
-          { name: 'Living Room', url: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=400&q=80' },
-          { name: 'Bathroom', url: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=400&q=80' },
-          { name: 'Kitchen', url: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=400&q=80' },
-          { name: 'Outdoor', url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=400&q=80' },
-          { name: 'Commercial', url: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=400&q=80' },
-          { name: 'Parking', url: 'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?auto=format&fit=crop&w=400&q=80' },
-        ].map((space) => (
-          <button
-            key={space.name}
-            onClick={() => handleSpaceSelect(space.name)}
+        {categories.map((space) => (
+          <Link
+            href="/#products"
+            key={space.id}
             className="group relative h-48 w-full overflow-hidden flex flex-col justify-end text-left border border-white/15"
           >
             <div className="absolute inset-0 bg-gradient-to-t from-dark-black via-dark-black/40 to-transparent z-10 group-hover:from-dark-black/95 transition-all duration-300" />
             <Image
-              src={space.url}
+              src={space.image_url}
               alt={space.name}
               fill className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
             />
@@ -47,7 +39,7 @@ export default function TilesPage() {
                 View Tiles <ArrowRight className="w-3 h-3" />
               </span>
             </div>
-          </button>
+          </Link>
         ))}
       </div>
       

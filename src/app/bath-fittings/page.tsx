@@ -1,8 +1,13 @@
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import { dbService } from '@/lib/supabase';
 
-export default function BathFittingsPage() {
+export const revalidate = 0;
+
+export default async function BathFittingsPage() {
+  const categories = await dbService.getDivisionCategories('bath-fittings');
+
   return (
     <div className="pt-32 pb-20 bg-dark-black max-w-7xl mx-auto px-6 md:px-12 min-h-screen">
       <div className="text-center mb-16">
@@ -14,16 +19,9 @@ export default function BathFittingsPage() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-        {[
-          { name: 'Faucets & Taps', url: 'https://images.unsplash.com/photo-1620626011761-996317b69763?auto=format&fit=crop&w=400&q=80' },
-          { name: 'Sanitaryware', url: 'https://images.unsplash.com/photo-1613214149922-f1809c99b414?auto=format&fit=crop&w=400&q=80' },
-          { name: 'Wellness & Tubs', url: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=400&q=80' },
-          { name: 'Shower Systems', url: 'https://images.unsplash.com/photo-1604014237800-1c9102c219da?auto=format&fit=crop&w=400&q=80' },
-          { name: 'Water Heaters', url: 'https://images.unsplash.com/photo-1584622781564-1d987f7333c1?auto=format&fit=crop&w=400&q=80' },
-          { name: 'Bath Accessories', url: 'https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=400&q=80' },
-        ].map((cat) => (
+        {categories.map((cat) => (
           <a
-            key={cat.name}
+            key={cat.id}
             href={`https://wa.me/919876543210?text=Hi!%20I%27m%20interested%20in%20Jaquar%20Group%20Bath%20Fittings%20-%20${encodeURIComponent(cat.name)}.%20Could%20you%20please%20share%20the%20brochure%20and%20pricing?`}
             target="_blank"
             rel="noopener noreferrer"
@@ -31,7 +29,7 @@ export default function BathFittingsPage() {
           >
             <div className="absolute inset-0 bg-gradient-to-t from-dark-black via-dark-black/40 to-transparent z-10 group-hover:from-dark-black/95 transition-all duration-300" />
             <Image
-              src={cat.url}
+              src={cat.image_url}
               alt={cat.name}
               fill className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
             />

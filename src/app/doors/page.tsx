@@ -1,8 +1,13 @@
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import { dbService } from '@/lib/supabase';
 
-export default function DoorsPage() {
+export const revalidate = 0;
+
+export default async function DoorsPage() {
+  const categories = await dbService.getDivisionCategories('doors');
+
   return (
     <div className="pt-32 pb-20 bg-dark-black max-w-7xl mx-auto px-6 md:px-12 min-h-screen">
       <div className="text-center mb-16">
@@ -14,16 +19,9 @@ export default function DoorsPage() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-        {[
-          { name: 'Main Entry Doors', url: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=400&q=80' },
-          { name: 'Bedroom Doors', url: 'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?auto=format&fit=crop&w=400&q=80' },
-          { name: 'Toilet & Bath Doors', url: 'https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=400&q=80' },
-          { name: 'Safety Steel Doors', url: 'https://images.unsplash.com/photo-1558036117-15d82a90b9b1?auto=format&fit=crop&w=400&q=80' },
-          { name: 'Steel Windows', url: 'https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=400&q=80' },
-          { name: 'Double Leaf Doors', url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=400&q=80' },
-        ].map((cat) => (
+        {categories.map((cat) => (
           <a
-            key={cat.name}
+            key={cat.id}
             href={`https://wa.me/919876543210?text=Hi!%20I%27m%20interested%20in%20Tata%20Pravesh%20Doors%20-%20${encodeURIComponent(cat.name)}.%20Could%20you%20please%20share%20the%20brochure%20and%20pricing?`}
             target="_blank"
             rel="noopener noreferrer"
@@ -31,7 +29,7 @@ export default function DoorsPage() {
           >
             <div className="absolute inset-0 bg-gradient-to-t from-dark-black via-dark-black/40 to-transparent z-10 group-hover:from-dark-black/95 transition-all duration-300" />
             <Image
-              src={cat.url}
+              src={cat.image_url}
               alt={cat.name}
               fill className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
             />

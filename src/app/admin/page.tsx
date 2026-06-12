@@ -13,9 +13,10 @@ import { ProductsTab } from '@/components/admin/tabs/ProductsTab';
 import { DealersTab } from '@/components/admin/tabs/DealersTab';
 import { ProjectsTab } from '@/components/admin/tabs/ProjectsTab';
 import { DivisionsTab } from '@/components/admin/tabs/DivisionsTab';
+import { DivisionCategoriesTab } from '@/components/admin/tabs/DivisionCategoriesTab';
 import { LeadsTab, ProfileTab, AnalyticsTab } from '@/components/admin/tabs/OtherTabs';
 
-type Tab = 'analytics' | 'products' | 'dealers' | 'projects' | 'leads' | 'divisions' | 'profile';
+type Tab = 'analytics' | 'products' | 'dealers' | 'projects' | 'leads' | 'divisions' | 'division-categories' | 'profile';
 
 export default function AdminPage() {
   const router = useRouter();
@@ -134,6 +135,7 @@ export default function AdminPage() {
           {activeTab === 'analytics' && <AnalyticsTab data={{ products: products.length, dealers: dealers.length, newLeads: newLeadsCount, closedLeads: wonLeadsCount }} />}
           {activeTab === 'products' && <ProductsTab products={products} refreshData={loadDashboardData} showToast={showToast} />}
           {activeTab === 'divisions' && <DivisionsTab divisions={divisions} refreshData={loadDashboardData} showToast={showToast} />}
+          {activeTab === 'division-categories' && <DivisionCategoriesTab showToast={showToast} />}
           {activeTab === 'dealers' && <DealersTab dealers={dealers} refreshData={loadDashboardData} showToast={showToast} />}
           {activeTab === 'projects' && <ProjectsTab projects={projects} refreshData={loadDashboardData} showToast={showToast} />}
           {activeTab === 'leads' && <LeadsTab leads={leads} refreshData={loadDashboardData} showToast={showToast} />}
