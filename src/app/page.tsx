@@ -428,7 +428,7 @@ export default function HomePage() {
           <span className="text-primary-gold text-xs tracking-[0.4em] uppercase mb-4 animate-fade-in font-semibold">
             Premium Ceramic & Vitrified Tiles
           </span>
-          <h1 className="font-display text-4xl md:text-7xl font-bold tracking-tight text-white mb-6 leading-tight">
+          <h1 className="font-display text-4xl md:text-7xl font-bold tracking-tight text-white mb-3 leading-tight">
             Transform Spaces <br />
             <span className="text-gold-gradient">With Premium Tiles</span>
           </h1>
