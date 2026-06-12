@@ -169,11 +169,14 @@ export const dbService = {
   },
 
   // Products
-  async getProducts(searchQuery?: string): Promise<Product[]> {
+  async getProducts(searchQuery?: string, divisionCategoryId?: string): Promise<Product[]> {
     const supabase = createClient();
     let query = supabase.from('products').select('*');
     if (searchQuery) {
       query = query.or(`name.ilike.%${searchQuery}%,sku.ilike.%${searchQuery}%`);
+    }
+    if (divisionCategoryId) {
+      query = query.eq('division_category_id', divisionCategoryId);
     }
     const { data, error } = await query;
     if (error) console.error(error);
@@ -343,6 +346,13 @@ export const dbService = {
     const { data, error } = await query;
     if (error) console.error(error);
     return data || [];
+  },
+
+  async getDivisionCategoryById(id: string): Promise<DivisionCategory | undefined> {
+    const supabase = createClient();
+    const { data, error } = await supabase.from('division_categories').select('*').eq('id', id).single();
+    if (error) console.error(error);
+    return data || undefined;
   },
 
   async saveDivisionCategory(category: Partial<DivisionCategory>): Promise<DivisionCategory | null> {

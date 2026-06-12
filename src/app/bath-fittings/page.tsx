@@ -22,7 +22,7 @@ export default async function BathFittingsPage() {
         {categories.map((cat) => (
           <Link
             key={cat.id}
-            href={`/products?category=${cat.id}&name=${encodeURIComponent(cat.name)}`}
+            href={`/category/${cat.id}`}
             className="group relative h-48 w-full overflow-hidden flex flex-col justify-end text-left border border-white/15"
           >
             <div className="absolute inset-0 bg-gradient-to-t from-dark-black via-dark-black/40 to-transparent z-10 group-hover:from-dark-black/95 transition-all duration-300" />
