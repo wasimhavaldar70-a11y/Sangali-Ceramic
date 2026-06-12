@@ -51,6 +51,10 @@ export function ProjectsTab({ projects, refreshData, showToast }: ProjectsTabPro
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!image) {
+      showToast('Please upload a featured image for the project.', 'error');
+      return;
+    }
     const projData: Project = {
       id: editingProject ? editingProject.id : `proj-${Date.now()}`,
       title,
@@ -62,10 +66,14 @@ export function ProjectsTab({ projects, refreshData, showToast }: ProjectsTabPro
     };
     
     try {
-      await dbService.saveProject(projData);
-      setModalOpen(false);
-      refreshData();
-      showToast('Project saved successfully.');
+      const saved = await dbService.saveProject(projData);
+      if (saved) {
+        setModalOpen(false);
+        refreshData();
+        showToast('Project saved successfully.');
+      } else {
+        showToast('Error saving project to database.', 'error');
+      }
     } catch (err) {
       showToast('Error saving project.', 'error');
     }
@@ -76,19 +84,31 @@ export function ProjectsTab({ projects, refreshData, showToast }: ProjectsTabPro
     setIsUploading(true);
     const file = e.target.files[0];
     const path = `project_${Date.now()}_${file.name}`;
-    const url = await dbService.uploadFile('projects', file, path);
-    if (url) {
-      setImage(url);
+    try {
+      const url = await dbService.uploadFile('projects', file, path);
+      if (url) {
+        setImage(url);
+        showToast('Image uploaded successfully.');
+      } else {
+        showToast('Error uploading image to storage. Check bucket permissions.', 'error');
+      }
+    } catch (err) {
+      showToast('Error uploading image.', 'error');
+    } finally {
+      setIsUploading(false);
     }
-    setIsUploading(false);
   };
 
   const executeDelete = async () => {
     if (!confirmDelete) return;
     try {
-      await dbService.deleteProject(confirmDelete);
-      refreshData();
-      showToast('Project deleted successfully.');
+      const success = await dbService.deleteProject(confirmDelete);
+      if (success) {
+        refreshData();
+        showToast('Project deleted successfully.');
+      } else {
+        showToast('Error deleting project from database.', 'error');
+      }
     } catch (err) {
       showToast('Error deleting project.', 'error');
     } finally {

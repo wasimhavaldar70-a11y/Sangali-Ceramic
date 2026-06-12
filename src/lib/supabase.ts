@@ -245,21 +245,7 @@ export const dbService = {
   // Projects
   async getProjects(): Promise<Project[]> {
     const isMock = !process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    if (isMock) {
-      if (typeof window !== 'undefined') {
-        const local = localStorage.getItem('mock_projects');
-        if (local) {
-          return JSON.parse(local);
-        }
-      }
-    } else {
-      const supabase = createClient();
-      const { data, error } = await supabase.from('projects').select('*');
-      if (!error && data && data.length > 0) {
-        return data;
-      }
-    }
-
+    
     const defaults: Project[] = [
       {
         id: 'proj-1',
@@ -299,9 +285,36 @@ export const dbService = {
       }
     ];
 
-    if (isMock && typeof window !== 'undefined') {
-      localStorage.setItem('mock_projects', JSON.stringify(defaults));
+    if (isMock) {
+      if (typeof window !== 'undefined') {
+        const local = localStorage.getItem('mock_projects');
+        if (local) {
+          return JSON.parse(local);
+        }
+        localStorage.setItem('mock_projects', JSON.stringify(defaults));
+      }
+      return defaults;
+    } else {
+      const supabase = createClient();
+      const { data, error } = await supabase.from('projects').select('*');
+      if (!error && data && data.length > 0) {
+        return data;
+      }
+      
+      // If table is empty and there's no DB error, seed default projects into the database
+      if (!error && data && data.length === 0) {
+        try {
+          const seedData = defaults.map(({ id, ...rest }) => rest);
+          const { data: seeded, error: seedError } = await supabase.from('projects').insert(seedData).select();
+          if (!seedError && seeded && seeded.length > 0) {
+            return seeded;
+          }
+        } catch (seedErr) {
+          console.error('Failed to seed default projects:', seedErr);
+        }
+      }
     }
+
     return defaults;
   },
 
@@ -337,7 +350,12 @@ export const dbService = {
     }
 
     const supabase = createClient();
-    if (project.id && project.id.startsWith('proj-')) delete project.id;
+    if (project.id) {
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(project.id);
+      if (!isUuid) {
+        delete project.id;
+      }
+    }
     const { data, error } = await supabase.from('projects').upsert(project).select().single();
     if (error) {
       console.error(error);
@@ -361,10 +379,19 @@ export const dbService = {
       return false;
     }
 
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+    if (!isUuid) {
+      // If it's not a valid UUID, it can't be in the database, so deletion is successful (no-op)
+      return true;
+    }
+
     const supabase = createClient();
     const { error } = await supabase.from('projects').delete().eq('id', id);
-    if (error) console.error(error);
-    return !error;
+    if (error) {
+      console.error(error);
+      return false;
+    }
+    return true;
   },
 
   // Testimonials
