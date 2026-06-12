@@ -7,7 +7,7 @@ import {
   ArrowRight, Search, SlidersHorizontal, Eye, FileText, Star,
   Shield, Droplet, Flame, Settings, Zap, Truck, MessageSquare, Phone, MapPin, Check
 } from 'lucide-react';
-import { dbService, Product, Collection, Project, Testimonial, Catalogue, ProductDivision, BrandLogo } from '@/lib/supabase';
+import { dbService, Product, Collection, Project, Testimonial, Catalogue, ProductDivision, BrandLogo, HeroSlide } from '@/lib/supabase';
 
 const BRAND_LOGOS = [
   {
@@ -226,23 +226,29 @@ export default function HomePage() {
 
   // Hero Slider
   const [heroIndex, setHeroIndex] = useState(0);
-  const heroImages = [
+  const [heroImages, setHeroImages] = useState<HeroSlide[]>([
     {
+      id: 'slide-1',
       url: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1920&q=90',
       title: 'Grand Marble Luxury',
-      subtitle: 'Calacatta Glazed Vitrified Slabs'
+      subtitle: 'Calacatta Glazed Vitrified Slabs',
+      display_order: 1
     },
     {
+      id: 'slide-2',
       url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1920&q=90',
       title: 'Warm Architectural Woods',
-      subtitle: 'Natural Woodgrain Planks Collection'
+      subtitle: 'Natural Woodgrain Planks Collection',
+      display_order: 2
     },
     {
+      id: 'slide-3',
       url: 'https://images.unsplash.com/photo-1600573472591-ee6b68d14c68?auto=format&fit=crop&w=1920&q=90',
       title: 'Rustic Raw Stone',
-      subtitle: 'Contemporary Slate & Stone Textures'
+      subtitle: 'Contemporary Slate & Stone Textures',
+      display_order: 3
     }
-  ];
+  ]);
 
   // AI Visualizer before/after divider position
   const [sliderPos, setSliderPos] = useState(50);
@@ -273,6 +279,7 @@ export default function HomePage() {
       const cats = await dbService.getCatalogues();
       const divs = await dbService.getDivisions();
       const brnds = await dbService.getBrands();
+      const slides = await dbService.getHeroSlides();
 
       setProducts(prods);
       setCollections(cols);
@@ -281,6 +288,7 @@ export default function HomePage() {
       setCatalogues(cats);
       setDivisions(divs);
       setBrands(brnds);
+      setHeroImages(slides);
     };
     fetchData();
 

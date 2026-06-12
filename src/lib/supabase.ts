@@ -130,6 +130,15 @@ export interface BrandLogo {
   created_at?: string;
 }
 
+export interface HeroSlide {
+  id: string;
+  url: string;
+  title: string;
+  subtitle: string;
+  display_order: number;
+  created_at?: string;
+}
+
 // Database APIs
 export const dbService = {
   // Authentication (Uses Supabase SSR)
@@ -526,6 +535,113 @@ export const dbService = {
   async deleteBrand(id: string): Promise<boolean> {
     const supabase = createClient();
     const { error } = await supabase.from('brand_logos').delete().eq('id', id);
+    if (error) console.error(error);
+    return !error;
+  },
+
+  // Hero Slides
+  async getHeroSlides(): Promise<HeroSlide[]> {
+    const isMock = !process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (isMock) {
+      if (typeof window !== 'undefined') {
+        const local = localStorage.getItem('mock_hero_slides');
+        if (local) {
+          return JSON.parse(local);
+        }
+      }
+    } else {
+      const supabase = createClient();
+      const { data, error } = await supabase.from('hero_slides').select('*').order('display_order', { ascending: true });
+      if (!error && data && data.length > 0) {
+        return data;
+      }
+    }
+
+    const defaults = [
+      {
+        id: 'slide-1',
+        url: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1920&q=90',
+        title: 'Grand Marble Luxury',
+        subtitle: 'Calacatta Glazed Vitrified Slabs',
+        display_order: 1
+      },
+      {
+        id: 'slide-2',
+        url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1920&q=90',
+        title: 'Warm Architectural Woods',
+        subtitle: 'Natural Woodgrain Planks Collection',
+        display_order: 2
+      },
+      {
+        id: 'slide-3',
+        url: 'https://images.unsplash.com/photo-1600573472591-ee6b68d14c68?auto=format&fit=crop&w=1920&q=90',
+        title: 'Rustic Raw Stone',
+        subtitle: 'Contemporary Slate & Stone Textures',
+        display_order: 3
+      }
+    ];
+
+    if (isMock && typeof window !== 'undefined') {
+      localStorage.setItem('mock_hero_slides', JSON.stringify(defaults));
+    }
+    return defaults;
+  },
+
+  async saveHeroSlide(slide: Partial<HeroSlide>): Promise<HeroSlide | null> {
+    const isMock = !process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (isMock) {
+      if (typeof window !== 'undefined') {
+        const local = localStorage.getItem('mock_hero_slides');
+        let current: HeroSlide[] = local ? JSON.parse(local) : [];
+        if (current.length === 0) {
+          current = await this.getHeroSlides();
+        }
+        
+        const toSave = { ...slide } as HeroSlide;
+        if (!toSave.id) {
+          toSave.id = 'slide-' + Date.now();
+        }
+        
+        const index = current.findIndex(s => s.id === toSave.id);
+        if (index >= 0) {
+          current[index] = toSave;
+        } else {
+          current.push(toSave);
+        }
+        
+        localStorage.setItem('mock_hero_slides', JSON.stringify(current));
+        return toSave;
+      }
+      return null;
+    }
+
+    const supabase = createClient();
+    if (slide.id && slide.id.startsWith('slide-')) delete slide.id;
+    const { data, error } = await supabase.from('hero_slides').upsert(slide).select().single();
+    if (error) {
+      console.error(error);
+      return null;
+    }
+    return data;
+  },
+
+  async deleteHeroSlide(id: string): Promise<boolean> {
+    const isMock = !process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (isMock) {
+      if (typeof window !== 'undefined') {
+        const local = localStorage.getItem('mock_hero_slides');
+        if (local) {
+          const current: HeroSlide[] = JSON.parse(local);
+          const filtered = current.filter(s => s.id !== id);
+          localStorage.setItem('mock_hero_slides', JSON.stringify(filtered));
+          return true;
+        }
+      }
+      return false;
+    }
+
+    const supabase = createClient();
+    const { error } = await supabase.from('hero_slides').delete().eq('id', id);
     if (error) console.error(error);
     return !error;
   }

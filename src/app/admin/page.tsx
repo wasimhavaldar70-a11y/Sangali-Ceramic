@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ArrowUpRight } from 'lucide-react';
-import { dbService, Product, Dealer, Lead, Project, ProductDivision, DivisionCategory, BrandLogo } from '@/lib/supabase';
+import { dbService, Product, Dealer, Lead, Project, ProductDivision, DivisionCategory, BrandLogo, HeroSlide } from '@/lib/supabase';
 
 // Components
 import { Toast } from '@/components/admin/Toast';
@@ -15,9 +15,10 @@ import { ProjectsTab } from '@/components/admin/tabs/ProjectsTab';
 import { DivisionsTab } from '@/components/admin/tabs/DivisionsTab';
 import { DivisionCategoriesTab } from '@/components/admin/tabs/DivisionCategoriesTab';
 import { BrandsTab } from '@/components/admin/tabs/BrandsTab';
+import { HeroSlidesTab } from '@/components/admin/tabs/HeroSlidesTab';
 import { LeadsTab, ProfileTab, AnalyticsTab } from '@/components/admin/tabs/OtherTabs';
 
-type Tab = 'analytics' | 'products' | 'dealers' | 'projects' | 'leads' | 'divisions' | 'division-categories' | 'profile' | 'brands';
+type Tab = 'analytics' | 'products' | 'dealers' | 'projects' | 'leads' | 'divisions' | 'division-categories' | 'profile' | 'brands' | 'hero-slides';
 
 export default function AdminPage() {
   const router = useRouter();
@@ -30,6 +31,7 @@ export default function AdminPage() {
   const [divisions, setDivisions] = useState<ProductDivision[]>([]);
   const [divisionCategories, setDivisionCategories] = useState<DivisionCategory[]>([]);
   const [brands, setBrands] = useState<BrandLogo[]>([]);
+  const [heroSlides, setHeroSlides] = useState<HeroSlide[]>([]);
 
   // Navigation
   const [activeTab, setActiveTab] = useState<Tab>('analytics');
@@ -48,14 +50,15 @@ export default function AdminPage() {
 
   const loadDashboardData = async () => {
     try {
-      const [prods, deals, projs, lds, divs, divCats, brnds] = await Promise.all([
+      const [prods, deals, projs, lds, divs, divCats, brnds, slides] = await Promise.all([
         dbService.getProducts(),
         dbService.getDealers(),
         dbService.getProjects(),
         dbService.getLeads(),
         dbService.getDivisions(),
         dbService.getDivisionCategories(),
-        dbService.getBrands()
+        dbService.getBrands(),
+        dbService.getHeroSlides()
       ]);
       setProducts(prods);
       setDealers(deals);
@@ -64,6 +67,7 @@ export default function AdminPage() {
       setDivisions(divs);
       setDivisionCategories(divCats);
       setBrands(brnds);
+      setHeroSlides(slides);
     } catch (e) {
       console.error(e);
       showToast('Error loading data', 'error');
@@ -220,6 +224,7 @@ export default function AdminPage() {
           {activeTab === 'analytics' && <AnalyticsTab data={{ products: products.length, dealers: dealers.length, newLeads: newLeadsCount, closedLeads: wonLeadsCount }} />}
           {activeTab === 'products' && <ProductsTab products={products} divisions={divisions} divisionCategories={divisionCategories} refreshData={loadDashboardData} showToast={showToast} />}
           {activeTab === 'divisions' && <DivisionsTab divisions={divisions} refreshData={loadDashboardData} showToast={showToast} />}
+          {activeTab === 'hero-slides' && <HeroSlidesTab slides={heroSlides} refreshData={loadDashboardData} showToast={showToast} />}
           {activeTab === 'division-categories' && <DivisionCategoriesTab showToast={showToast} />}
           {activeTab === 'brands' && <BrandsTab brands={brands} refreshData={loadDashboardData} showToast={showToast} />}
           {activeTab === 'dealers' && <DealersTab dealers={dealers} refreshData={loadDashboardData} showToast={showToast} />}

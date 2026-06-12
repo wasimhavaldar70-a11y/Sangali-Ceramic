@@ -1,9 +1,9 @@
-import { LayoutDashboard, ShoppingBag, MapPin, FolderOpen, Users, ShieldAlert, Database, Layers, Award } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, MapPin, FolderOpen, Users, ShieldAlert, Database, Layers, Award, Image as ImageIcon } from 'lucide-react';
 import { Product, Dealer, Project, Lead } from '@/lib/supabase';
 
 interface AdminSidebarProps {
-  activeTab: 'analytics' | 'products' | 'dealers' | 'projects' | 'leads' | 'divisions' | 'division-categories' | 'profile' | 'brands';
-  setActiveTab: (tab: 'analytics' | 'products' | 'dealers' | 'projects' | 'leads' | 'divisions' | 'division-categories' | 'profile' | 'brands') => void;
+  activeTab: 'analytics' | 'products' | 'dealers' | 'projects' | 'leads' | 'divisions' | 'division-categories' | 'profile' | 'brands' | 'hero-slides';
+  setActiveTab: (tab: 'analytics' | 'products' | 'dealers' | 'projects' | 'leads' | 'divisions' | 'division-categories' | 'profile' | 'brands' | 'hero-slides') => void;
   products: Product[];
   dealers: Dealer[];
   projects: Project[];
@@ -33,6 +33,9 @@ export function AdminSidebar({
       </button>
       <button onClick={() => setActiveTab('divisions')} className={getTabClass('divisions')}>
         <span className="flex items-center gap-3"><Layers className="w-4 h-4" /> Divisions (Home)</span>
+      </button>
+      <button onClick={() => setActiveTab('hero-slides')} className={getTabClass('hero-slides')}>
+        <span className="flex items-center gap-3"><ImageIcon className="w-4 h-4" /> Hero Carousel</span>
       </button>
       <button onClick={() => setActiveTab('division-categories')} className={getTabClass('division-categories')}>
         <span className="flex items-center gap-3"><Layers className="w-4 h-4" /> Page Categories</span>
