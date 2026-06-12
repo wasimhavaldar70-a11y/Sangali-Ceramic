@@ -233,7 +233,7 @@ export default function VisualizerPage() {
                       className="w-[200%] h-[200%] -left-1/2 origin-top transition-all duration-300"
                       style={{
                         transform: `rotateX(75deg) rotateZ(${tileAngle}deg)`,
-                        backgroundImage: `url(${selectedTile.images[0]})`,
+                        backgroundImage: selectedTile.images?.[0] ? `url(${selectedTile.images[0]})` : 'none',
                         backgroundSize: `${160 * tileScale}px ${160 * tileScale}px`,
                         backgroundRepeat: 'repeat',
                         boxShadow: 'inset 0 0 100px rgba(0,0,0,0.9)'
@@ -390,8 +390,8 @@ export default function VisualizerPage() {
                       : 'border-white/5 hover:border-white/10 bg-charcoal/20'
                   }`}
                 >
-                  <div className="w-14 h-14 bg-dark-black shrink-0 overflow-hidden border border-white/10">
-                    <Image src={tile.images[0]} alt={tile.name} fill className="w-full h-full object-cover" />
+                  <div className="w-14 h-14 bg-dark-black shrink-0 overflow-hidden border border-white/10 relative">
+                    <Image src={tile.images?.[0] || 'https://images.unsplash.com/photo-1600573472591-ee6b68d14c68?w=100&q=80'} alt={tile.name} fill className="w-full h-full object-cover" />
                   </div>
                   <div className="flex-grow flex flex-col justify-between">
                     <div>
