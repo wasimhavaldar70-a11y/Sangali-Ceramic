@@ -3,16 +3,17 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingBag, Plus, Edit2, Trash2, X, Save, Search, AlertTriangle } from 'lucide-react';
-import { Product, dbService, DivisionCategory } from '@/lib/supabase';
+import { Product, dbService, DivisionCategory, ProductDivision } from '@/lib/supabase';
 
 interface ProductsTabProps {
   products: Product[];
+  divisions?: ProductDivision[];
   divisionCategories?: DivisionCategory[];
   refreshData: () => void;
   showToast: (msg: string, type?: 'success' | 'error') => void;
 }
 
-export function ProductsTab({ products, divisionCategories = [], refreshData, showToast }: ProductsTabProps) {
+export function ProductsTab({ products, divisions = [], divisionCategories = [], refreshData, showToast }: ProductsTabProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
@@ -25,10 +26,10 @@ export function ProductsTab({ products, divisionCategories = [], refreshData, sh
   const [pSku, setPSku] = useState('');
   const [pSize, setPSize] = useState('');
   const [pFinish, setPFinish] = useState('');
+  const [pDivisionUrl, setPDivisionUrl] = useState('');
   const [pDivisionCategoryId, setPDivisionCategoryId] = useState('');
   const [pPrice, setPPrice] = useState(0);
   const [pImages, setPImages] = useState<string[]>([]);
-  const [pDesc, setPDesc] = useState('');
   const [isUploading, setIsUploading] = useState(false);
 
   const openForm = (prod: Product | null = null) => {
@@ -38,20 +39,30 @@ export function ProductsTab({ products, divisionCategories = [], refreshData, sh
       setPSku(prod.sku);
       setPSize(prod.size);
       setPFinish(prod.finish);
-      setPDivisionCategoryId(prod.division_category_id || '');
+      
+      const catId = prod.division_category_id || '';
+      setPDivisionCategoryId(catId);
+      
+      // Auto-infer division URL from category
+      const foundCat = divisionCategories.find(c => c.id === catId);
+      if (foundCat) {
+        setPDivisionUrl('/' + foundCat.page_slug);
+      } else {
+        setPDivisionUrl('');
+      }
+      
       setPPrice(prod.price);
       setPImages(prod.images || []);
-      setPDesc(prod.description || '');
     } else {
       setEditingProduct(null);
       setPName('');
       setPSku(`PR-${Math.floor(100 + Math.random() * 900)}`);
       setPSize('600x1200 mm');
       setPFinish('Glossy');
+      setPDivisionUrl('');
       setPDivisionCategoryId('');
       setPPrice(1200);
       setPImages([]);
-      setPDesc('');
     }
     setModalOpen(true);
   };
@@ -70,7 +81,6 @@ export function ProductsTab({ products, divisionCategories = [], refreshData, sh
       collection_id: pFinish.toLowerCase() === 'matte' ? 'col-matte' : 'col-marble',
       division_category_id: pDivisionCategoryId || undefined,
       images: pImages,
-      description: pDesc,
       status: 'active',
       tech_specs: editingProduct?.tech_specs || { water_absorption: '< 0.05%', hardness: '6 Mohs', thickness: '9.5 mm' }
     };
@@ -233,43 +243,61 @@ export function ProductsTab({ products, divisionCategories = [], refreshData, sh
                       <label className="block uppercase tracking-wider text-white/50 mb-1">Product Name *</label>
                       <input type="text" required value={pName} onChange={e => setPName(e.target.value)} className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold rounded outline-none" />
                     </div>
-                    <div>
-                      <label className="block uppercase tracking-wider text-white/50 mb-1">SKU Code *</label>
-                      <input type="text" required value={pSku} onChange={e => setPSku(e.target.value)} className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold rounded outline-none font-mono" />
-                    </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block uppercase tracking-wider text-white/50 mb-1">Slab Size *</label>
-                        <input type="text" required value={pSize} onChange={e => setPSize(e.target.value)} className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold rounded outline-none" />
+                        <label className="block uppercase tracking-wider text-white/50 mb-1">Code *</label>
+                        <input type="text" required value={pSku} onChange={e => setPSku(e.target.value)} className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold rounded outline-none font-mono" />
                       </div>
                       <div>
-                        <label className="block uppercase tracking-wider text-white/50 mb-1">Price/Sq.Ft *</label>
+                        <label className="block uppercase tracking-wider text-white/50 mb-1">Price *</label>
                         <input type="number" required value={pPrice} onChange={e => setPPrice(Number(e.target.value))} className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold rounded outline-none" />
                       </div>
                     </div>
                     <div>
-                      <label className="block uppercase tracking-wider text-white/50 mb-1">Finish *</label>
-                      <select value={pFinish} onChange={e => setPFinish(e.target.value)} className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold rounded outline-none">
-                        <option value="Glossy">Glossy</option>
-                        <option value="Matte">Matte</option>
-                        <option value="Satin">Satin</option>
+                      <label className="block uppercase tracking-wider text-white/50 mb-1">Division</label>
+                      <select value={pDivisionUrl} onChange={e => {
+                        setPDivisionUrl(e.target.value);
+                        setPDivisionCategoryId(''); // Reset subdivision when division changes
+                      }} className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold rounded outline-none">
+                        <option value="">-- Select Division --</option>
+                        {divisions.map(div => (
+                          <option key={div.id} value={div.link_url}>{div.title} ({div.badge_text})</option>
+                        ))}
                       </select>
                     </div>
                     <div>
-                      <label className="block uppercase tracking-wider text-white/50 mb-1">Page Category</label>
-                      <select value={pDivisionCategoryId} onChange={e => setPDivisionCategoryId(e.target.value)} className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold rounded outline-none">
-                        <option value="">-- No Category --</option>
-                        {divisionCategories.map(cat => (
-                          <option key={cat.id} value={cat.id}>{cat.name} ({cat.page_slug})</option>
+                      <label className="block uppercase tracking-wider text-white/50 mb-1">Subdivision (Page Category)</label>
+                      <select value={pDivisionCategoryId} onChange={e => setPDivisionCategoryId(e.target.value)} className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold rounded outline-none" disabled={!pDivisionUrl}>
+                        <option value="">-- Select Subdivision --</option>
+                        {divisionCategories
+                          .filter(cat => `/${cat.page_slug}` === pDivisionUrl)
+                          .map(cat => (
+                          <option key={cat.id} value={cat.id}>{cat.name}</option>
                         ))}
                       </select>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block uppercase tracking-wider text-white/50 mb-1">Finish *</label>
+                        <select value={pFinish} onChange={e => setPFinish(e.target.value)} className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold rounded outline-none">
+                          <option value="Glossy">Glossy</option>
+                          <option value="Matte">Matte</option>
+                          <option value="Satin">Satin</option>
+                        </select>
+                      </div>
+                      {pDivisionUrl !== '/bath-fittings' && (
+                        <div>
+                          <label className="block uppercase tracking-wider text-white/50 mb-1">One Piece Size *</label>
+                          <input type="text" required value={pSize} onChange={e => setPSize(e.target.value)} className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold rounded outline-none" />
+                        </div>
+                      )}
                     </div>
                   </div>
                   
                   {/* Right Column */}
                   <div className="space-y-4">
                     <div>
-                      <label className="block uppercase tracking-wider text-white/50 mb-1">Upload Images (Supabase)</label>
+                      <label className="block uppercase tracking-wider text-white/50 mb-1">Upload Image</label>
                       <input 
                         type="file" 
                         multiple 
@@ -278,7 +306,7 @@ export function ProductsTab({ products, divisionCategories = [], refreshData, sh
                         disabled={isUploading}
                         className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold rounded outline-none text-xs file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:uppercase file:tracking-wider file:font-semibold file:bg-primary-gold file:text-dark-black hover:file:bg-gold-gradient-hover" 
                       />
-                      {isUploading && <p className="text-[10px] text-primary-gold mt-1 animate-pulse">Uploading to Supabase Storage...</p>}
+                      {isUploading && <p className="text-[10px] text-primary-gold mt-1 animate-pulse">Uploading...</p>}
                     </div>
                     {/* Image Preview */}
                     {pImages.length > 0 && (
@@ -297,10 +325,6 @@ export function ProductsTab({ products, divisionCategories = [], refreshData, sh
                         ))}
                       </div>
                     )}
-                    <div>
-                      <label className="block uppercase tracking-wider text-white/50 mb-1">Description</label>
-                      <textarea rows={3} value={pDesc} onChange={e => setPDesc(e.target.value)} className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold resize-none rounded outline-none"></textarea>
-                    </div>
                   </div>
                 </div>
 
