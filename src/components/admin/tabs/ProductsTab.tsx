@@ -190,6 +190,7 @@ export function ProductsTab({ products, divisions = [], divisionCategories = [],
           <tbody className="divide-y divide-white/5">
             {filteredProducts.length === 0 ? (
               <tr><td colSpan={8} className="p-8 text-center text-white/40 italic">No products found matching your criteria.</td></tr>
+            ) : filteredProducts.map(prod => (
               <tr key={prod.id} className="hover:bg-white/5 transition-colors">
                 <td className="p-4">
                   <div className="w-12 h-12 bg-dark-black overflow-hidden border border-white/10 rounded flex-shrink-0 relative">
