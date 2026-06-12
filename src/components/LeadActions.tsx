@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { Phone, MessageSquare, X, ArrowRight, CheckCircle, FileText } from 'lucide-react';
+import { MessageSquare, X, ArrowRight, CheckCircle, FileText } from 'lucide-react';
 import { dbService } from '@/lib/supabase';
 import { leadSchema } from '@/lib/validations/lead';
 
@@ -157,15 +157,6 @@ export default function LeadActions() {
     <>
       {/* Floating Buttons */}
       <div className="fixed bottom-8 right-8 z-40 flex flex-col gap-4">
-        {/* Call Now */}
-        <a
-          href="tel:+917058536371"
-          className="w-14 h-14 bg-charcoal text-primary-gold hover:text-white rounded-full flex items-center justify-center shadow-2xl border border-primary-gold/20 hover:border-primary-gold transition-all duration-300 hover:scale-110 group"
-          aria-label="Call Expert"
-        >
-          <Phone className="w-6 h-6 group-hover:animate-bounce" />
-        </a>
-
         {/* WhatsApp Chat */}
         <a
           href="https://wa.me/917058536371?text=Hi!%20I%27m%20interested%20in%20Sangli%20Ceramica%20Premium%20Tiles.%20Could%20you%20please%20share%20the%20latest%20pricing%20and%20catalogue?"

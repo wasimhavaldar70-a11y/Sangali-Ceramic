@@ -427,16 +427,16 @@ export default function HomePage() {
         {heroImages.map((image, idx) => (
           <div
             key={idx}
-            className={`absolute inset-0 transition-opacity duration-[1500ms] ease-in-out ${
+            className={`absolute inset-0 bg-black transition-opacity duration-[1500ms] ease-in-out ${
               idx === heroIndex ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
             }`}
             style={{ transitionProperty: 'opacity, transform' }}
           >
-            <div className="absolute inset-0 bg-dark-black/75 z-10" />
+            <div className="absolute inset-0 bg-dark-black/50 z-10" />
             <Image
               src={image.url}
               alt={image.title}
-              fill className="w-full h-full object-cover object-center"
+              fill className="w-full h-full object-cover object-center opacity-40"
             />
           </div>
         ))}
