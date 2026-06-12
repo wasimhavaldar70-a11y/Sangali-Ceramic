@@ -1,6 +1,5 @@
 'use client';
 import { useState } from 'react';
-import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FolderOpen, Plus, Edit2, Trash2, X, Save, Search, AlertTriangle } from 'lucide-react';
 import { Project, dbService } from '@/lib/supabase';
@@ -160,8 +159,9 @@ export function ProjectsTab({ projects, refreshData, showToast }: ProjectsTabPro
             ) : filteredProjects.map(proj => (
               <tr key={proj.id} className="hover:bg-white/5 transition-colors">
                 <td className="p-4 flex items-center gap-3">
-                  <div className="w-10 h-10 bg-dark-black overflow-hidden border border-white/10 shrink-0 rounded">
-                    <Image src={proj.image} alt={proj.title} fill className="w-full h-full object-cover" />
+                  <div className="w-10 h-10 bg-dark-black overflow-hidden border border-white/10 shrink-0 rounded relative">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={proj.image} alt={proj.title} className="w-full h-full object-cover" />
                   </div>
                   <span className="font-bold text-white text-sm">{proj.title}</span>
                 </td>
@@ -252,9 +252,10 @@ export function ProjectsTab({ projects, refreshData, showToast }: ProjectsTabPro
                       {isUploading && <p className="text-[10px] text-primary-gold mt-1 animate-pulse">Uploading to Supabase Storage...</p>}
                     </div>
                     {/* Image Preview */}
-                    <div className="w-full h-24 bg-dark-black border border-white/5 rounded flex items-center justify-center overflow-hidden">
+                    <div className="w-full h-24 bg-dark-black border border-white/5 rounded flex items-center justify-center overflow-hidden relative">
                       {image ? (
-                        <Image src={image} alt="Preview" fill className="w-full h-full object-cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={image} alt="Preview" className="w-full h-full object-cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
                       ) : (
                         <span className="text-white/20 italic">No image preview</span>
                       )}
