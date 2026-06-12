@@ -146,6 +146,17 @@ export const dbService = {
 
   // Storage
   async uploadFile(bucket: string, file: File, path: string): Promise<string | null> {
+    const isMock = !process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (isMock) {
+      // Return file as base64 data URL
+      return new Promise<string | null>((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.onerror = () => resolve(null);
+        reader.readAsDataURL(file);
+      });
+    }
+
     const supabase = createClient();
     const { data, error } = await supabase.storage.from(bucket).upload(path, file, {
       upsert: true
@@ -320,13 +331,23 @@ export const dbService = {
 
   // Product Divisions
   async getDivisions(): Promise<ProductDivision[]> {
-    const supabase = createClient();
-    const { data, error } = await supabase.from('product_divisions').select('*').order('display_order', { ascending: true });
-    if (error) console.error(error);
-    if (data && data.length > 0) {
-      return data;
+    const isMock = !process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (isMock) {
+      if (typeof window !== 'undefined') {
+        const local = localStorage.getItem('mock_product_divisions');
+        if (local) {
+          return JSON.parse(local);
+        }
+      }
+    } else {
+      const supabase = createClient();
+      const { data, error } = await supabase.from('product_divisions').select('*').order('display_order', { ascending: true });
+      if (!error && data && data.length > 0) {
+        return data;
+      }
     }
-    return [
+
+    const defaults = [
       {
         id: 'div-tiles',
         badge_text: 'Core Collection',
@@ -361,9 +382,41 @@ export const dbService = {
         display_order: 3
       }
     ];
+
+    if (isMock && typeof window !== 'undefined') {
+      localStorage.setItem('mock_product_divisions', JSON.stringify(defaults));
+    }
+    return defaults;
   },
 
   async saveDivision(division: Partial<ProductDivision>): Promise<ProductDivision | null> {
+    const isMock = !process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (isMock) {
+      if (typeof window !== 'undefined') {
+        const local = localStorage.getItem('mock_product_divisions');
+        let current: ProductDivision[] = local ? JSON.parse(local) : [];
+        if (current.length === 0) {
+          current = await this.getDivisions();
+        }
+        
+        const toSave = { ...division } as ProductDivision;
+        if (!toSave.id) {
+          toSave.id = 'div-' + Date.now();
+        }
+        
+        const index = current.findIndex(d => d.id === toSave.id);
+        if (index >= 0) {
+          current[index] = toSave;
+        } else {
+          current.push(toSave);
+        }
+        
+        localStorage.setItem('mock_product_divisions', JSON.stringify(current));
+        return toSave;
+      }
+      return null;
+    }
+
     const supabase = createClient();
     if (division.id && division.id.startsWith('div-')) delete division.id;
     const { data, error } = await supabase.from('product_divisions').upsert(division).select().single();
@@ -375,6 +428,20 @@ export const dbService = {
   },
 
   async deleteDivision(id: string): Promise<boolean> {
+    const isMock = !process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (isMock) {
+      if (typeof window !== 'undefined') {
+        const local = localStorage.getItem('mock_product_divisions');
+        if (local) {
+          const current: ProductDivision[] = JSON.parse(local);
+          const filtered = current.filter(d => d.id !== id);
+          localStorage.setItem('mock_product_divisions', JSON.stringify(filtered));
+          return true;
+        }
+      }
+      return false;
+    }
+
     const supabase = createClient();
     const { error } = await supabase.from('product_divisions').delete().eq('id', id);
     if (error) console.error(error);
