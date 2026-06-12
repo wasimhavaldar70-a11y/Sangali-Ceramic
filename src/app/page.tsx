@@ -484,7 +484,7 @@ export default function HomePage() {
       </section>
 
       {/* SPACE EXPLORER & DIVISIONS SECTION */}
-      <section id="spaces" className="pt-10 pb-20 bg-dark-black max-w-7xl mx-auto px-6 md:px-12 border-b border-white/5">
+      <section id="spaces" className="pt-10 pb-8 bg-dark-black max-w-7xl mx-auto px-6 md:px-12 border-b border-white/5">
         <div className="text-center mb-16">
           <span className="text-primary-gold text-xs tracking-[0.35em] uppercase font-semibold">Our Offerings</span>
           <h2 className="font-display text-3xl md:text-5xl font-bold mt-2">Explore Our Product Divisions</h2>
@@ -494,7 +494,7 @@ export default function HomePage() {
         </div>
 
         {/* Dynamic Divisions Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-0">
           {divisions.length > 0 ? divisions.map((div) => (
             <div key={div.id} className="group relative h-[420px] w-full overflow-hidden flex flex-col justify-end text-left border border-white/10 luxury-card">
               <div className="absolute inset-0 bg-gradient-to-t from-dark-black via-dark-black/55 to-transparent z-10 group-hover:from-dark-black/90 transition-all duration-500" />
