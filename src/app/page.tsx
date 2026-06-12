@@ -208,6 +208,16 @@ const getBrandLogoElement = (brandName: string, logoUrl?: string) => {
   );
 };
 
+const isVideoUrl = (url?: string) => {
+  if (!url) return false;
+  return url.endsWith('.mp4') || url.endsWith('.webm') || url.endsWith('.ogg') || url.endsWith('.mov') || url.startsWith('data:video/');
+};
+
+const isGifUrl = (url?: string) => {
+  if (!url) return false;
+  return url.endsWith('.gif') || url.startsWith('data:image/gif') || url.startsWith('data:image/webp');
+};
+
 export default function HomePage() {
   // Data States
   const [products, setProducts] = useState<Product[]>([]);
@@ -506,11 +516,29 @@ export default function HomePage() {
           {divisions.length > 0 ? divisions.map((div) => (
             <div key={div.id} className="group relative h-[420px] w-full overflow-hidden flex flex-col justify-end text-left border border-white/10 luxury-card">
               <div className="absolute inset-0 bg-gradient-to-t from-dark-black via-dark-black/55 to-transparent z-10 group-hover:from-dark-black/90 transition-all duration-500" />
-              <Image
-                src={div.image_url}
-                alt={div.title}
-                fill className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-              />
+              {isVideoUrl(div.image_url) ? (
+                <video
+                  src={div.image_url}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                />
+              ) : isGifUrl(div.image_url) || div.image_url.startsWith('data:image/') ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={div.image_url}
+                  alt={div.title}
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                />
+              ) : (
+                <Image
+                  src={div.image_url}
+                  alt={div.title}
+                  fill className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                />
+              )}
               <div className="absolute top-5 left-5 z-20">
                 <span className="px-3 py-1 bg-white/95 text-dark-black text-[9px] tracking-widest uppercase font-bold">
                   {div.badge_text}
