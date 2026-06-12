@@ -483,47 +483,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* BRAND MARQUEE SECTION */}
-      <section className="bg-charcoal/30 border-y border-white/5 py-10 overflow-hidden relative z-30">
-        <div className="max-w-3xl mx-auto px-6 mb-8 text-center flex flex-col items-center justify-center gap-1.5">
-          <span className="text-primary-gold text-[10px] tracking-[0.3em] uppercase font-bold">
-            Authorized Partner & Elite Product Showcase
-          </span>
-          <span className="text-white text-xs mt-1 font-light opacity-85">
-            Sourced from world-renowned architectural & ceramic brands
-          </span>
-        </div>
-        
-        <div className="relative flex overflow-x-hidden w-full">
-          {/* Left fading mask overlay */}
-          <div className="absolute left-0 top-0 bottom-0 w-24 md:w-48 bg-gradient-to-r from-dark-black to-transparent z-10 pointer-events-none" />
-          
-          <div className="flex animate-marquee gap-8 whitespace-nowrap">
-            {/* First loop of logos */}
-            {brands.map((brand, i) => (
-              <div
-                key={`brand-loop1-${brand.id}-${i}`}
-                className="inline-flex items-center justify-center w-52 h-20 bg-[#121212] hover:bg-[#1A1A1A] border border-white/5 rounded-none px-5 py-3.5 hover:border-primary-gold/45 hover:shadow-lg transition-all duration-300 transform hover:scale-[1.03] relative"
-              >
-                {getBrandLogoElement(brand.name, brand.logo_url)}
-              </div>
-            ))}
-            {/* Second identical loop of logos for infinite scrolling seamless transition */}
-            {brands.map((brand, i) => (
-              <div
-                key={`brand-loop2-${brand.id}-${i}`}
-                className="inline-flex items-center justify-center w-52 h-20 bg-[#121212] hover:bg-[#1A1A1A] border border-white/5 rounded-none px-5 py-3.5 hover:border-primary-gold/45 hover:shadow-lg transition-all duration-300 transform hover:scale-[1.03] relative"
-              >
-                {getBrandLogoElement(brand.name, brand.logo_url)}
-              </div>
-            ))}
-          </div>
-
-          {/* Right fading mask overlay */}
-          <div className="absolute right-0 top-0 bottom-0 w-24 md:w-48 bg-gradient-to-l from-dark-black to-transparent z-10 pointer-events-none" />
-        </div>
-      </section>
-
       {/* SPACE EXPLORER & DIVISIONS SECTION */}
       <section id="spaces" className="pt-10 pb-20 bg-dark-black max-w-7xl mx-auto px-6 md:px-12 border-b border-white/5">
         <div className="text-center mb-16">
@@ -576,6 +535,47 @@ export default function HomePage() {
         </div>
 
 
+      </section>
+
+      {/* BRAND MARQUEE SECTION */}
+      <section className="bg-charcoal/30 border-y border-white/5 py-10 overflow-hidden relative z-30">
+        <div className="max-w-3xl mx-auto px-6 mb-8 text-center flex flex-col items-center justify-center gap-1.5">
+          <span className="text-primary-gold text-[10px] tracking-[0.3em] uppercase font-bold">
+            Authorized Partner & Elite Product Showcase
+          </span>
+          <span className="text-white text-xs mt-1 font-light opacity-85">
+            Sourced from world-renowned architectural & ceramic brands
+          </span>
+        </div>
+        
+        <div className="relative flex overflow-x-hidden w-full">
+          {/* Left fading mask overlay */}
+          <div className="absolute left-0 top-0 bottom-0 w-24 md:w-48 bg-gradient-to-r from-dark-black to-transparent z-10 pointer-events-none" />
+          
+          <div className="flex animate-marquee gap-8 whitespace-nowrap">
+            {/* First loop of logos */}
+            {brands.map((brand, i) => (
+              <div
+                key={`brand-loop1-${brand.id}-${i}`}
+                className="inline-flex items-center justify-center w-52 h-20 bg-[#121212] hover:bg-[#1A1A1A] border border-white/5 rounded-none px-5 py-3.5 hover:border-primary-gold/45 hover:shadow-lg transition-all duration-300 transform hover:scale-[1.03] relative"
+              >
+                {getBrandLogoElement(brand.name, brand.logo_url)}
+              </div>
+            ))}
+            {/* Second identical loop of logos for infinite scrolling seamless transition */}
+            {brands.map((brand, i) => (
+              <div
+                key={`brand-loop2-${brand.id}-${i}`}
+                className="inline-flex items-center justify-center w-52 h-20 bg-[#121212] hover:bg-[#1A1A1A] border border-white/5 rounded-none px-5 py-3.5 hover:border-primary-gold/45 hover:shadow-lg transition-all duration-300 transform hover:scale-[1.03] relative"
+              >
+                {getBrandLogoElement(brand.name, brand.logo_url)}
+              </div>
+            ))}
+          </div>
+
+          {/* Right fading mask overlay */}
+          <div className="absolute right-0 top-0 bottom-0 w-24 md:w-48 bg-gradient-to-l from-dark-black to-transparent z-10 pointer-events-none" />
+        </div>
       </section>
 
 
