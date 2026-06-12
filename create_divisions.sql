@@ -29,7 +29,7 @@ VALUES
   'Discover our curated vitrified slabs, marble textures, and designer ceramic collections crafted for modern spaces and elite architectures.',
   'Explore Tiles',
   '/tiles',
-  'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80',
+  '/premium-tiles.jpg',
   1
 ),
 (

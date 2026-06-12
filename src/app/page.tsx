@@ -7,7 +7,7 @@ import {
   ArrowRight, Search, SlidersHorizontal, Eye, FileText, Star,
   Shield, Droplet, Flame, Settings, Zap, Truck, MessageSquare, Phone, MapPin, Check
 } from 'lucide-react';
-import { dbService, Product, Collection, Project, Testimonial, Catalogue, ProductDivision } from '@/lib/supabase';
+import { dbService, Product, Collection, Project, Testimonial, Catalogue, ProductDivision, BrandLogo } from '@/lib/supabase';
 
 const BRAND_LOGOS = [
   {
@@ -165,6 +165,49 @@ const BRAND_LOGOS = [
   }
 ];
 
+const DEFAULT_BRANDS: BrandLogo[] = [
+  { id: 'b-1', name: 'Jaquar', display_order: 1 },
+  { id: 'b-2', name: 'Artize', display_order: 2 },
+  { id: 'b-3', name: 'Fenesta', display_order: 3 },
+  { id: 'b-4', name: 'Johnson', display_order: 4 },
+  { id: 'b-5', name: 'Nitco', display_order: 5 },
+  { id: 'b-6', name: 'Oasis', display_order: 6 },
+  { id: 'b-7', name: 'Essco', display_order: 7 },
+  { id: 'b-8', name: 'Tata Pravesh', display_order: 8 },
+  { id: 'b-9', name: 'RAK Ceramics', display_order: 9 },
+  { id: 'b-10', name: 'Franke', display_order: 10 },
+  { id: 'b-11', name: 'Carysil', display_order: 11 },
+  { id: 'b-12', name: 'Antiek', display_order: 12 },
+  { id: 'b-13', name: 'Nirali BG', display_order: 13 },
+  { id: 'b-14', name: 'Ardex Endura', display_order: 14 }
+];
+
+const getBrandLogoElement = (brandName: string, logoUrl?: string) => {
+  if (logoUrl) {
+    return (
+      <div className="relative w-full h-full flex items-center justify-center">
+        <Image 
+          src={logoUrl} 
+          alt={brandName} 
+          fill className="object-contain px-2 select-none filter brightness-0 invert opacity-75 hover:opacity-100 transition-all duration-300"
+        />
+      </div>
+    );
+  }
+
+  // Fallback to stylized custom SVGs from BRAND_LOGOS
+  const defaultBrand = BRAND_LOGOS.find(b => b.name.toLowerCase() === brandName.toLowerCase());
+  if (defaultBrand) {
+    return defaultBrand.logo;
+  }
+
+  return (
+    <div className="flex items-center justify-center text-white font-serif font-black italic text-lg select-none w-full h-full">
+      {brandName}
+    </div>
+  );
+};
+
 export default function HomePage() {
   // Data States
   const [products, setProducts] = useState<Product[]>([]);
@@ -173,6 +216,7 @@ export default function HomePage() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [catalogues, setCatalogues] = useState<Catalogue[]>([]);
   const [divisions, setDivisions] = useState<ProductDivision[]>([]);
+  const [brands, setBrands] = useState<BrandLogo[]>(DEFAULT_BRANDS);
 
   // UI Filtering/Sorting States
   const [activeCategory, setActiveCategory] = useState('All');
@@ -228,6 +272,7 @@ export default function HomePage() {
       const tests = await dbService.getTestimonials();
       const cats = await dbService.getCatalogues();
       const divs = await dbService.getDivisions();
+      const brnds = await dbService.getBrands();
 
       setProducts(prods);
       setCollections(cols);
@@ -235,6 +280,7 @@ export default function HomePage() {
       setTestimonials(tests);
       setCatalogues(cats);
       setDivisions(divs);
+      setBrands(brnds);
     };
     fetchData();
 
@@ -454,21 +500,21 @@ export default function HomePage() {
           
           <div className="flex animate-marquee gap-8 whitespace-nowrap">
             {/* First loop of logos */}
-            {BRAND_LOGOS.map((brand, i) => (
+            {brands.map((brand, i) => (
               <div
-                key={`brand-loop1-${i}`}
-                className="inline-flex items-center justify-center w-52 h-20 bg-[#121212] hover:bg-[#1A1A1A] border border-white/5 rounded-none px-5 py-3.5 hover:border-primary-gold/45 hover:shadow-lg transition-all duration-300 transform hover:scale-[1.03]"
+                key={`brand-loop1-${brand.id}-${i}`}
+                className="inline-flex items-center justify-center w-52 h-20 bg-[#121212] hover:bg-[#1A1A1A] border border-white/5 rounded-none px-5 py-3.5 hover:border-primary-gold/45 hover:shadow-lg transition-all duration-300 transform hover:scale-[1.03] relative"
               >
-                {brand.logo}
+                {getBrandLogoElement(brand.name, brand.logo_url)}
               </div>
             ))}
             {/* Second identical loop of logos for infinite scrolling seamless transition */}
-            {BRAND_LOGOS.map((brand, i) => (
+            {brands.map((brand, i) => (
               <div
-                key={`brand-loop2-${i}`}
-                className="inline-flex items-center justify-center w-52 h-20 bg-[#121212] hover:bg-[#1A1A1A] border border-white/5 rounded-none px-5 py-3.5 hover:border-primary-gold/45 hover:shadow-lg transition-all duration-300 transform hover:scale-[1.03]"
+                key={`brand-loop2-${brand.id}-${i}`}
+                className="inline-flex items-center justify-center w-52 h-20 bg-[#121212] hover:bg-[#1A1A1A] border border-white/5 rounded-none px-5 py-3.5 hover:border-primary-gold/45 hover:shadow-lg transition-all duration-300 transform hover:scale-[1.03] relative"
               >
-                {brand.logo}
+                {getBrandLogoElement(brand.name, brand.logo_url)}
               </div>
             ))}
           </div>

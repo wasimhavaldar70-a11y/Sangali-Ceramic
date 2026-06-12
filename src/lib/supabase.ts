@@ -122,6 +122,14 @@ export interface DivisionCategory {
   created_at?: string;
 }
 
+export interface BrandLogo {
+  id: string;
+  name: string;
+  logo_url?: string;
+  display_order: number;
+  created_at?: string;
+}
+
 // Database APIs
 export const dbService = {
   // Authentication (Uses Supabase SSR)
@@ -315,7 +323,44 @@ export const dbService = {
     const supabase = createClient();
     const { data, error } = await supabase.from('product_divisions').select('*').order('display_order', { ascending: true });
     if (error) console.error(error);
-    return data || [];
+    if (data && data.length > 0) {
+      return data;
+    }
+    return [
+      {
+        id: 'div-tiles',
+        badge_text: 'Core Collection',
+        title: 'Premium Tiles',
+        heading: 'Find The Perfect Tile For Every Space',
+        description: 'Discover our curated vitrified slabs, marble textures, and designer ceramic collections crafted for modern spaces and elite architectures.',
+        link_text: 'Explore Tiles',
+        link_url: '/tiles',
+        image_url: '/premium-tiles.jpg',
+        display_order: 1
+      },
+      {
+        id: 'div-bath',
+        badge_text: 'Authorized Seller',
+        title: 'Luxury Sanitaryware',
+        heading: 'Authorized Seller of Jaquar Group',
+        description: 'Upgrade your spaces with luxury sanitaryware, wellness systems, designer showers, and sleek fittings from the premium Jaquar Group.',
+        link_text: 'Explore Bath',
+        link_url: '/bath-fittings',
+        image_url: 'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=800&q=80',
+        display_order: 2
+      },
+      {
+        id: 'div-doors',
+        badge_text: 'Official Distributor',
+        title: 'Tata Pravesh Doors',
+        heading: 'Distributor in Western Maharashtra & Goa',
+        description: 'Official distributor of Tata Pravesh doors in Western Maharashtra and Goa. Experience the unyielding strength of steel combined with the elegant wooden finish.',
+        link_text: 'Explore Tata Doors',
+        link_url: '/doors',
+        image_url: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80',
+        display_order: 3
+      }
+    ];
   },
 
   async saveDivision(division: Partial<ProductDivision>): Promise<ProductDivision | null> {
@@ -369,6 +414,51 @@ export const dbService = {
   async deleteDivisionCategory(id: string): Promise<boolean> {
     const supabase = createClient();
     const { error } = await supabase.from('division_categories').delete().eq('id', id);
+    if (error) console.error(error);
+    return !error;
+  },
+
+  // Brand Logos
+  async getBrands(): Promise<BrandLogo[]> {
+    const supabase = createClient();
+    const { data, error } = await supabase.from('brand_logos').select('*').order('display_order', { ascending: true });
+    if (error) console.error(error);
+    if (data && data.length > 0) {
+      return data;
+    }
+    // Fallback list of default brands in the exact display order
+    return [
+      { id: 'b-1', name: 'Jaquar', display_order: 1 },
+      { id: 'b-2', name: 'Artize', display_order: 2 },
+      { id: 'b-3', name: 'Fenesta', display_order: 3 },
+      { id: 'b-4', name: 'Johnson', display_order: 4 },
+      { id: 'b-5', name: 'Nitco', display_order: 5 },
+      { id: 'b-6', name: 'Oasis', display_order: 6 },
+      { id: 'b-7', name: 'Essco', display_order: 7 },
+      { id: 'b-8', name: 'Tata Pravesh', display_order: 8 },
+      { id: 'b-9', name: 'RAK Ceramics', display_order: 9 },
+      { id: 'b-10', name: 'Franke', display_order: 10 },
+      { id: 'b-11', name: 'Carysil', display_order: 11 },
+      { id: 'b-12', name: 'Antiek', display_order: 12 },
+      { id: 'b-13', name: 'Nirali BG', display_order: 13 },
+      { id: 'b-14', name: 'Ardex Endura', display_order: 14 }
+    ];
+  },
+
+  async saveBrand(brand: Partial<BrandLogo>): Promise<BrandLogo | null> {
+    const supabase = createClient();
+    if (brand.id && brand.id.startsWith('b-')) delete brand.id;
+    const { data, error } = await supabase.from('brand_logos').upsert(brand).select().single();
+    if (error) {
+      console.error(error);
+      return null;
+    }
+    return data;
+  },
+
+  async deleteBrand(id: string): Promise<boolean> {
+    const supabase = createClient();
+    const { error } = await supabase.from('brand_logos').delete().eq('id', id);
     if (error) console.error(error);
     return !error;
   }
