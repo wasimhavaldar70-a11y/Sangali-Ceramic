@@ -341,9 +341,9 @@ export const dbService = {
       {
         id: 'div-bath',
         badge_text: 'Authorized Seller',
-        title: 'Luxury Sanitaryware',
+        title: 'Luxury Bathroom Products',
         heading: 'Authorized Seller of Jaquar Group',
-        description: 'Upgrade your spaces with luxury sanitaryware, wellness systems, designer showers, and sleek fittings from the premium Jaquar Group.',
+        description: 'Upgrade your spaces with luxury bath fittings, sanitaryware, wellness systems, designer showers, and sleek solutions from the premium Jaquar Group.',
         link_text: 'Explore Bath',
         link_url: '/bath-fittings',
         image_url: 'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=800&q=80',
