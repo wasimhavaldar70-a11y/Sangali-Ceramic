@@ -244,13 +244,98 @@ export const dbService = {
 
   // Projects
   async getProjects(): Promise<Project[]> {
-    const supabase = createClient();
-    const { data, error } = await supabase.from('projects').select('*');
-    if (error) console.error(error);
-    return data || [];
+    const isMock = !process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (isMock) {
+      if (typeof window !== 'undefined') {
+        const local = localStorage.getItem('mock_projects');
+        if (local) {
+          return JSON.parse(local);
+        }
+      }
+    } else {
+      const supabase = createClient();
+      const { data, error } = await supabase.from('projects').select('*');
+      if (!error && data && data.length > 0) {
+        return data;
+      }
+    }
+
+    const defaults: Project[] = [
+      {
+        id: 'proj-1',
+        title: 'The Grand Heritage Villa',
+        slug: 'the-grand-heritage-villa',
+        category: 'Villas',
+        image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80',
+        description: 'Luxury travertine floors and custom marble wall panels styled for a modern classical aesthetic.',
+        location: 'Pune, Maharashtra',
+        year: 2025,
+        is_featured: true,
+        status: 'published'
+      },
+      {
+        id: 'proj-2',
+        title: 'Skyline Penthouse Suites',
+        slug: 'skyline-penthouse-suites',
+        category: 'Apartments',
+        image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80',
+        description: 'Large-format glazed vitrified slabs with seamless edge profiles across kitchen and living spaces.',
+        location: 'Mumbai, Maharashtra',
+        year: 2024,
+        is_featured: true,
+        status: 'published'
+      },
+      {
+        id: 'proj-3',
+        title: 'Opal Wellness Resort',
+        slug: 'opal-wellness-resort',
+        category: 'Hotels',
+        image: 'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=800&q=80',
+        description: 'Premium anti-skid wooden textured tile decks and complete luxury bath fittings from Jaquar wellness systems.',
+        location: 'Calangute, Goa',
+        year: 2025,
+        is_featured: true,
+        status: 'published'
+      }
+    ];
+
+    if (isMock && typeof window !== 'undefined') {
+      localStorage.setItem('mock_projects', JSON.stringify(defaults));
+    }
+    return defaults;
   },
 
   async saveProject(project: Partial<Project>): Promise<Project | null> {
+    const isMock = !process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (isMock) {
+      if (typeof window !== 'undefined') {
+        const local = localStorage.getItem('mock_projects');
+        let current: Project[] = local ? JSON.parse(local) : [];
+        if (current.length === 0) {
+          current = await this.getProjects();
+        }
+        
+        const toSave = { ...project } as Project;
+        if (!toSave.id) {
+          toSave.id = 'proj-' + Date.now();
+        }
+        if (!toSave.slug) {
+          toSave.slug = toSave.title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        }
+        
+        const index = current.findIndex(p => p.id === toSave.id);
+        if (index >= 0) {
+          current[index] = toSave;
+        } else {
+          current.push(toSave);
+        }
+        
+        localStorage.setItem('mock_projects', JSON.stringify(current));
+        return toSave;
+      }
+      return null;
+    }
+
     const supabase = createClient();
     if (project.id && project.id.startsWith('proj-')) delete project.id;
     const { data, error } = await supabase.from('projects').upsert(project).select().single();
@@ -262,6 +347,20 @@ export const dbService = {
   },
 
   async deleteProject(id: string): Promise<boolean> {
+    const isMock = !process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (isMock) {
+      if (typeof window !== 'undefined') {
+        const local = localStorage.getItem('mock_projects');
+        if (local) {
+          const current: Project[] = JSON.parse(local);
+          const filtered = current.filter(p => p.id !== id);
+          localStorage.setItem('mock_projects', JSON.stringify(filtered));
+          return true;
+        }
+      }
+      return false;
+    }
+
     const supabase = createClient();
     const { error } = await supabase.from('projects').delete().eq('id', id);
     if (error) console.error(error);
