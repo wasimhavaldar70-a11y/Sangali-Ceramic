@@ -432,7 +432,7 @@ export default function HomePage() {
             Transform Spaces <br />
             <span className="text-gold-gradient">With Premium Tiles</span>
           </h1>
-          <p className="text-white text-base md:text-xl font-medium tracking-wide max-w-2xl mb-10 leading-relaxed luxury-shadow-text">
+          <p className="text-white text-base md:text-xl font-medium tracking-wide max-w-2xl mb-5 leading-relaxed luxury-shadow-text">
             Crafted for modern homes, elite architects, and luxury commercial spaces.
           </p>
 
