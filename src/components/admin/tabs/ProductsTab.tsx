@@ -72,7 +72,7 @@ export function ProductsTab({ products, divisions = [], divisionCategories = [],
     const productData: Product = {
       id: editingProduct ? editingProduct.id : `prod-${Date.now()}`,
       name: pName,
-      slug: pName.toLowerCase().replace(/ /g, '-'),
+      slug: editingProduct ? editingProduct.slug : pName.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Math.floor(Math.random() * 10000),
       sku: pSku,
       size: pSize,
       finish: pFinish,
