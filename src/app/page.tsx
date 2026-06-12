@@ -439,13 +439,13 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row gap-3.5 w-full justify-center items-center">
             <a
               href="#collections"
-              className="px-6 py-2.5 bg-gold-gradient text-dark-black font-semibold text-xs uppercase tracking-widest hover:bg-gold-gradient-hover hover:scale-[1.02] transition-all duration-300 shadow-lg text-center"
+              className="px-4 py-2 bg-gold-gradient text-dark-black font-bold text-[10px] uppercase tracking-[0.25em] hover:bg-gold-gradient-hover hover:scale-[1.02] transition-all duration-300 shadow-lg text-center"
             >
               Explore Collection
             </a>
             <button
               onClick={() => triggerQuote()}
-              className="px-6 py-2.5 border border-white/30 text-white font-semibold text-xs uppercase tracking-widest hover:bg-white hover:text-dark-black hover:scale-[1.02] transition-all duration-300 text-center"
+              className="px-4 py-2 border border-white/30 text-white font-bold text-[10px] uppercase tracking-[0.25em] hover:bg-white hover:text-dark-black hover:scale-[1.02] transition-all duration-300 text-center"
             >
               Get Free Consultation
             </button>
