@@ -857,6 +857,9 @@ export const dbService = {
       return true;
     }
 
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+    if (!isUuid) return true;
+
     const supabase = createClient();
     const { error } = await supabase.from('product_divisions').delete().eq('id', id);
     if (error) console.error(error);
@@ -930,6 +933,9 @@ export const dbService = {
       return true;
     }
 
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+    if (!isUuid) return true;
+
     const supabase = createClient();
     const { error } = await supabase.from('division_categories').delete().eq('id', id);
     if (error) console.error(error);
@@ -985,6 +991,9 @@ export const dbService = {
       return true;
     }
 
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+    if (!isUuid) return true;
+
     const supabase = createClient();
     const { error } = await supabase.from('brand_logos').delete().eq('id', id);
     if (error) console.error(error);
@@ -1038,6 +1047,9 @@ export const dbService = {
       saveLocal('mock_hero_slides', filtered);
       return true;
     }
+
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+    if (!isUuid) return true;
 
     const supabase = createClient();
     const { error } = await supabase.from('hero_slides').delete().eq('id', id);
