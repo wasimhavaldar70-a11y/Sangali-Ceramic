@@ -430,9 +430,9 @@ const getOrSetLocal = <T>(key: string, defaults: T[]): T[] => {
   if (typeof window === 'undefined') {
     return defaults;
   }
-  const data = localStorage.getItem(key);
+  const data = window.localStorage.getItem(key);
   if (!data) {
-    localStorage.setItem(key, JSON.stringify(defaults));
+    window.localStorage.setItem(key, JSON.stringify(defaults));
     return defaults;
   }
   try {
@@ -444,7 +444,7 @@ const getOrSetLocal = <T>(key: string, defaults: T[]): T[] => {
 
 const saveLocal = <T>(key: string, data: T[]): void => {
   if (typeof window !== 'undefined') {
-    localStorage.setItem(key, JSON.stringify(data));
+    window.localStorage.setItem(key, JSON.stringify(data));
   }
 };
 
