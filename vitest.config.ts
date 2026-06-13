@@ -5,7 +5,7 @@ import path from 'path'
 export default defineConfig({
   plugins: [react()],
   esbuild: {
-    // @ts-ignore
+    // @ts-expect-error: tsconfigRaw expects a specific format
     tsconfigRaw: {
       compilerOptions: {
         jsx: 'react-jsx'
