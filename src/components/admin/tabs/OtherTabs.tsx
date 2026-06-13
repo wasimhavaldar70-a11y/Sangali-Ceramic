@@ -1,7 +1,7 @@
 'use client';
 import { motion } from 'framer-motion';
 import { Users, Phone, Mail, BarChart3, ShieldAlert, Save, CheckCircle, Clock } from 'lucide-react';
-import { Lead, dbService } from '@/lib/supabase';
+import { Lead, dbService } from '@/lib/db';
 import { useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 

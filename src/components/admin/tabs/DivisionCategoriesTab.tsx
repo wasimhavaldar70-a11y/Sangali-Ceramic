@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { Edit, Trash2, Plus, X, Save, Layers } from 'lucide-react';
-import { dbService, DivisionCategory } from '@/lib/supabase';
+import { dbService, DivisionCategory } from '@/lib/db';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export function DivisionCategoriesTab({ showToast }: { showToast: (msg: string, type?: 'success'|'error') => void }) {

@@ -7,7 +7,7 @@ import {
   ArrowRight, Search, SlidersHorizontal, Eye, FileText, Star,
   Shield, Droplet, Flame, Settings, Zap, Truck, MessageSquare, Phone, MapPin, Check
 } from 'lucide-react';
-import { dbService, Product, Collection, Project, Testimonial, Catalogue, ProductDivision, BrandLogo, HeroSlide } from '@/lib/supabase';
+import { dbService, Product, Collection, Project, Testimonial, Catalogue, ProductDivision, BrandLogo, HeroSlide } from '@/lib/db';
 
 const BRAND_LOGOS = [
   {

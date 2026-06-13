@@ -1,6 +1,6 @@
 'use client';
 
-import { Product } from '@/lib/supabase';
+import { Product } from '@/lib/db';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Eye } from 'lucide-react';

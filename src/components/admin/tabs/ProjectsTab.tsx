@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FolderOpen, Plus, Edit2, Trash2, X, Save, Search, AlertTriangle } from 'lucide-react';
-import { Project, dbService } from '@/lib/supabase';
+import { Project, dbService } from '@/lib/db';
 
 interface ProjectsTabProps {
   projects: Project[];

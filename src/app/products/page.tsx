@@ -8,7 +8,7 @@ import {
   ArrowRight, Search, SlidersHorizontal, Eye, ShieldAlert,
   Compass, ArrowLeft, RefreshCw, Layers, Check, ChevronRight
 } from 'lucide-react';
-import { dbService, Product } from '@/lib/supabase';
+import { dbService, Product } from '@/lib/db';
 
 
 export default function ProductsPage() {

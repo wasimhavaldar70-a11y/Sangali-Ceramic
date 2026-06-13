@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BrandLogo, dbService } from '@/lib/supabase';
+import { BrandLogo, dbService } from '@/lib/db';
 import { Edit, Trash2, Plus, X, Save, Image as ImageIcon } from 'lucide-react';
 
 interface BrandsTabProps {

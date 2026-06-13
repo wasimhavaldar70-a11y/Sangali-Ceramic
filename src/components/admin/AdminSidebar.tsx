@@ -1,5 +1,5 @@
 import { LayoutDashboard, ShoppingBag, MapPin, FolderOpen, Users, ShieldAlert, Database, Layers, Award, Image as ImageIcon } from 'lucide-react';
-import { Product, Dealer, Project, Lead } from '@/lib/supabase';
+import { Product, Dealer, Project, Lead } from '@/lib/db';
 
 interface AdminSidebarProps {
   activeTab: 'analytics' | 'products' | 'dealers' | 'projects' | 'leads' | 'divisions' | 'division-categories' | 'profile' | 'brands' | 'hero-slides';

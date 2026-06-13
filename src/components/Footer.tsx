@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Mail, Phone, MapPin, Compass, Send } from 'lucide-react';
-import { dbService } from '@/lib/supabase';
+import { dbService } from '@/lib/db';
 
 export default function Footer() {
   const [email, setEmail] = useState('');

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { MessageSquare, X, ArrowRight, CheckCircle, FileText } from 'lucide-react';
-import { dbService } from '@/lib/supabase';
+import { dbService } from '@/lib/db';
 import { leadSchema } from '@/lib/validations/lead';
 
 export default function LeadActions() {

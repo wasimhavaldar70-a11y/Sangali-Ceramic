@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Compass, LogIn, ShieldAlert } from 'lucide-react';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/lib/db/client';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');

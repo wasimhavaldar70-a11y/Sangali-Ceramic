@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-import { dbService } from '@/lib/supabase';
+import { dbService } from '@/lib/db';
 
 export const revalidate = 0;
 

@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next';
-import { dbService } from '@/lib/supabase';
+import { dbService } from '@/lib/db';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const products = await dbService.getProducts();

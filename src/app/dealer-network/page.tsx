@@ -6,7 +6,7 @@ import {
   ArrowLeft, Search, MapPin, Phone, Mail, Compass, Star,
   CheckCircle2, ArrowRight, UserPlus, Info
 } from 'lucide-react';
-import { dbService, Dealer } from '@/lib/supabase';
+import { dbService, Dealer } from '@/lib/db';
 import { leadSchema } from '@/lib/validations/lead';
 
 export default function DealerNetworkPage() {

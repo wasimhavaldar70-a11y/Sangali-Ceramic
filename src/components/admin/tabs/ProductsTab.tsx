@@ -3,7 +3,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingBag, Plus, Edit2, Trash2, X, Save, Search, AlertTriangle } from 'lucide-react';
-import { Product, dbService, DivisionCategory, ProductDivision } from '@/lib/supabase';
+import { Product, dbService, DivisionCategory, ProductDivision } from '@/lib/db';
 
 interface ProductsTabProps {
   products: Product[];

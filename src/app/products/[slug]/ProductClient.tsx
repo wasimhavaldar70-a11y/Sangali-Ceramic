@@ -8,7 +8,7 @@ import {
   ArrowLeft, Check, Compass, MessageSquare, Phone, ChevronRight,
   ShieldAlert, RefreshCw, LayoutGrid, CheckCircle2, ChevronLeft
 } from 'lucide-react';
-import { dbService, Product } from '@/lib/supabase';
+import { dbService, Product } from '@/lib/db';
 import { leadSchema } from '@/lib/validations/lead';
 
 export default function ProductClient({ initialProduct, relatedProducts }: { initialProduct: Product, relatedProducts: Product[] }) {

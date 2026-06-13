@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ArrowUpRight } from 'lucide-react';
-import { dbService, Product, Dealer, Lead, Project, ProductDivision, DivisionCategory, BrandLogo, HeroSlide } from '@/lib/supabase';
+import { dbService, Product, Dealer, Lead, Project, ProductDivision, DivisionCategory, BrandLogo, HeroSlide } from '@/lib/db';
 
 // Components
 import { Toast } from '@/components/admin/Toast';

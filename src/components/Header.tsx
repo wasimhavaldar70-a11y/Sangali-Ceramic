@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Search, Menu, X, ArrowRight, Compass } from 'lucide-react';
+import { Search, Menu, X, ArrowRight, Compass, ChevronDown } from 'lucide-react';
+import { dbService, DivisionCategory } from '@/lib/db';
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -11,7 +12,20 @@ export default function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeSection, setActiveSection] = useState('hero');
+  const [divisionCategories, setDivisionCategories] = useState<DivisionCategory[]>([]);
   const pathname = usePathname();
+
+  useEffect(() => {
+    const fetchCats = async () => {
+      try {
+        const cats = await dbService.getDivisionCategories();
+        setDivisionCategories(cats);
+      } catch (err) {
+        console.error('Failed to load categories:', err);
+      }
+    };
+    fetchCats();
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -116,6 +130,10 @@ export default function Header() {
     }
   };
 
+  const tilesCats = divisionCategories.filter(cat => cat.page_slug === 'tiles');
+  const bathCats = divisionCategories.filter(cat => cat.page_slug === 'bath-fittings');
+  const doorsCats = divisionCategories.filter(cat => cat.page_slug === 'doors');
+
   return (
     <>
       <header
@@ -143,6 +161,108 @@ export default function Header() {
           <nav className="hidden xl:flex items-center gap-6">
             {navLinks.map((link) => {
               const isActive = checkIsActive(link.path);
+              if (link.name === 'Products') {
+                return (
+                  <div key={link.name} className="relative group py-2">
+                    <Link
+                      href={link.path}
+                      className={`text-xs tracking-widest uppercase transition-all duration-300 relative py-1 flex items-center gap-1 ${
+                        isActive
+                          ? 'text-primary-gold font-bold'
+                          : 'text-neutral-100 hover:text-white'
+                      }`}
+                    >
+                      {link.name}
+                      <ChevronDown className="w-3.5 h-3.5 transform group-hover:rotate-180 transition-transform duration-300" />
+                      {isActive && (
+                        <span className="absolute bottom-0 left-0 w-[calc(100%-14px)] h-[1px] bg-primary-gold" />
+                      )}
+                    </Link>
+
+                    {/* Mega Menu Dropdown */}
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-[680px] hidden group-hover:block transition-all duration-300 z-50">
+                      <div className="bg-charcoal/95 border border-white/10 p-6 shadow-2xl backdrop-blur-md rounded-xl grid grid-cols-3 gap-6 text-left">
+                        {/* Tiles Column */}
+                        <div className="space-y-4">
+                          <div className="border-b border-white/10 pb-2">
+                            <span className="text-[10px] tracking-[0.2em] uppercase font-bold text-primary-gold block">
+                              Premium Tiles
+                            </span>
+                          </div>
+                          <ul className="space-y-2">
+                            {tilesCats.length === 0 ? (
+                              <li className="text-[11px] text-white/40">Loading...</li>
+                            ) : (
+                              tilesCats.map(cat => (
+                                <li key={cat.id}>
+                                  <Link href={`/category/${cat.id}`} className="text-[11px] text-white/70 hover:text-primary-gold transition-colors block py-0.5">
+                                    {cat.name}
+                                  </Link>
+                                </li>
+                              ))
+                            )}
+                          </ul>
+                          <Link href="/tiles" className="text-[10px] text-white/50 hover:text-white transition-colors uppercase tracking-widest font-semibold inline-flex items-center gap-1 mt-2">
+                            View All Tiles <ArrowRight className="w-3 h-3" />
+                          </Link>
+                        </div>
+
+                        {/* Bath Column */}
+                        <div className="space-y-4">
+                          <div className="border-b border-white/10 pb-2">
+                            <span className="text-[10px] tracking-[0.2em] uppercase font-bold text-primary-gold block">
+                              Bathroom Products
+                            </span>
+                          </div>
+                          <ul className="space-y-2">
+                            {bathCats.length === 0 ? (
+                              <li className="text-[11px] text-white/40">Loading...</li>
+                            ) : (
+                              bathCats.map(cat => (
+                                <li key={cat.id}>
+                                  <Link href={`/category/${cat.id}`} className="text-[11px] text-white/70 hover:text-primary-gold transition-colors block py-0.5">
+                                    {cat.name}
+                                  </Link>
+                                </li>
+                              ))
+                            )}
+                          </ul>
+                          <Link href="/bath-fittings" className="text-[10px] text-white/50 hover:text-white transition-colors uppercase tracking-widest font-semibold inline-flex items-center gap-1 mt-2">
+                            View All Bath <ArrowRight className="w-3 h-3" />
+                          </Link>
+                        </div>
+
+                        {/* Doors Column */}
+                        <div className="space-y-4">
+                          <div className="border-b border-white/10 pb-2">
+                            <span className="text-[10px] tracking-[0.2em] uppercase font-bold text-primary-gold block">
+                              Tata Pravesh Doors
+                            </span>
+                          </div>
+                          <ul className="space-y-2">
+                            {doorsCats.length === 0 ? (
+                              <li className="text-[11px] text-white/40">Loading...</li>
+                            ) : (
+                              doorsCats.map(cat => (
+                                <li key={cat.id}>
+                                  <Link href={`/category/${cat.id}`} className="text-[11px] text-white/70 hover:text-primary-gold transition-colors block py-0.5">
+                                    {cat.name}
+                                  </Link>
+                                </li>
+                              ))
+                            )}
+                          </ul>
+                          <Link href="/doors" className="text-[10px] text-white/50 hover:text-white transition-colors uppercase tracking-widest font-semibold inline-flex items-center gap-1 mt-2">
+                            View All Doors <ArrowRight className="w-3 h-3" />
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              // Normal links
               return (
                 <Link
                   key={link.name}

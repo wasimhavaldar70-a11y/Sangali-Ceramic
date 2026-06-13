@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { HeroSlide, dbService } from '@/lib/supabase';
+import { HeroSlide, dbService } from '@/lib/db';
 import { Edit, Trash2, Plus, X, Save, Image as ImageIcon } from 'lucide-react';
 
 interface HeroSlidesTabProps {

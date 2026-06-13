@@ -7,7 +7,7 @@ import {
   ArrowLeft, Upload, RefreshCw, Layers, ZoomIn, Compass,
   Sliders, Download, Check, Save, Share2, HelpCircle, LayoutGrid
 } from 'lucide-react';
-import { dbService, Product } from '@/lib/supabase';
+import { dbService, Product } from '@/lib/db';
 
 // Preset room definitions
 const PRESET_ROOMS = [

@@ -1,4 +1,4 @@
-import { dbService } from '@/lib/supabase';
+import { dbService } from '@/lib/db';
 import ProductClient from './ProductClient';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';

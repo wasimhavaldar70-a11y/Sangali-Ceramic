@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ProductDivision, dbService } from '@/lib/supabase';
+import { ProductDivision, dbService } from '@/lib/db';
 import { Edit, Trash2, Plus, X, Save, Image as ImageIcon } from 'lucide-react';
 
 interface DivisionsTabProps {
