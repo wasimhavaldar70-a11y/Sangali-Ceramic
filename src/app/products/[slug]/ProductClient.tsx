@@ -268,7 +268,7 @@ export default function ProductClient({ initialProduct, relatedProducts }: { ini
               Get Custom Quote
             </button>
             <a
-              href={`https://wa.me/917058536371?text=Hi!%20I%27m%20inquiring%20about%20the%20${product.name}%20(${product.sku})%20on%20your%20website.%20Can%20you%20please%20send%20more%20details?`}
+              href={`https://wa.me/919284632524?text=Hi!%20I%27m%20inquiring%20about%20the%20${product.name}%20(${product.sku})%20on%20your%20website.%20Can%20you%20please%20send%20more%20details?`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex-1 py-4 border border-[#25D366] text-[#25D366] font-semibold uppercase tracking-wider text-xs hover:bg-[#25D366] hover:text-white transition-colors flex items-center justify-center gap-2"

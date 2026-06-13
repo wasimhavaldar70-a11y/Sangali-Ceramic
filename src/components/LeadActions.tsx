@@ -159,7 +159,7 @@ export default function LeadActions() {
       <div className="fixed bottom-8 right-8 z-40 flex flex-col gap-4">
         {/* WhatsApp Chat */}
         <a
-          href="https://wa.me/917058536371?text=Hi!%20I%27m%20interested%20in%20Sangli%20Ceramica%20Premium%20Tiles.%20Could%20you%20please%20share%20the%20latest%20pricing%20and%20catalogue?"
+          href="https://wa.me/919284632524?text=Hi!%20I%27m%20interested%20in%20Sangli%20Ceramica%20Premium%20Tiles.%20Could%20you%20please%20share%20the%20latest%20pricing%20and%20catalogue?"
           target="_blank"
           rel="noopener noreferrer"
           className="w-14 h-14 bg-[#25D366] text-white rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-110 relative group"

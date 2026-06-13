@@ -1012,7 +1012,7 @@ export default function HomePage() {
               Request Quote
             </button>
             <a
-              href="tel:+917058536371"
+              href="tel:+919284632524"
               className="px-8 py-3.5 border border-dark-black/20 text-dark-black hover:bg-dark-black hover:text-white font-semibold text-xs uppercase tracking-widest transition-all duration-300"
             >
               Contact Expert

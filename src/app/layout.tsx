@@ -75,7 +75,7 @@ export default function RootLayout({
               "name": "Sangli Ceramica",
               "image": "https://sangliceramicapremiumtiles.vercel.app/logo.png",
               "url": "https://sangliceramicapremiumtiles.vercel.app",
-              "telephone": "+917058536371",
+              "telephone": "+919284632524",
               "address": {
                 "@type": "PostalAddress",
                 "streetAddress": "Main Market Road",

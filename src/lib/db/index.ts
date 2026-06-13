@@ -203,12 +203,12 @@ const DEFAULT_TESTIMONIALS: Testimonial[] = [
 ];
 
 const DEFAULT_DEALERS: Dealer[] = [
-  { id: 'deal-1', name: 'Sangli Ceramica Gallery Pune', state: 'Maharashtra', city: 'Pune', address: 'Ishanya Mall, Yerawada', phone: '+91 70585 36371', email: 'pune@sangliceramica.com', coords: { lat: 18.552, lng: 73.882 } },
-  { id: 'deal-2', name: 'Luxe Tiles Mansion', state: 'Maharashtra', city: 'Mumbai', address: 'S.V. Road, Santacruz West', phone: '+91 70585 36371', email: 'mumbai@sangliceramica.com', coords: { lat: 19.082, lng: 72.839 } },
-  { id: 'deal-3', name: 'Architectural Surfaces', state: 'Karnataka', city: 'Bangalore', address: 'Indiranagar 100ft Road', phone: '+91 70585 36371', email: 'blr@sangliceramica.com', coords: { lat: 12.971, lng: 77.594 } },
-  { id: 'deal-4', name: 'Royal Stone & Tile', state: 'Delhi', city: 'Delhi', address: 'Kirti Nagar Industrial Area', phone: '+91 70585 36371', email: 'delhi@sangliceramica.com', coords: { lat: 28.613, lng: 77.209 } },
-  { id: 'deal-5', name: 'Elite Tiles & Sanitary', state: 'Tamil Nadu', city: 'Chennai', address: 'Nungambakkam High Road', phone: '+91 70585 36371', email: 'chennai@sangliceramica.com', coords: { lat: 13.082, lng: 80.270 } },
-  { id: 'deal-6', name: 'Vitrified Hub Ahmedabad', state: 'Gujarat', city: 'Ahmedabad', address: 'S.G. Highway', phone: '+91 70585 36371', email: 'ahmedabad@sangliceramica.com', coords: { lat: 23.022, lng: 72.571 } }
+  { id: 'deal-1', name: 'Sangli Ceramica Gallery Pune', state: 'Maharashtra', city: 'Pune', address: 'Ishanya Mall, Yerawada', phone: '+91 92846 32524', email: 'pune@sangliceramica.com', coords: { lat: 18.552, lng: 73.882 } },
+  { id: 'deal-2', name: 'Luxe Tiles Mansion', state: 'Maharashtra', city: 'Mumbai', address: 'S.V. Road, Santacruz West', phone: '+91 92846 32524', email: 'mumbai@sangliceramica.com', coords: { lat: 19.082, lng: 72.839 } },
+  { id: 'deal-3', name: 'Architectural Surfaces', state: 'Karnataka', city: 'Bangalore', address: 'Indiranagar 100ft Road', phone: '+91 92846 32524', email: 'blr@sangliceramica.com', coords: { lat: 12.971, lng: 77.594 } },
+  { id: 'deal-4', name: 'Royal Stone & Tile', state: 'Delhi', city: 'Delhi', address: 'Kirti Nagar Industrial Area', phone: '+91 92846 32524', email: 'delhi@sangliceramica.com', coords: { lat: 28.613, lng: 77.209 } },
+  { id: 'deal-5', name: 'Elite Tiles & Sanitary', state: 'Tamil Nadu', city: 'Chennai', address: 'Nungambakkam High Road', phone: '+91 92846 32524', email: 'chennai@sangliceramica.com', coords: { lat: 13.082, lng: 80.270 } },
+  { id: 'deal-6', name: 'Vitrified Hub Ahmedabad', state: 'Gujarat', city: 'Ahmedabad', address: 'S.G. Highway', phone: '+91 92846 32524', email: 'ahmedabad@sangliceramica.com', coords: { lat: 23.022, lng: 72.571 } }
 ];
 
 const DEFAULT_CATALOGUES: Catalogue[] = [
