@@ -145,13 +145,13 @@ export default function Header() {
       >
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <Compass className="w-8 h-8 text-primary-gold group-hover:rotate-45 transition-transform duration-500" />
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <Compass className="w-10 h-10 text-primary-gold group-hover:rotate-45 transition-transform duration-500" />
             <div className="flex flex-col">
-              <span className="font-display text-lg md:text-xl font-bold tracking-widest text-gold-gradient">
+              <span className="font-display text-xl md:text-2xl font-bold tracking-widest text-gold-gradient leading-tight">
                 SANGLI CERAMICA
               </span>
-              <span className="text-[9px] tracking-[0.3em] text-white/90 -mt-1">
+              <span className="text-[10px] md:text-[11px] tracking-[0.3em] text-white/90 mt-0.5">
                 PREMIUM TILES
               </span>
             </div>
