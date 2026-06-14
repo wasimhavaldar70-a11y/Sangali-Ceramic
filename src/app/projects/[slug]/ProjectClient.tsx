@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, ChevronRight, MapPin, Calendar, LayoutGrid } from 'lucide-react';
 import { Project, Product } from '@/lib/db';
-import { ProductCard } from '@/components/ProductCard';
+
 
 export default function ProjectClient({ project, usedProducts }: { project: Project, usedProducts: Product[] }) {
   const allImages = [project.image, ...(project.gallery_images || [])].filter(Boolean);
@@ -112,8 +112,42 @@ export default function ProjectClient({ project, usedProducts }: { project: Proj
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {usedProducts.map(product => (
-              <ProductCard key={product.id} product={product} />
+            {usedProducts.map(prod => (
+              <div key={prod.id} className="bg-charcoal border border-white/5 group flex flex-col h-full hover:border-primary-gold/50 transition-colors duration-300">
+                <div className="relative h-64 overflow-hidden bg-dark-black flex items-center justify-center p-8">
+                  <div className="absolute inset-0 bg-gradient-to-t from-dark-black/50 to-transparent z-10" />
+                  {prod.images[0] ? (
+                    <Image
+                      src={prod.images[0]}
+                      alt={prod.name}
+                      fill className="w-full h-full object-contain filter drop-shadow-2xl transition-transform duration-700 group-hover:scale-110 relative z-20"
+                    />
+                  ) : (
+                    <div className="text-white/20 italic relative z-20">No Image</div>
+                  )}
+                </div>
+
+                <div className="p-6 flex flex-col justify-between flex-grow">
+                  <div>
+                    <span className="text-[10px] text-white/80 tracking-widest uppercase font-semibold">{prod.sku}</span>
+                    <h3 className="font-display text-lg font-bold text-white mt-1 hover:text-primary-gold transition-colors duration-300">
+                      <Link href={`/products/${prod.id}`}>{prod.name}</Link>
+                    </h3>
+                    <p className="text-white text-xs mt-2 flex gap-4">
+                      <span>Size: <strong>{prod.size}</strong></span>
+                      <span>Finish: <strong>{prod.finish}</strong></span>
+                    </p>
+                  </div>
+                  <div className="mt-6 pt-4 border-t border-white/15">
+                    <Link
+                      href={`/products/${prod.id}`}
+                      className="py-2.5 w-full bg-white/10 hover:bg-white/20 text-white text-xs uppercase tracking-wider font-bold transition-colors flex items-center justify-center gap-1.5"
+                    >
+                      View Product
+                    </Link>
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         </section>
