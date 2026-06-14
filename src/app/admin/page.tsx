@@ -221,7 +221,7 @@ export default function AdminPage() {
           {/* Subtle background glow effect */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-primary-gold/5 blur-[100px] rounded-full pointer-events-none"></div>
 
-          {activeTab === 'analytics' && <AnalyticsTab data={{ products: products.length, dealers: dealers.length, newLeads: newLeadsCount, closedLeads: wonLeadsCount }} />}
+          {activeTab === 'analytics' && <AnalyticsTab data={{ products: products.length, dealers: dealers.length, newLeads: newLeadsCount }} />}
           {activeTab === 'products' && <ProductsTab products={products} divisions={divisions} divisionCategories={divisionCategories} refreshData={loadDashboardData} showToast={showToast} />}
           {activeTab === 'divisions' && <DivisionsTab divisions={divisions} refreshData={loadDashboardData} showToast={showToast} />}
           {activeTab === 'hero-slides' && <HeroSlidesTab slides={heroSlides} refreshData={loadDashboardData} showToast={showToast} />}

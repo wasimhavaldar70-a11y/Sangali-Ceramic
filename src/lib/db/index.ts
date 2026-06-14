@@ -809,21 +809,24 @@ export const dbService = {
     return !error;
   },
 
-  async deleteLead(id: string): Promise<boolean> {
+  async deleteLead(id: string): Promise<{ success: boolean; error?: string }> {
     if (isMock) {
       const list = getOrSetLocal<Lead>('mock_leads', []);
       const filtered = list.filter(l => l.id !== id);
       saveLocal('mock_leads', filtered);
-      return true;
+      return { success: true };
     }
 
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-    if (!isUuid) return true;
+    if (!isUuid) return { success: true };
 
     const supabase = createClient();
     const { error } = await supabase.from('leads').delete().eq('id', id);
-    if (error) console.error(error);
-    return !error;
+    if (error) {
+      console.error(error);
+      return { success: false, error: error.message };
+    }
+    return { success: true };
   },
 
   // Product Divisions

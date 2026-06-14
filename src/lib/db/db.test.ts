@@ -104,8 +104,8 @@ describe('dbService Unit Tests', () => {
       let leads = await dbService.getLeads()
       expect(leads.some(l => l.id === created!.id)).toBe(true)
 
-      const success = await dbService.deleteLead(created!.id)
-      expect(success).toBe(true)
+      const result = await dbService.deleteLead(created!.id)
+      expect(result.success).toBe(true)
 
       leads = await dbService.getLeads()
       expect(leads.some(l => l.id === created!.id)).toBe(false)

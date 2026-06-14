@@ -1,6 +1,6 @@
 'use client';
 import { motion } from 'framer-motion';
-import { Users, Phone, Mail, BarChart3, ShieldAlert, Save, CheckCircle, Clock, Trash2 } from 'lucide-react';
+import { Users, Phone, Mail, BarChart3, ShieldAlert, Clock, Trash2 } from 'lucide-react';
 import { Lead, dbService } from '@/lib/db';
 import { useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
@@ -41,15 +41,16 @@ export function LeadsTab({ leads, refreshData, showToast }: { leads: Lead[], ref
     if (!confirm('Are you sure you want to delete this enquiry?')) return;
     setIsDeleting(id);
     try {
-      const success = await dbService.deleteLead(id);
-      if (success) {
+      const result = await dbService.deleteLead(id);
+      if (result.success) {
         showToast('Enquiry deleted successfully.');
         refreshData();
       } else {
-        showToast('Failed to delete enquiry.', 'error');
+        showToast(`Failed to delete enquiry: ${result.error || 'Unknown database error'}. Check your Supabase RLS policies.`, 'error');
       }
-    } catch {
-      showToast('Error deleting enquiry.', 'error');
+    } catch (err) {
+      const errMsg = err instanceof Error ? err.message : String(err);
+      showToast(`Error deleting enquiry: ${errMsg}`, 'error');
     } finally {
       setIsDeleting(null);
     }
@@ -190,7 +191,7 @@ export function ProfileTab({ showToast }: { showToast: (msg: string, type?: 'suc
 }
 
 // --- ANALYTICS TAB ---
-export function AnalyticsTab({ data }: { data: { products: number, dealers: number, newLeads: number, closedLeads: number } }) {
+export function AnalyticsTab({ data }: { data: { products: number, dealers: number, newLeads: number } }) {
   // Mock timeseries data for visual flair
   const mockChartData = [
     { name: 'Mon', leads: 4, sales: 2400 },
@@ -216,12 +217,11 @@ export function AnalyticsTab({ data }: { data: { products: number, dealers: numb
         <BarChart3 className="w-5 h-5 text-primary-gold" /> System Analytics
       </h2>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         {[
           { label: 'Total Catalogue Slabs', value: `${data.products} Designs`, color: 'text-primary-gold' },
           { label: 'Showroom Outlets', value: `${data.dealers} Locations`, color: 'text-primary-gold' },
-          { label: 'New Customer Inquiries', value: `${data.newLeads} Active`, color: 'text-yellow-400' },
-          { label: 'Closed Deals', value: `${data.closedLeads} Completed`, color: 'text-green-400' }
+          { label: 'New Customer Inquiries', value: `${data.newLeads} Active`, color: 'text-yellow-400' }
         ].map(stat => (
           <motion.div whileHover={{ scale: 1.02 }} key={stat.label} className="bg-dark-black/40 p-5 border border-white/5 rounded-xl shadow-lg backdrop-blur-sm">
             <span className="text-[10px] text-white/40 uppercase tracking-widest block mb-2">{stat.label}</span>
