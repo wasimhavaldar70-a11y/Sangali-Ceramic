@@ -1038,7 +1038,7 @@ export const dbService = {
     return data || [];
   },
 
-  async saveHeroSlide(slide: Partial<HeroSlide>): Promise<HeroSlide | null> {
+  async saveHeroSlide(slide: Partial<HeroSlide>): Promise<{ success: boolean; data?: HeroSlide; error?: string }> {
     if (isMock) {
       const list = getOrSetLocal('mock_hero_slides', DEFAULT_HERO_SLIDES);
       const toSave = { ...slide } as HeroSlide;
@@ -1052,7 +1052,7 @@ export const dbService = {
         list.push(toSave);
       }
       saveLocal('mock_hero_slides', list);
-      return toSave;
+      return { success: true, data: toSave };
     }
 
     const supabase = createClient();
@@ -1065,25 +1065,28 @@ export const dbService = {
     const { data, error } = await supabase.from('hero_slides').upsert(slide).select().single();
     if (error) {
       console.error(error);
-      return null;
+      return { success: false, error: error.message };
     }
-    return data;
+    return { success: true, data: data || undefined };
   },
 
-  async deleteHeroSlide(id: string): Promise<boolean> {
+  async deleteHeroSlide(id: string): Promise<{ success: boolean; error?: string }> {
     if (isMock) {
       const list = getOrSetLocal('mock_hero_slides', DEFAULT_HERO_SLIDES);
       const filtered = list.filter(s => s.id !== id);
       saveLocal('mock_hero_slides', filtered);
-      return true;
+      return { success: true };
     }
 
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-    if (!isUuid) return false;
+    if (!isUuid) return { success: true };
 
     const supabase = createClient();
     const { error } = await supabase.from('hero_slides').delete().eq('id', id);
-    if (error) console.error(error);
-    return !error;
+    if (error) {
+      console.error(error);
+      return { success: false, error: error.message };
+    }
+    return { success: true };
   }
 };

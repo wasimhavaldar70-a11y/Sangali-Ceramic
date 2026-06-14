@@ -107,11 +107,13 @@ export function ProjectsTab({ projects, products, refreshData, showToast }: Proj
     } finally {
       setIsUploading(false);
     }
+  };
+
   const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
     setIsGalleryUploading(true);
     
-    const newImages = [];
+    const newImages: string[] = [];
     try {
       for (let i = 0; i < e.target.files.length; i++) {
         const file = e.target.files[i];

@@ -37,16 +37,17 @@ export function HeroSlidesTab({ slides, refreshData, showToast }: HeroSlidesTabP
 
     setIsSaving(true);
     try {
-      const saved = await dbService.saveHeroSlide(editingSlide as Partial<HeroSlide>);
-      if (saved) {
+      const result = await dbService.saveHeroSlide(editingSlide as Partial<HeroSlide>);
+      if (result.success) {
         showToast('Hero slide saved successfully');
         setEditingSlide(null);
         refreshData();
       } else {
-        showToast('Failed to save hero slide', 'error');
+        showToast(`Failed to save hero slide: ${result.error || 'Unknown database error'}. Check your Supabase RLS policies and table schema.`, 'error');
       }
     } catch (err) {
-      showToast('Error saving hero slide', 'error');
+      const errMsg = err instanceof Error ? err.message : String(err);
+      showToast(`Error saving hero slide: ${errMsg}`, 'error');
     } finally {
       setIsSaving(false);
     }
@@ -57,15 +58,16 @@ export function HeroSlidesTab({ slides, refreshData, showToast }: HeroSlidesTabP
     
     setIsDeleting(id);
     try {
-      const success = await dbService.deleteHeroSlide(id);
-      if (success) {
+      const result = await dbService.deleteHeroSlide(id);
+      if (result.success) {
         showToast('Hero slide deleted successfully');
         refreshData();
       } else {
-        showToast('Failed to delete hero slide', 'error');
+        showToast(`Failed to delete hero slide: ${result.error || 'Unknown database error'}. Check your Supabase RLS policies.`, 'error');
       }
     } catch (err) {
-      showToast('Error deleting hero slide', 'error');
+      const errMsg = err instanceof Error ? err.message : String(err);
+      showToast(`Error deleting hero slide: ${errMsg}`, 'error');
     } finally {
       setIsDeleting(null);
     }
