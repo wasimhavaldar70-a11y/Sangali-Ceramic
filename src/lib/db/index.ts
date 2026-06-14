@@ -608,23 +608,11 @@ export const dbService = {
     }
     const supabase = createClient();
     const { data, error } = await supabase.from('projects').select('*');
-    if (!error && data && data.length > 0) {
-      return data;
+    if (error) {
+      console.error('Error fetching projects:', error);
+      return [];
     }
-    
-    // Seed default projects if DB table is empty
-    if (!error && data && data.length === 0) {
-      try {
-        const seedData = DEFAULT_PROJECTS.map(({ id, ...rest }) => rest);
-        const { data: seeded, error: seedError } = await supabase.from('projects').insert(seedData).select();
-        if (!seedError && seeded && seeded.length > 0) {
-          return seeded;
-        }
-      } catch (seedErr) {
-        console.error('Failed to seed default projects:', seedErr);
-      }
-    }
-    return DEFAULT_PROJECTS;
+    return data || [];
   },
 
   async getProjectBySlug(slug: string): Promise<Project | null> {
@@ -685,7 +673,7 @@ export const dbService = {
     }
 
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-    if (!isUuid) return true;
+    if (!isUuid) return false;
 
     const supabase = createClient();
     const { error } = await supabase.from('projects').delete().eq('id', id);
@@ -1043,24 +1031,11 @@ export const dbService = {
     }
     const supabase = createClient();
     const { data, error } = await supabase.from('hero_slides').select('*').order('display_order', { ascending: true });
-    
-    if (!error && data && data.length > 0) {
-      return data;
+    if (error) {
+      console.error('Error fetching hero slides:', error);
+      return [];
     }
-    
-    // Seed default hero slides if DB table is empty
-    if (!error && data && data.length === 0) {
-      try {
-        const seedData = DEFAULT_HERO_SLIDES.map(({ id, ...rest }) => rest);
-        const { data: seeded, error: seedError } = await supabase.from('hero_slides').insert(seedData).select();
-        if (!seedError && seeded && seeded.length > 0) {
-          return seeded;
-        }
-      } catch (seedErr) {
-        console.error('Failed to seed default hero slides:', seedErr);
-      }
-    }
-    return DEFAULT_HERO_SLIDES;
+    return data || [];
   },
 
   async saveHeroSlide(slide: Partial<HeroSlide>): Promise<HeroSlide | null> {
@@ -1081,7 +1056,12 @@ export const dbService = {
     }
 
     const supabase = createClient();
-    if (slide.id && slide.id.startsWith('slide-')) delete slide.id;
+    if (slide.id) {
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slide.id);
+      if (!isUuid) {
+        delete slide.id;
+      }
+    }
     const { data, error } = await supabase.from('hero_slides').upsert(slide).select().single();
     if (error) {
       console.error(error);
@@ -1097,6 +1077,9 @@ export const dbService = {
       saveLocal('mock_hero_slides', filtered);
       return true;
     }
+
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+    if (!isUuid) return false;
 
     const supabase = createClient();
     const { error } = await supabase.from('hero_slides').delete().eq('id', id);

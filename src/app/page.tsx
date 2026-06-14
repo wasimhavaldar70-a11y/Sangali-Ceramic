@@ -634,7 +634,7 @@ export default function HomePage() {
           ].map((item, idx) => (
             <div
               key={idx}
-              className="luxury-card p-8 flex flex-col items-start"
+              className="luxury-card p-8 flex flex-col items-center text-center"
             >
               <div className="mb-6 bg-dark-black p-4 border border-white/15 hover:rotate-[360deg] transition-transform duration-700">
                 {item.icon}
