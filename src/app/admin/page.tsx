@@ -228,7 +228,7 @@ export default function AdminPage() {
           {activeTab === 'division-categories' && <DivisionCategoriesTab showToast={showToast} />}
           {activeTab === 'brands' && <BrandsTab brands={brands} refreshData={loadDashboardData} showToast={showToast} />}
           {activeTab === 'dealers' && <DealersTab dealers={dealers} refreshData={loadDashboardData} showToast={showToast} />}
-          {activeTab === 'projects' && <ProjectsTab projects={projects} refreshData={loadDashboardData} showToast={showToast} />}
+          {activeTab === 'projects' && <ProjectsTab projects={projects} products={products} refreshData={loadDashboardData} showToast={showToast} />}
           {activeTab === 'leads' && <LeadsTab leads={leads} refreshData={loadDashboardData} showToast={showToast} />}
           {activeTab === 'profile' && <ProfileTab showToast={showToast} />}
         </div>

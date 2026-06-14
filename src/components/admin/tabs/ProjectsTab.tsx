@@ -6,11 +6,12 @@ import { Project, dbService } from '@/lib/db';
 
 interface ProjectsTabProps {
   projects: Project[];
+  products: import('@/lib/db').Product[];
   refreshData: () => void;
   showToast: (msg: string, type?: 'success' | 'error') => void;
 }
 
-export function ProjectsTab({ projects, refreshData, showToast }: ProjectsTabProps) {
+export function ProjectsTab({ projects, products, refreshData, showToast }: ProjectsTabProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
@@ -26,7 +27,10 @@ export function ProjectsTab({ projects, refreshData, showToast }: ProjectsTabPro
   const [year, setYear] = useState<number>(new Date().getFullYear());
   const [image, setImage] = useState('');
   const [description, setDescription] = useState('');
+  const [galleryImages, setGalleryImages] = useState<string[]>([]);
+  const [productIds, setProductIds] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [isGalleryUploading, setIsGalleryUploading] = useState(false);
 
   const openForm = (proj: Project | null = null) => {
     if (proj) {
@@ -37,6 +41,8 @@ export function ProjectsTab({ projects, refreshData, showToast }: ProjectsTabPro
       setYear(proj.year || new Date().getFullYear());
       setImage(proj.image || '');
       setDescription(proj.description || '');
+      setGalleryImages(proj.gallery_images || []);
+      setProductIds(proj.product_ids || []);
     } else {
       setEditingProject(null);
       setTitle('');
@@ -45,6 +51,8 @@ export function ProjectsTab({ projects, refreshData, showToast }: ProjectsTabPro
       setYear(new Date().getFullYear());
       setImage('');
       setDescription('');
+      setGalleryImages([]);
+      setProductIds([]);
     }
     setModalOpen(true);
   };
@@ -62,7 +70,9 @@ export function ProjectsTab({ projects, refreshData, showToast }: ProjectsTabPro
       location,
       year,
       image,
-      description
+      description,
+      gallery_images: galleryImages,
+      product_ids: productIds
     };
     
     try {
@@ -97,6 +107,38 @@ export function ProjectsTab({ projects, refreshData, showToast }: ProjectsTabPro
     } finally {
       setIsUploading(false);
     }
+  const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    setIsGalleryUploading(true);
+    
+    const newImages = [];
+    try {
+      for (let i = 0; i < e.target.files.length; i++) {
+        const file = e.target.files[i];
+        const path = `project_gallery_${Date.now()}_${i}_${file.name}`;
+        const url = await dbService.uploadFile('projects', file, path);
+        if (url) newImages.push(url);
+      }
+      
+      if (newImages.length > 0) {
+        setGalleryImages(prev => [...prev, ...newImages]);
+        showToast(`Uploaded ${newImages.length} gallery images.`);
+      }
+    } catch (err) {
+      showToast('Error uploading gallery images.', 'error');
+    } finally {
+      setIsGalleryUploading(false);
+    }
+  };
+
+  const removeGalleryImage = (idx: number) => {
+    setGalleryImages(prev => prev.filter((_, i) => i !== idx));
+  };
+
+  const toggleProduct = (pid: string) => {
+    setProductIds(prev => 
+      prev.includes(pid) ? prev.filter(id => id !== pid) : [...prev, pid]
+    );
   };
 
   const executeDelete = async () => {
@@ -284,6 +326,60 @@ export function ProjectsTab({ projects, refreshData, showToast }: ProjectsTabPro
                       <label className="block uppercase tracking-wider text-white/50 mb-1">Description</label>
                       <textarea rows={2} value={description} onChange={e => setDescription(e.target.value)} className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold rounded outline-none resize-none"></textarea>
                     </div>
+
+                    <div className="pt-4 border-t border-white/10">
+                      <label className="block uppercase tracking-wider text-white/50 mb-1">Upload Additional Gallery Images</label>
+                      <input 
+                        type="file" 
+                        accept="image/*"
+                        multiple
+                        onChange={handleGalleryUpload} 
+                        disabled={isGalleryUploading}
+                        className="w-full bg-dark-black border border-white/10 px-3 py-2 text-white focus:border-primary-gold rounded outline-none text-xs file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-[10px] file:uppercase file:tracking-wider file:font-semibold file:bg-white/10 file:text-white hover:file:bg-white/20" 
+                      />
+                      {isGalleryUploading && <p className="text-[10px] text-primary-gold mt-1 animate-pulse">Uploading gallery to Supabase...</p>}
+                      
+                      {galleryImages.length > 0 && (
+                        <div className="mt-2 grid grid-cols-4 gap-2">
+                          {galleryImages.map((img, idx) => (
+                            <div key={idx} className="relative w-full aspect-square bg-dark-black border border-white/10 rounded overflow-hidden group">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img src={img} alt="Gallery Preview" className="w-full h-full object-cover" />
+                              <button 
+                                type="button" 
+                                onClick={() => removeGalleryImage(idx)}
+                                className="absolute inset-0 bg-red-500/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                              >
+                                <X className="w-4 h-4 text-white" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-6 pt-4 border-t border-white/10">
+                  <label className="block uppercase tracking-wider text-white/50 mb-2">Products Used in this Project</label>
+                  <div className="max-h-48 overflow-y-auto bg-dark-black border border-white/10 rounded p-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+                    {products.map(prod => (
+                      <label key={prod.id} className={`flex items-center gap-2 p-2 rounded cursor-pointer border transition-colors ${productIds.includes(prod.id) ? 'bg-primary-gold/10 border-primary-gold/50' : 'bg-charcoal border-white/5 hover:border-white/20'}`}>
+                        <input 
+                          type="checkbox" 
+                          checked={productIds.includes(prod.id)}
+                          onChange={() => toggleProduct(prod.id)}
+                          className="accent-primary-gold"
+                        />
+                        <div className="flex items-center gap-2 overflow-hidden">
+                          {prod.images[0] && (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={prod.images[0]} alt="" className="w-6 h-6 object-cover rounded shrink-0" />
+                          )}
+                          <span className="text-[10px] text-white/90 truncate">{prod.name} ({prod.sku})</span>
+                        </div>
+                      </label>
+                    ))}
                   </div>
                 </div>
 

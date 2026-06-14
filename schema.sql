@@ -114,6 +114,16 @@ CREATE TABLE settings (
     value TEXT NOT NULL
 );
 
+-- 11. Hero Slides Table
+CREATE TABLE hero_slides (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    title VARCHAR(255) NOT NULL,
+    subtitle VARCHAR(255),
+    url VARCHAR(1024) NOT NULL,
+    display_order INTEGER DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Indexes for performance
 CREATE INDEX idx_products_category ON products(category_id);
 CREATE INDEX idx_products_collection ON products(collection_id);

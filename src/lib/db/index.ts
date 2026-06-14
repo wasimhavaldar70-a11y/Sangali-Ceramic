@@ -55,6 +55,8 @@ export interface Project {
   year?: number;
   is_featured?: boolean;
   status?: string;
+  gallery_images?: string[];
+  product_ids?: string[];
 }
 
 export interface Testimonial {
@@ -625,6 +627,20 @@ export const dbService = {
     return DEFAULT_PROJECTS;
   },
 
+  async getProjectBySlug(slug: string): Promise<Project | null> {
+    if (isMock) {
+      const list = getOrSetLocal('mock_projects', DEFAULT_PROJECTS);
+      return list.find(p => p.slug === slug) || null;
+    }
+    const supabase = createClient();
+    const { data, error } = await supabase.from('projects').select('*').eq('slug', slug).single();
+    if (error) {
+      console.error('Error fetching project by slug:', error);
+      return null;
+    }
+    return data as Project;
+  },
+
   async saveProject(project: Partial<Project>): Promise<Project | null> {
     if (isMock) {
       const list = getOrSetLocal('mock_projects', DEFAULT_PROJECTS);
@@ -1027,8 +1043,22 @@ export const dbService = {
     }
     const supabase = createClient();
     const { data, error } = await supabase.from('hero_slides').select('*').order('display_order', { ascending: true });
+    
     if (!error && data && data.length > 0) {
       return data;
+    }
+    
+    // Seed default hero slides if DB table is empty
+    if (!error && data && data.length === 0) {
+      try {
+        const seedData = DEFAULT_HERO_SLIDES.map(({ id, ...rest }) => rest);
+        const { data: seeded, error: seedError } = await supabase.from('hero_slides').insert(seedData).select();
+        if (!seedError && seeded && seeded.length > 0) {
+          return seeded;
+        }
+      } catch (seedErr) {
+        console.error('Failed to seed default hero slides:', seedErr);
+      }
     }
     return DEFAULT_HERO_SLIDES;
   },
@@ -1067,9 +1097,6 @@ export const dbService = {
       saveLocal('mock_hero_slides', filtered);
       return true;
     }
-
-    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-    if (!isUuid) return true;
 
     const supabase = createClient();
     const { error } = await supabase.from('hero_slides').delete().eq('id', id);

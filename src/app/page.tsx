@@ -870,11 +870,13 @@ export default function HomePage() {
                 className="group relative h-80 overflow-hidden border border-white/10 flex flex-col justify-end p-6 luxury-card"
               >
                 <div className="absolute inset-0 bg-gradient-to-t from-dark-black via-dark-black/40 to-transparent z-10 group-hover:from-dark-black/95 transition-all duration-500" />
-                <Image
-                  src={proj.image}
-                  alt={proj.title}
-                  fill className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-                />
+                <Link href={`/projects/${proj.slug}`}>
+                  <Image
+                    src={proj.image}
+                    alt={proj.title}
+                    fill className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 cursor-pointer"
+                  />
+                </Link>
                 <div className="relative z-20">
                   <span className="text-[10px] text-primary-gold tracking-widest uppercase font-bold">{proj.category}</span>
                   <h3 className="font-display text-xl font-bold text-white mt-1 mb-2">
@@ -885,12 +887,12 @@ export default function HomePage() {
                   </p>
                   <div className="flex justify-between items-center mt-4 pt-4 border-t border-white/15 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                     <span className="text-[10px] text-white/70 font-semibold">{proj.location} | {proj.year}</span>
-                    <button 
-                      onClick={() => alert(`Project detail: ${proj.title}`)} 
+                    <Link 
+                      href={`/projects/${proj.slug}`}
                       className="text-xs text-primary-gold uppercase tracking-wider hover:underline font-bold"
                     >
                       View Details
-                    </button>
+                    </Link>
                   </div>
                 </div>
               </div>
