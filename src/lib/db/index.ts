@@ -977,6 +977,29 @@ export const dbService = {
     if (data && data.length > 0) {
       return data;
     }
+    
+    // Auto-seed table if it exists but is empty
+    if (data && data.length === 0) {
+      try {
+        const brandsToInsert = DEFAULT_BRANDS.map(({ name, display_order }) => ({
+          name,
+          logo_url: null,
+          display_order
+        }));
+        const { data: seededData, error: seedError } = await supabase
+          .from('brand_logos')
+          .insert(brandsToInsert)
+          .select()
+          .order('display_order', { ascending: true });
+        
+        if (!seedError && seededData) {
+          return seededData;
+        }
+      } catch (e) {
+        console.error('Failed to auto-seed brand logos:', e);
+      }
+    }
+    
     return DEFAULT_BRANDS;
   },
 
@@ -1033,9 +1056,36 @@ export const dbService = {
     const { data, error } = await supabase.from('hero_slides').select('*').order('display_order', { ascending: true });
     if (error) {
       console.error('Error fetching hero slides:', error);
-      return [];
+      return DEFAULT_HERO_SLIDES;
     }
-    return data || [];
+    if (data && data.length > 0) {
+      return data;
+    }
+    
+    // Auto-seed table if it exists but is empty
+    if (data && data.length === 0) {
+      try {
+        const slidesToInsert = DEFAULT_HERO_SLIDES.map(({ title, subtitle, url, display_order }) => ({
+          title,
+          subtitle,
+          url,
+          display_order
+        }));
+        const { data: seededData, error: seedError } = await supabase
+          .from('hero_slides')
+          .insert(slidesToInsert)
+          .select()
+          .order('display_order', { ascending: true });
+        
+        if (!seedError && seededData) {
+          return seededData;
+        }
+      } catch (e) {
+        console.error('Failed to auto-seed hero slides:', e);
+      }
+    }
+    
+    return DEFAULT_HERO_SLIDES;
   },
 
   async saveHeroSlide(slide: Partial<HeroSlide>): Promise<{ success: boolean; data?: HeroSlide; error?: string }> {

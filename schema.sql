@@ -130,3 +130,39 @@ CREATE INDEX idx_products_collection ON products(collection_id);
 CREATE INDEX idx_dealers_state ON dealers(state);
 CREATE INDEX idx_leads_type ON leads(type);
 CREATE INDEX idx_leads_status ON leads(status);
+
+-- 12. Product Divisions (Home Layout Sections)
+CREATE TABLE IF NOT EXISTS product_divisions (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    badge_text VARCHAR(255) NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    heading VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    link_text VARCHAR(255) NOT NULL,
+    link_url VARCHAR(255) NOT NULL,
+    image_url TEXT NOT NULL,
+    display_order INTEGER DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 13. Division Categories
+CREATE TABLE IF NOT EXISTS division_categories (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    page_slug VARCHAR(50) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    image_url TEXT NOT NULL,
+    display_order INTEGER NOT NULL DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Link products to division_categories
+ALTER TABLE products ADD COLUMN IF NOT EXISTS division_category_id UUID REFERENCES division_categories(id) ON DELETE SET NULL;
+
+-- 14. Brand Logos (Marquee partner logos)
+CREATE TABLE IF NOT EXISTS brand_logos (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR(255) NOT NULL,
+    logo_url TEXT,
+    display_order INTEGER NOT NULL DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
