@@ -47,6 +47,34 @@ const GROUT_COLORS = [
   { name: 'Pure White', hex: '#FFFFFF' }
 ];
 
+// Helper to compute repeating tile background size dynamically based on its physical size metadata.
+// Caps the primary dimension at 160px * scale and adjusts the secondary dimension proportionally.
+const getTileBackgroundSize = (size: string | undefined, scale: number): string => {
+  const baseSize = 160;
+  if (!size) return `${baseSize * scale}px ${baseSize * scale}px`;
+  
+  // Match dimensions like "800x1600 mm", "200x1200 mm", etc.
+  const match = size.match(/(\d+(?:\.\d+)?)\s*x\s*(\d+(?:\.\d+)?)/i);
+  if (match) {
+    const w = parseFloat(match[1]);
+    const h = parseFloat(match[2]);
+    if (w > 0 && h > 0) {
+      if (h >= w) {
+        // Vertical slab: cap height at baseSize * scale, scale width down proportionally
+        const height = baseSize * scale;
+        const width = (w / h) * baseSize * scale;
+        return `${width}px ${height}px`;
+      } else {
+        // Horizontal slab: cap width at baseSize * scale, scale height down proportionally
+        const width = baseSize * scale;
+        const height = (h / w) * baseSize * scale;
+        return `${width}px ${height}px`;
+      }
+    }
+  }
+  return `${baseSize * scale}px ${baseSize * scale}px`;
+};
+
 export default function VisualizerPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedTile, setSelectedTile] = useState<Product | null>(null);
@@ -278,7 +306,7 @@ export default function VisualizerPage() {
                       backgroundImage: `linear-gradient(to right, ${groutColor} ${groutWidth}px, transparent ${groutWidth}px),
                                          linear-gradient(to bottom, ${groutColor} ${groutWidth}px, transparent ${groutWidth}px),
                                          url(${selectedTile.images[0]})`,
-                      backgroundSize: `${160 * tileScale}px ${160 * tileScale}px`,
+                      backgroundSize: getTileBackgroundSize(selectedTile.size, tileScale),
                       backgroundRepeat: 'repeat',
                       boxShadow: surfaceType === 'floor' 
                         ? 'inset 0 0 120px rgba(0,0,0,0.9)'
@@ -527,11 +555,11 @@ export default function VisualizerPage() {
                       : 'border-white/5 hover:border-white/10 bg-black/25'
                   }`}
                 >
-                  <div className="w-16 h-16 bg-neutral-950 shrink-0 overflow-hidden border border-white/10 relative rounded-lg">
+                  <div className="w-16 h-16 bg-neutral-950 shrink-0 overflow-hidden border border-white/10 relative rounded-lg flex items-center justify-center">
                     <img 
                       src={tile.images?.[0] || 'https://images.unsplash.com/photo-1600573472591-ee6b68d14c68?w=100&q=80'} 
                       alt={tile.name} 
-                      className="w-full h-full object-cover" 
+                      className="max-w-full max-h-full object-contain p-1" 
                     />
                   </div>
                   <div className="flex-grow flex flex-col justify-between py-0.5">
