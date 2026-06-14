@@ -442,7 +442,7 @@ export default function HomePage() {
         ))}
 
         {/* Hero Content */}
-        <div className="relative z-20 text-center px-6 max-w-4xl mx-auto flex flex-col items-center pt-28 md:pt-36">
+        <div className="relative z-20 text-center px-6 max-w-4xl mx-auto flex flex-col items-center pt-12 md:pt-16">
           <span className="text-primary-gold text-[10px] md:text-xs tracking-[0.3em] uppercase mb-1.5 animate-fade-in font-semibold">
             Transforming Houses into Dream Homes
           </span>
@@ -470,7 +470,7 @@ export default function HomePage() {
           </div>
 
           {/* Quick Stats */}
-          <div className="grid grid-cols-3 gap-8 md:gap-16 mt-8 pt-4 border-t border-white/10 w-full max-w-3xl">
+          <div className="grid grid-cols-3 gap-8 md:gap-16 mt-5 pt-3 border-t border-white/10 w-full max-w-3xl">
             <div className="text-center">
               <h3 className="font-display text-xl md:text-2xl font-bold text-primary-gold">25+</h3>
               <p className="text-white text-[9px] tracking-widest uppercase mt-1 font-semibold opacity-85">Years Experience</p>
