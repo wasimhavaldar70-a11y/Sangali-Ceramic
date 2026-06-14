@@ -1007,7 +1007,7 @@ export const dbService = {
     if (isMock) {
       const list = getOrSetLocal('mock_brand_logos', DEFAULT_BRANDS);
       const toSave = { ...brand } as BrandLogo;
-      if (!toSave.id || toSave.id.startsWith('b-')) {
+      if (!toSave.id) {
         toSave.id = 'b-' + Date.now();
       }
       const index = list.findIndex(b => b.id === toSave.id);
@@ -1092,7 +1092,7 @@ export const dbService = {
     if (isMock) {
       const list = getOrSetLocal('mock_hero_slides', DEFAULT_HERO_SLIDES);
       const toSave = { ...slide } as HeroSlide;
-      if (!toSave.id || toSave.id.startsWith('slide-')) {
+      if (!toSave.id) {
         toSave.id = 'slide-' + Date.now();
       }
       const index = list.findIndex(s => s.id === toSave.id);
