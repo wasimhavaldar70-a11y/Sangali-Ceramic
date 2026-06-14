@@ -31,7 +31,7 @@ export function HeroSlidesTab({ slides, refreshData, showToast }: HeroSlidesTabP
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingSlide?.title || !editingSlide?.subtitle || !editingSlide?.url) {
-      showToast('Please fill all required fields', 'error');
+      showToast('Please upload an image and fill all required fields', 'error');
       return;
     }
 
@@ -157,18 +157,7 @@ export function HeroSlidesTab({ slides, refreshData, showToast }: HeroSlidesTabP
               )}
             </div>
 
-            <div>
-              <label className="block text-xs uppercase tracking-widest text-white/60 mb-2">Or Image URL</label>
-              <input 
-                type="text" 
-                value={editingSlide.url || ''}
-                onChange={e => setEditingSlide({...editingSlide, url: e.target.value})}
-                placeholder="https://images.unsplash.com/..."
-                className="w-full bg-dark-black border border-white/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-primary-gold transition-colors"
-                required
-              />
             </div>
-          </div>
 
           <div className="md:col-span-2 flex justify-end gap-3 mt-4">
             <button 
