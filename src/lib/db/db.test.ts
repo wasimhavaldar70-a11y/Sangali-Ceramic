@@ -91,5 +91,24 @@ describe('dbService Unit Tests', () => {
       expect(updated?.status).toBe('contacted')
       expect(updated?.notes).toBe('Customer called back and requested details.')
     })
+
+    it('should delete a lead successfully from the pipeline', async () => {
+      const created = await dbService.insertLead({
+        type: 'contact',
+        name: 'Jane Doe to Delete',
+        phone: '9876543210',
+        status: 'new'
+      })
+      expect(created).toBeDefined()
+
+      let leads = await dbService.getLeads()
+      expect(leads.some(l => l.id === created!.id)).toBe(true)
+
+      const success = await dbService.deleteLead(created!.id)
+      expect(success).toBe(true)
+
+      leads = await dbService.getLeads()
+      expect(leads.some(l => l.id === created!.id)).toBe(false)
+    })
   })
 })

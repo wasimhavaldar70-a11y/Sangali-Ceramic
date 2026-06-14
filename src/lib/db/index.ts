@@ -809,6 +809,23 @@ export const dbService = {
     return !error;
   },
 
+  async deleteLead(id: string): Promise<boolean> {
+    if (isMock) {
+      const list = getOrSetLocal<Lead>('mock_leads', []);
+      const filtered = list.filter(l => l.id !== id);
+      saveLocal('mock_leads', filtered);
+      return true;
+    }
+
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+    if (!isUuid) return true;
+
+    const supabase = createClient();
+    const { error } = await supabase.from('leads').delete().eq('id', id);
+    if (error) console.error(error);
+    return !error;
+  },
+
   // Product Divisions
   async getDivisions(): Promise<ProductDivision[]> {
     if (isMock) {

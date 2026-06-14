@@ -1,6 +1,6 @@
 'use client';
 import { motion } from 'framer-motion';
-import { Users, Phone, Mail, BarChart3, ShieldAlert, Save, CheckCircle, Clock } from 'lucide-react';
+import { Users, Phone, Mail, BarChart3, ShieldAlert, Save, CheckCircle, Clock, Trash2 } from 'lucide-react';
 import { Lead, dbService } from '@/lib/db';
 import { useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
@@ -10,6 +10,7 @@ export function LeadsTab({ leads, refreshData, showToast }: { leads: Lead[], ref
   const [filter, setFilter] = useState<'all' | 'new' | 'contacted' | 'quotation_sent' | 'negotiation' | 'won' | 'lost'>('all');
   const [editingNotesId, setEditingNotesId] = useState<string | null>(null);
   const [notesTemp, setNotesTemp] = useState('');
+  const [isDeleting, setIsDeleting] = useState<string | null>(null);
   
   const updateStatus = async (id: string, nextStatus: Lead['status']) => {
     try {
@@ -33,6 +34,24 @@ export function LeadsTab({ leads, refreshData, showToast }: { leads: Lead[], ref
       setEditingNotesId(null);
     } catch {
       showToast('Failed to update notes.', 'error');
+    }
+  };
+
+  const deleteLead = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this enquiry?')) return;
+    setIsDeleting(id);
+    try {
+      const success = await dbService.deleteLead(id);
+      if (success) {
+        showToast('Enquiry deleted successfully.');
+        refreshData();
+      } else {
+        showToast('Failed to delete enquiry.', 'error');
+      }
+    } catch {
+      showToast('Error deleting enquiry.', 'error');
+    } finally {
+      setIsDeleting(null);
     }
   };
 
@@ -93,17 +112,26 @@ export function LeadsTab({ leads, refreshData, showToast }: { leads: Lead[], ref
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-2 shrink-0 w-full md:w-48 bg-black/40 p-3 rounded border border-white/5">
-                  <div className="text-[10px] uppercase tracking-widest mb-1 text-white/40">Status Pipeline:</div>
-                  <select 
-                    value={lead.status}
-                    onChange={(e) => updateStatus(lead.id, e.target.value as Lead['status'])}
-                    className="w-full bg-dark-black border border-white/10 text-xs text-white p-2 rounded focus:border-primary-gold outline-none uppercase tracking-wider font-semibold"
+                <div className="flex flex-col gap-2 shrink-0 w-full md:w-48 bg-black/40 p-3 rounded border border-white/5 justify-between">
+                  <div>
+                    <div className="text-[10px] uppercase tracking-widest mb-1 text-white/40">Status Pipeline:</div>
+                    <select 
+                      value={lead.status}
+                      onChange={(e) => updateStatus(lead.id, e.target.value as Lead['status'])}
+                      className="w-full bg-dark-black border border-white/10 text-xs text-white p-2 rounded focus:border-primary-gold outline-none uppercase tracking-wider font-semibold"
+                    >
+                      {statuses.map(s => (
+                        <option key={s} value={s}>{s.replace('_', ' ')}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <button
+                    onClick={() => deleteLead(lead.id)}
+                    disabled={isDeleting === lead.id}
+                    className="w-full mt-2 py-1.5 border border-red-500/20 text-red-500/80 hover:text-white hover:bg-red-500/20 hover:border-red-500/50 rounded text-[10px] uppercase tracking-widest font-semibold flex items-center justify-center gap-1.5 transition-all duration-300 disabled:opacity-50"
                   >
-                    {statuses.map(s => (
-                      <option key={s} value={s}>{s.replace('_', ' ')}</option>
-                    ))}
-                  </select>
+                    <Trash2 className="w-3.5 h-3.5" /> Delete Enquiry
+                  </button>
                 </div>
               </div>
 
