@@ -443,14 +443,14 @@ export default function HomePage() {
 
         {/* Hero Content */}
         <div className="relative z-20 text-center px-6 max-w-4xl mx-auto flex flex-col items-center pt-28 md:pt-36">
-          <span className="text-primary-gold text-xs tracking-[0.3em] uppercase mb-1 animate-fade-in font-semibold">
+          <span className="text-primary-gold text-[10px] md:text-xs tracking-[0.3em] uppercase mb-1.5 animate-fade-in font-semibold">
             Transforming Houses into Dream Homes
           </span>
-          <h1 className="font-display text-4xl md:text-7xl font-bold tracking-tight text-white mb-3 leading-tight">
+          <h1 className="font-display text-3xl md:text-5xl font-bold tracking-tight text-white mb-2.5 leading-tight">
             Transform Spaces <br />
             <span className="text-gold-gradient">With Premium Tiles</span>
           </h1>
-          <p className="text-white text-base md:text-xl font-medium tracking-wide max-w-2xl mb-5 leading-relaxed luxury-shadow-text">
+          <p className="text-white text-xs md:text-base font-medium tracking-wide max-w-xl mb-5 leading-relaxed luxury-shadow-text opacity-90">
             Crafted for modern homes, elite architects, and luxury commercial spaces.
           </p>
 
@@ -472,16 +472,16 @@ export default function HomePage() {
           {/* Quick Stats */}
           <div className="grid grid-cols-3 gap-8 md:gap-16 mt-8 pt-4 border-t border-white/10 w-full max-w-3xl">
             <div className="text-center">
-              <h3 className="font-display text-2xl md:text-3xl font-bold text-primary-gold">25+</h3>
-              <p className="text-white text-[10px] tracking-widest uppercase mt-1 font-semibold">Years Experience</p>
+              <h3 className="font-display text-xl md:text-2xl font-bold text-primary-gold">25+</h3>
+              <p className="text-white text-[9px] tracking-widest uppercase mt-1 font-semibold opacity-85">Years Experience</p>
             </div>
             <div className="text-center">
-              <h3 className="font-display text-2xl md:text-3xl font-bold text-primary-gold">5000+</h3>
-              <p className="text-white text-[10px] tracking-widest uppercase mt-1 font-semibold">Happy Clients</p>
+              <h3 className="font-display text-xl md:text-2xl font-bold text-primary-gold">5000+</h3>
+              <p className="text-white text-[9px] tracking-widest uppercase mt-1 font-semibold opacity-85">Happy Clients</p>
             </div>
             <div className="text-center">
-              <h3 className="font-display text-2xl md:text-3xl font-bold text-primary-gold">1000+</h3>
-              <p className="text-white text-[10px] tracking-widest uppercase mt-1 font-semibold">Tile Designs</p>
+              <h3 className="font-display text-xl md:text-2xl font-bold text-primary-gold">1000+</h3>
+              <p className="text-white text-[9px] tracking-widest uppercase mt-1 font-semibold opacity-85">Tile Designs</p>
             </div>
           </div>
         </div>
