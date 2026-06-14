@@ -56,7 +56,7 @@ export default function VisualizerPage() {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
 
   // Customization parameters
-  const [surfaceType, setSurfaceType] = useState<'floor' | 'wall'>('floor');
+  const [surfaceType, setSurfaceType] = useState<'floor' | 'wall' | 'full'>('floor');
   const [tileScale, setTileScale] = useState(1.0); 
   const [tileAngle, setTileAngle] = useState(0); 
   const [sliderPos, setSliderPos] = useState(50); 
@@ -96,6 +96,7 @@ export default function VisualizerPage() {
         if (event.target?.result) {
           setUploadedImage(event.target.result as string);
           setActiveRoomId('upload');
+          setSurfaceType('full'); // Default to full screen overlay for custom uploads
         }
       };
       reader.readAsDataURL(file);
@@ -210,6 +211,7 @@ export default function VisualizerPage() {
             ref={containerRef}
             onMouseMove={handleMouseMove}
             onTouchMove={handleTouchMove}
+            onMouseDown={(e) => handleSliderMove(e.clientX)}
             className="relative w-full h-[540px] overflow-hidden select-none border border-white/5 rounded-2xl bg-neutral-900 shadow-2xl cursor-ew-resize group"
           >
             {/* Before State (Left/Right overlay background) */}
@@ -396,6 +398,14 @@ export default function VisualizerPage() {
                         }`}
                       >
                         Walls
+                      </button>
+                      <button
+                        onClick={() => setSurfaceType('full')}
+                        className={`px-3 py-1 rounded text-[9px] uppercase font-bold tracking-widest transition-colors ${
+                          surfaceType === 'full' ? 'bg-primary-gold text-dark-black' : 'bg-white/5 text-white/60 hover:text-white'
+                        }`}
+                      >
+                        Full
                       </button>
                     </div>
                   </div>
