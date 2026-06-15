@@ -149,7 +149,7 @@ export function ProjectsTab({ projects, products, refreshData, showToast }: Proj
         refreshData();
         showToast('Project deleted successfully.');
       } else {
-        showToast('Error deleting project from database.', 'error');
+        showToast('Failed to delete project. Check RLS policies.', 'error');
       }
     } catch (err) {
       showToast('Error deleting project.', 'error');

@@ -122,9 +122,13 @@ export function ProductsTab({ products, divisions = [], divisionCategories = [],
   const executeDelete = async () => {
     if (!confirmDelete) return;
     try {
-      await dbService.deleteProduct(confirmDelete);
-      refreshData();
-      showToast('Product deleted successfully.');
+      const success = await dbService.deleteProduct(confirmDelete);
+      if (success) {
+        refreshData();
+        showToast('Product deleted successfully.');
+      } else {
+        showToast('Failed to delete product. Check RLS policies.', 'error');
+      }
     } catch (err) {
       showToast('Error deleting product.', 'error');
     } finally {
