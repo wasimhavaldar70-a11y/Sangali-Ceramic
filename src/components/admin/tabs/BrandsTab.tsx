@@ -48,7 +48,8 @@ export function BrandsTab({ brands, refreshData, showToast }: BrandsTabProps) {
         showToast('Failed to save brand logo', 'error');
       }
     } catch (err) {
-      showToast('Error saving brand logo', 'error');
+      const errMsg = err instanceof Error ? err.message : String(err);
+      showToast(`Error saving brand logo: ${errMsg}`, 'error');
     } finally {
       setIsSaving(false);
     }
@@ -141,7 +142,7 @@ export function BrandsTab({ brands, refreshData, showToast }: BrandsTabProps) {
             <div className="w-full h-32 bg-dark-black border border-white/5 rounded-lg flex items-center justify-center overflow-hidden">
               {editingBrand.logo_url ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={editingBrand.logo_url} alt="Logo Preview" className="max-w-[80%] max-h-[80%] object-contain" onError={(e) => (e.currentTarget.style.display = 'none')} />
+                <img src={editingBrand.logo_url} alt="Logo Preview" className="max-w-[80%] max-h-[80%] object-contain" />
               ) : (
                 <div className="flex flex-col items-center justify-center text-white/20 select-none">
                   <span className="font-serif italic text-lg font-bold">{editingBrand.name || 'Brand Logo'}</span>

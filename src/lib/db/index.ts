@@ -1157,10 +1157,32 @@ export const dbService = {
     }
 
     const supabase = createClient();
-    if (brand.id && brand.id.startsWith('b-')) delete brand.id;
-    const { data, error } = await supabase.from('brand_logos').upsert(brand).select().single();
+    if (brand.id) {
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(brand.id);
+      if (!isUuid) {
+        delete brand.id;
+      }
+    }
+
+    let query;
+    if (brand.id) {
+      query = supabase
+        .from('brand_logos')
+        .update(brand)
+        .eq('id', brand.id)
+        .select()
+        .single();
+    } else {
+      query = supabase
+        .from('brand_logos')
+        .insert(brand)
+        .select()
+        .single();
+    }
+
+    const { data, error } = await query;
     if (error) {
-      console.error(error);
+      console.error('Failed to save brand logo:', error);
       return null;
     }
     return data;
