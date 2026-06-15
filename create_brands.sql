@@ -29,17 +29,17 @@ WITH CHECK (true);
 -- they can start with logo_url as NULL, and page.tsx will fallback to their customized SVGs.
 -- Admins can upload custom image logos to override them anytime.
 INSERT INTO public.brand_logos (name, logo_url, display_order) VALUES
-('Jaquar', NULL, 1),
-('Artize', NULL, 2),
-('Fenesta', NULL, 3),
-('Johnson', NULL, 4),
-('Nitco', NULL, 5),
-('Oasis', NULL, 6),
-('Essco', NULL, 7),
-('Tata Pravesh', NULL, 8),
-('RAK Ceramics', NULL, 9),
-('Franke', NULL, 10),
-('Carysil', NULL, 11),
-('Antiek', NULL, 12),
-('Nirali BG', NULL, 13),
-('Ardex Endura', NULL, 14);
+('Jaquar', 'https://logo.clearbit.com/jaquar.com', 1),
+('Artize', 'https://logo.clearbit.com/artize.com', 2),
+('Fenesta', 'https://logo.clearbit.com/fenesta.com', 3),
+('Johnson', 'https://logo.clearbit.com/hrjohnsonindia.com', 4),
+('Nitco', 'https://logo.clearbit.com/nitco.in', 5),
+('Oasis', 'https://logo.clearbit.com/oasistiles.in', 6),
+('Essco', 'https://logo.clearbit.com/esscobathware.com', 7),
+('Tata Pravesh', 'https://logo.clearbit.com/tatapravesh.com', 8),
+('RAK Ceramics', 'https://logo.clearbit.com/rakceramics.com', 9),
+('Franke', 'https://logo.clearbit.com/franke.com', 10),
+('Carysil', 'https://logo.clearbit.com/carysil.com', 11),
+('Antiek', 'https://logo.clearbit.com/antiek.com', 12),
+('Nirali BG', 'https://logo.clearbit.com/niralibg.com', 13),
+('Ardex Endura', 'https://logo.clearbit.com/ardexendura.com', 14);

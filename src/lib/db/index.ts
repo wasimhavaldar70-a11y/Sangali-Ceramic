@@ -316,21 +316,21 @@ const DEFAULT_DIVISION_CATEGORIES: DivisionCategory[] = [
   { id: 'dc-doubledoors', page_slug: 'doors', name: 'Double Leaf Doors', image_url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=400&q=80', display_order: 6 }
 ];
 
-const DEFAULT_BRANDS: BrandLogo[] = [
-  { id: 'b-1', name: 'Jaquar', display_order: 1 },
-  { id: 'b-2', name: 'Artize', display_order: 2 },
-  { id: 'b-3', name: 'Fenesta', display_order: 3 },
-  { id: 'b-4', name: 'Johnson', display_order: 4 },
-  { id: 'b-5', name: 'Nitco', display_order: 5 },
-  { id: 'b-6', name: 'Oasis', display_order: 6 },
-  { id: 'b-7', name: 'Essco', display_order: 7 },
-  { id: 'b-8', name: 'Tata Pravesh', display_order: 8 },
-  { id: 'b-9', name: 'RAK Ceramics', display_order: 9 },
-  { id: 'b-10', name: 'Franke', display_order: 10 },
-  { id: 'b-11', name: 'Carysil', display_order: 11 },
-  { id: 'b-12', name: 'Antiek', display_order: 12 },
-  { id: 'b-13', name: 'Nirali BG', display_order: 13 },
-  { id: 'b-14', name: 'Ardex Endura', display_order: 14 }
+export const DEFAULT_BRANDS: BrandLogo[] = [
+  { id: 'b-1', name: 'Jaquar', logo_url: 'https://logo.clearbit.com/jaquar.com', display_order: 1 },
+  { id: 'b-2', name: 'Artize', logo_url: 'https://logo.clearbit.com/artize.com', display_order: 2 },
+  { id: 'b-3', name: 'Fenesta', logo_url: 'https://logo.clearbit.com/fenesta.com', display_order: 3 },
+  { id: 'b-4', name: 'Johnson', logo_url: 'https://logo.clearbit.com/hrjohnsonindia.com', display_order: 4 },
+  { id: 'b-5', name: 'Nitco', logo_url: 'https://logo.clearbit.com/nitco.in', display_order: 5 },
+  { id: 'b-6', name: 'Oasis', logo_url: 'https://logo.clearbit.com/oasistiles.in', display_order: 6 },
+  { id: 'b-7', name: 'Essco', logo_url: 'https://logo.clearbit.com/esscobathware.com', display_order: 7 },
+  { id: 'b-8', name: 'Tata Pravesh', logo_url: 'https://logo.clearbit.com/tatapravesh.com', display_order: 8 },
+  { id: 'b-9', name: 'RAK Ceramics', logo_url: 'https://logo.clearbit.com/rakceramics.com', display_order: 9 },
+  { id: 'b-10', name: 'Franke', logo_url: 'https://logo.clearbit.com/franke.com', display_order: 10 },
+  { id: 'b-11', name: 'Carysil', logo_url: 'https://logo.clearbit.com/carysil.com', display_order: 11 },
+  { id: 'b-12', name: 'Antiek', logo_url: 'https://logo.clearbit.com/antiek.com', display_order: 12 },
+  { id: 'b-13', name: 'Nirali BG', logo_url: 'https://logo.clearbit.com/niralibg.com', display_order: 13 },
+  { id: 'b-14', name: 'Ardex Endura', logo_url: 'https://logo.clearbit.com/ardexendura.com', display_order: 14 }
 ];
 
 const DEFAULT_HERO_SLIDES: HeroSlide[] = [
@@ -635,7 +635,10 @@ export const dbService = {
     }
 
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-    if (!isUuid) return true;
+    if (!isUuid) {
+      console.warn('Cannot delete fallback mock data from Supabase. Ensure database is properly seeded.');
+      return false;
+    }
 
     const supabase = createClient();
     const { error } = await supabase.from('products').delete().eq('id', id);
@@ -875,7 +878,10 @@ export const dbService = {
     }
 
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-    if (!isUuid) return true;
+    if (!isUuid) {
+      console.warn('Cannot delete fallback mock data from Supabase. Ensure database is properly seeded.');
+      return false;
+    }
 
     const supabase = createClient();
     const { error } = await supabase.from('dealers').delete().eq('id', id);
@@ -958,7 +964,10 @@ export const dbService = {
     }
 
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-    if (!isUuid) return { success: true };
+    if (!isUuid) {
+      console.warn('Cannot delete fallback mock data from Supabase. Ensure database is properly seeded.');
+      return { success: false, error: 'Cannot delete default fallback data.' };
+    }
 
     const supabase = createClient();
     const { error } = await supabase.from('leads').delete().eq('id', id);
@@ -1018,7 +1027,10 @@ export const dbService = {
     }
 
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-    if (!isUuid) return true;
+    if (!isUuid) {
+      console.warn('Cannot delete fallback mock data from Supabase. Ensure database is properly seeded.');
+      return false;
+    }
 
     const supabase = createClient();
     const { error } = await supabase.from('product_divisions').delete().eq('id', id);
@@ -1094,7 +1106,10 @@ export const dbService = {
     }
 
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-    if (!isUuid) return true;
+    if (!isUuid) {
+      console.warn('Cannot delete fallback mock data from Supabase. Ensure database is properly seeded.');
+      return false;
+    }
 
     const supabase = createClient();
     const { error } = await supabase.from('division_categories').delete().eq('id', id);
@@ -1117,9 +1132,9 @@ export const dbService = {
     // Auto-seed table if it exists but is empty
     if (data && data.length === 0) {
       try {
-        const brandsToInsert = DEFAULT_BRANDS.map(({ name, display_order }) => ({
+        const brandsToInsert = DEFAULT_BRANDS.map(({ name, logo_url, display_order }) => ({
           name,
-          logo_url: null,
+          logo_url,
           display_order
         }));
         const { data: seededData, error: seedError } = await supabase
@@ -1197,7 +1212,10 @@ export const dbService = {
     }
 
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-    if (!isUuid) return true;
+    if (!isUuid) {
+      console.warn('Cannot delete fallback mock data from Supabase. Ensure database is properly seeded.');
+      return false;
+    }
 
     const supabase = createClient();
     const { error } = await supabase.from('brand_logos').delete().eq('id', id);
@@ -1287,7 +1305,10 @@ export const dbService = {
     }
 
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-    if (!isUuid) return { success: true };
+    if (!isUuid) {
+      console.warn('Cannot delete fallback mock data from Supabase. Ensure database is properly seeded.');
+      return { success: false, error: 'Cannot delete default fallback data.' };
+    }
 
     const supabase = createClient();
     const { error } = await supabase.from('hero_slides').delete().eq('id', id);
