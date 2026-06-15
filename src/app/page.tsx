@@ -8,7 +8,7 @@ import {
   Shield, Droplet, Flame, Settings, Zap, Truck, MessageSquare, Phone, MapPin, Check,
   Users, Building, Grid3X3, Bath, Clock, Award, Tag, Palette, CheckCircle2, BadgeCheck
 } from 'lucide-react';
-import { dbService, Product, Collection, Project, Testimonial, Catalogue, ProductDivision, BrandLogo, HeroSlide } from '@/lib/db';
+import { dbService, Product, Collection, Project, Testimonial, Catalogue, ProductDivision, BrandLogo, HeroSlide, DEFAULT_TESTIMONIALS } from '@/lib/db';
 
 const BRAND_LOGOS = [
   {
@@ -247,7 +247,7 @@ export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [collections, setCollections] = useState<Collection[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
-  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(DEFAULT_TESTIMONIALS);
   const [catalogues, setCatalogues] = useState<Catalogue[]>([]);
   const [divisions, setDivisions] = useState<ProductDivision[]>([]);
   const [brands, setBrands] = useState<BrandLogo[]>(DEFAULT_BRANDS);
@@ -965,40 +965,9 @@ export default function HomePage() {
 
         {/* Testimonial Cards Grid */}
         <div className="flex flex-wrap justify-center gap-8 max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-          {[
-            {
-              name: "Rahul Patil",
-              role: "Homeowner",
-              review: "We purchased tiles for our entire home renovation from Sangli Ceramica. The collection was premium, prices were reasonable, and the quality exceeded our expectations.",
-              avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&h=150&q=80"
-            },
-            {
-              name: "Sneha Deshmukh",
-              role: "Interior Designer",
-              review: "The showroom offers an impressive variety of tiles and sanitaryware. Their team helped us select designs that perfectly matched our project.",
-              avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&h=150&q=80"
-            },
-            {
-              name: "Amit Kulkarni",
-              role: "Builder",
-              review: "Professional service from selection to delivery. Everything was managed efficiently and delivered on schedule.",
-              avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&h=150&q=80"
-            },
-            {
-              name: "Priya Shah",
-              role: "Homeowner",
-              review: "We compared several suppliers before choosing Sangli Ceramica. The quality, pricing, and service were exceptional.",
-              avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=150&h=150&q=80"
-            },
-            {
-              name: "Ar. Ketan Joshi",
-              role: "Architect",
-              review: "The premium sanitaryware and tile collection helped us create luxury spaces for our clients.",
-              avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&h=150&q=80"
-            }
-          ].map((item, index) => (
+          {testimonials.map((item, index) => (
             <div
-              key={index}
+              key={item.id || index}
               className="w-full md:w-[calc(50%-16px)] lg:w-[calc(33.33%-22px)] max-w-sm bg-white p-8 pt-12 rounded-xl border border-neutral-100 flex flex-col justify-between relative shadow-[0_10px_35px_-5px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_45px_-10px_rgba(0,0,0,0.08)] hover:-translate-y-2 hover:scale-[1.01] transition-all duration-500 group"
               style={{
                 animation: 'fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both',
@@ -1012,7 +981,7 @@ export default function HomePage() {
                 {/* Avatar */}
                 <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-neutral-100 group-hover:border-primary-gold mb-5 relative transition-all duration-500 shadow-sm">
                   <Image
-                    src={item.avatar}
+                    src={item.image_url || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150&q=80'}
                     alt={item.name}
                     width={64}
                     height={64}
@@ -1022,14 +991,14 @@ export default function HomePage() {
 
                 {/* Rating */}
                 <div className="flex gap-1 mb-4">
-                  {[...Array(5)].map((_, i) => (
+                  {[...Array(item.rating || 5)].map((_, i) => (
                     <Star key={i} className="w-3.5 h-3.5 fill-primary-gold text-primary-gold" />
                   ))}
                 </div>
 
                 {/* Review */}
                 <p className="text-neutral-600 text-sm font-light leading-relaxed mb-6">
-                  &ldquo;{item.review}&rdquo;
+                  &ldquo;{item.comment}&rdquo;
                 </p>
 
                 {/* Divider Line */}

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ArrowUpRight } from 'lucide-react';
-import { dbService, Product, Dealer, Lead, Project, ProductDivision, DivisionCategory, BrandLogo, HeroSlide } from '@/lib/db';
+import { dbService, Product, Dealer, Lead, Project, ProductDivision, DivisionCategory, BrandLogo, HeroSlide, Testimonial } from '@/lib/db';
 
 // Components
 import { Toast } from '@/components/admin/Toast';
@@ -17,8 +17,9 @@ import { DivisionCategoriesTab } from '@/components/admin/tabs/DivisionCategorie
 import { BrandsTab } from '@/components/admin/tabs/BrandsTab';
 import { HeroSlidesTab } from '@/components/admin/tabs/HeroSlidesTab';
 import { LeadsTab, ProfileTab, AnalyticsTab } from '@/components/admin/tabs/OtherTabs';
+import { TestimonialsTab } from '@/components/admin/tabs/TestimonialsTab';
 
-type Tab = 'analytics' | 'products' | 'dealers' | 'projects' | 'leads' | 'divisions' | 'division-categories' | 'profile' | 'brands' | 'hero-slides';
+type Tab = 'analytics' | 'products' | 'dealers' | 'projects' | 'leads' | 'divisions' | 'division-categories' | 'profile' | 'brands' | 'hero-slides' | 'testimonials';
 
 export default function AdminPage() {
   const router = useRouter();
@@ -32,6 +33,7 @@ export default function AdminPage() {
   const [divisionCategories, setDivisionCategories] = useState<DivisionCategory[]>([]);
   const [brands, setBrands] = useState<BrandLogo[]>([]);
   const [heroSlides, setHeroSlides] = useState<HeroSlide[]>([]);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
 
   // Navigation
   const [activeTab, setActiveTab] = useState<Tab>('analytics');
@@ -50,7 +52,7 @@ export default function AdminPage() {
 
   const loadDashboardData = async () => {
     try {
-      const [prods, deals, projs, lds, divs, divCats, brnds, slides] = await Promise.all([
+      const [prods, deals, projs, lds, divs, divCats, brnds, slides, tests] = await Promise.all([
         dbService.getProducts(),
         dbService.getDealers(),
         dbService.getProjects(),
@@ -58,7 +60,8 @@ export default function AdminPage() {
         dbService.getDivisions(),
         dbService.getDivisionCategories(),
         dbService.getBrands(),
-        dbService.getHeroSlides()
+        dbService.getHeroSlides(),
+        dbService.getTestimonials()
       ]);
       setProducts(prods);
       setDealers(deals);
@@ -68,6 +71,7 @@ export default function AdminPage() {
       setDivisionCategories(divCats);
       setBrands(brnds);
       setHeroSlides(slides);
+      setTestimonials(tests);
     } catch (e) {
       console.error(e);
       showToast('Error loading data', 'error');
@@ -215,6 +219,7 @@ export default function AdminPage() {
           projects={projects} 
           newLeads={newLeadsCount} 
           onBulkImport={handleBulkImport} 
+          testimonials={testimonials}
         />
 
         <div className="lg:col-span-9 bg-charcoal border border-white/5 p-6 min-h-[500px] rounded-xl shadow-2xl relative overflow-hidden backdrop-blur-md">
@@ -230,6 +235,7 @@ export default function AdminPage() {
           {activeTab === 'dealers' && <DealersTab dealers={dealers} refreshData={loadDashboardData} showToast={showToast} />}
           {activeTab === 'projects' && <ProjectsTab projects={projects} products={products} refreshData={loadDashboardData} showToast={showToast} />}
           {activeTab === 'leads' && <LeadsTab leads={leads} refreshData={loadDashboardData} showToast={showToast} />}
+          {activeTab === 'testimonials' && <TestimonialsTab testimonials={testimonials} refreshData={loadDashboardData} showToast={showToast} />}
           {activeTab === 'profile' && <ProfileTab showToast={showToast} />}
         </div>
       </div>

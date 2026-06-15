@@ -197,11 +197,47 @@ const DEFAULT_PROJECTS: Project[] = [
   }
 ];
 
-const DEFAULT_TESTIMONIALS: Testimonial[] = [
-  { id: 'test-1', name: 'Rohit Sharma', role: 'Homeowner', rating: 5, comment: 'The quality of vitrified slabs is exceptional. It completely transformed our living lounge.' },
-  { id: 'test-2', name: 'Ar. Neha Patil', role: 'Architect', rating: 5, comment: 'Perfect finish, exact dimensional consistency, and excellent premium customer support. Highly recommended!' },
-  { id: 'test-3', name: 'Luxe Spaces Studio', role: 'Interior Designer', rating: 5, comment: 'Their Jaquar bathroom display collections and Tata doors supply let us complete luxury villas in records time.' },
-  { id: 'test-4', name: 'Buildtech Developers', role: 'Commercial Builder', rating: 5, comment: 'Sangli Ceramica is our absolute partner for bulk vitrified tile shipments across Maharashtra.' }
+export const DEFAULT_TESTIMONIALS: Testimonial[] = [
+  {
+    id: 'test-1',
+    name: 'Rahul Patil',
+    role: 'Homeowner',
+    rating: 5,
+    comment: 'We purchased tiles for our entire home renovation from Sangli Ceramica. The collection was premium, prices were reasonable, and the quality exceeded our expectations.',
+    image_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&h=150&q=80'
+  },
+  {
+    id: 'test-2',
+    name: 'Sneha Deshmukh',
+    role: 'Interior Designer',
+    rating: 5,
+    comment: 'The showroom offers an impressive variety of tiles and sanitaryware. Their team helped us select designs that perfectly matched our project.',
+    image_url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&h=150&q=80'
+  },
+  {
+    id: 'test-3',
+    name: 'Amit Kulkarni',
+    role: 'Builder',
+    rating: 5,
+    comment: 'Professional service from selection to delivery. Everything was managed efficiently and delivered on schedule.',
+    image_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&h=150&q=80'
+  },
+  {
+    id: 'test-4',
+    name: 'Priya Shah',
+    role: 'Homeowner',
+    rating: 5,
+    comment: 'We compared several suppliers before choosing Sangli Ceramica. The quality, pricing, and service were exceptional.',
+    image_url: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=150&h=150&q=80'
+  },
+  {
+    id: 'test-5',
+    name: 'Ar. Ketan Joshi',
+    role: 'Architect',
+    rating: 5,
+    comment: 'The premium sanitaryware and tile collection helped us create luxury spaces for our clients.',
+    image_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&h=150&q=80'
+  }
 ];
 
 const DEFAULT_DEALERS: Dealer[] = [
@@ -687,9 +723,103 @@ export const dbService = {
       return getOrSetLocal('mock_testimonials', DEFAULT_TESTIMONIALS);
     }
     const supabase = createClient();
-    const { data, error } = await supabase.from('testimonials').select('*');
+    const { data, error } = await supabase.from('testimonials').select('*').order('created_at', { ascending: true });
     if (error) console.error(error);
-    return data || [];
+    if (data && data.length > 0) {
+      return data;
+    }
+
+    // Auto-seed table if it exists but is empty
+    if (data && data.length === 0) {
+      try {
+        const testimonialsToInsert = DEFAULT_TESTIMONIALS.map(({ name, role, rating, comment, image_url }) => ({
+          name,
+          role,
+          rating,
+          comment,
+          image_url
+        }));
+        const { data: seededData, error: seedError } = await supabase
+          .from('testimonials')
+          .insert(testimonialsToInsert)
+          .select()
+          .order('created_at', { ascending: true });
+        
+        if (!seedError && seededData) {
+          return seededData;
+        }
+      } catch (e) {
+        console.error('Failed to auto-seed testimonials:', e);
+      }
+    }
+
+    return DEFAULT_TESTIMONIALS;
+  },
+
+  async saveTestimonial(testimonial: Partial<Testimonial>): Promise<Testimonial | null> {
+    if (isMock) {
+      const list = getOrSetLocal('mock_testimonials', DEFAULT_TESTIMONIALS);
+      const toSave = { ...testimonial } as Testimonial;
+      if (!toSave.id || toSave.id.startsWith('test-')) {
+        toSave.id = 'test-' + Date.now();
+      }
+      const index = list.findIndex(t => t.id === toSave.id);
+      if (index >= 0) {
+        list[index] = { ...list[index], ...toSave };
+      } else {
+        list.push(toSave);
+      }
+      saveLocal('mock_testimonials', list);
+      return toSave;
+    }
+    const supabase = createClient();
+    let query;
+    if (testimonial.id) {
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(testimonial.id);
+      if (!isUuid) {
+        delete testimonial.id;
+      }
+    }
+    if (testimonial.id) {
+      query = supabase
+        .from('testimonials')
+        .update(testimonial)
+        .eq('id', testimonial.id)
+        .select()
+        .single();
+    } else {
+      query = supabase
+        .from('testimonials')
+        .insert(testimonial)
+        .select()
+        .single();
+    }
+    const { data, error } = await query;
+    if (error) {
+      console.error('Failed to save testimonial:', error);
+      throw error;
+    }
+    return data;
+  },
+
+  async deleteTestimonial(id: string): Promise<{ success: boolean; error?: string }> {
+    if (isMock) {
+      const list = getOrSetLocal('mock_testimonials', DEFAULT_TESTIMONIALS);
+      const index = list.findIndex(t => t.id === id);
+      if (index >= 0) {
+        list.splice(index, 1);
+        saveLocal('mock_testimonials', list);
+        return { success: true };
+      }
+      return { success: false, error: 'Not found' };
+    }
+    const supabase = createClient();
+    const { error } = await supabase.from('testimonials').delete().eq('id', id);
+    if (error) {
+      console.error('Failed to delete testimonial:', error);
+      return { success: false, error: error.message };
+    }
+    return { success: true };
   },
 
   // Dealers

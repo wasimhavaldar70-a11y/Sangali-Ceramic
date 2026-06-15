@@ -1,18 +1,19 @@
-import { LayoutDashboard, ShoppingBag, MapPin, FolderOpen, Users, ShieldAlert, Database, Layers, Award, Image as ImageIcon } from 'lucide-react';
-import { Product, Dealer, Project, Lead } from '@/lib/db';
+import { LayoutDashboard, ShoppingBag, MapPin, FolderOpen, Users, ShieldAlert, Database, Layers, Award, Image as ImageIcon, MessageSquare } from 'lucide-react';
+import { Product, Dealer, Project, Lead, Testimonial } from '@/lib/db';
 
 interface AdminSidebarProps {
-  activeTab: 'analytics' | 'products' | 'dealers' | 'projects' | 'leads' | 'divisions' | 'division-categories' | 'profile' | 'brands' | 'hero-slides';
-  setActiveTab: (tab: 'analytics' | 'products' | 'dealers' | 'projects' | 'leads' | 'divisions' | 'division-categories' | 'profile' | 'brands' | 'hero-slides') => void;
+  activeTab: 'analytics' | 'products' | 'dealers' | 'projects' | 'leads' | 'divisions' | 'division-categories' | 'profile' | 'brands' | 'hero-slides' | 'testimonials';
+  setActiveTab: (tab: 'analytics' | 'products' | 'dealers' | 'projects' | 'leads' | 'divisions' | 'division-categories' | 'profile' | 'brands' | 'hero-slides' | 'testimonials') => void;
   products: Product[];
   dealers: Dealer[];
   projects: Project[];
   newLeads: number;
   onBulkImport: () => void;
+  testimonials: Testimonial[];
 }
 
 export function AdminSidebar({ 
-  activeTab, setActiveTab, products, dealers, projects, newLeads, onBulkImport 
+  activeTab, setActiveTab, products, dealers, projects, newLeads, onBulkImport, testimonials 
 }: AdminSidebarProps) {
   
   const getTabClass = (tabName: string) => {
@@ -56,6 +57,9 @@ export function AdminSidebar({
             {newLeads}
           </span>
         )}
+      </button>
+      <button onClick={() => setActiveTab('testimonials')} className={getTabClass('testimonials')}>
+        <span className="flex items-center gap-3"><MessageSquare className="w-4 h-4" /> Testimonials ({testimonials.length})</span>
       </button>
 
       <div className="pt-4 border-t border-white/5 mt-4 flex flex-col gap-2">
