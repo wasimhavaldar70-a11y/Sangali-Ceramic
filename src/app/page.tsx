@@ -5,7 +5,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { 
   ArrowRight, Search, SlidersHorizontal, Eye, FileText, Star,
-  Shield, Droplet, Flame, Settings, Zap, Truck, MessageSquare, Phone, MapPin, Check
+  Shield, Droplet, Flame, Settings, Zap, Truck, MessageSquare, Phone, MapPin, Check,
+  Users, Building, Grid3X3, Bath, Clock, Award, Tag, Palette, CheckCircle2, BadgeCheck
 } from 'lucide-react';
 import { dbService, Product, Collection, Project, Testimonial, Catalogue, ProductDivision, BrandLogo, HeroSlide } from '@/lib/db';
 
@@ -218,6 +219,29 @@ const isGifUrl = (url?: string) => {
   return url.endsWith('.gif') || url.startsWith('data:image/gif') || url.startsWith('data:image/webp');
 };
 
+const AnimatedCounter = ({ value, startTrigger, duration = 2000 }: { value: string; startTrigger: boolean; duration?: number }) => {
+  const [count, setCount] = useState(0);
+  const target = parseInt(value.replace(/\D/g, ''));
+  const suffix = value.replace(/\d/g, '');
+
+  useEffect(() => {
+    if (!startTrigger) return;
+    let startTimestamp: number | null = null;
+    const step = (timestamp: number) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      const easeProgress = progress * (2 - progress);
+      setCount(Math.floor(easeProgress * target));
+      if (progress < 1) {
+        window.requestAnimationFrame(step);
+      }
+    };
+    window.requestAnimationFrame(step);
+  }, [target, duration, startTrigger]);
+
+  return <span>{startTrigger ? count : 0}{suffix}</span>;
+};
+
 export default function HomePage() {
   // Data States
   const [products, setProducts] = useState<Product[]>([]);
@@ -267,14 +291,25 @@ export default function HomePage() {
   // Quick View Modal State
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
 
-  // Stats Counter state (animation trigger)
-  const [stats, setStats] = useState({
-    years: 0,
-    projectsCount: 0,
-    dealers: 0,
-    designs: 0,
-    states: 0
-  });
+  // Intersection Observer for Trust Stats
+  const [statsVisible, setStatsVisible] = useState(false);
+  const statsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setStatsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+    if (statsRef.current) {
+      observer.observe(statsRef.current);
+    }
+    return () => observer.disconnect();
+  }, []);
 
   // Testimonials slide state
   const [testimonialIndex, setTestimonialIndex] = useState(0);
@@ -330,30 +365,6 @@ export default function HomePage() {
     return () => clearInterval(timer);
   }, [testimonials.length]);
 
-  // Animate stats counters when in view
-  useEffect(() => {
-    const targetStats = { years: 25, projectsCount: 5000, dealers: 300, designs: 1000, states: 20 };
-    const duration = 2000;
-    const steps = 50;
-    const interval = duration / steps;
-    
-    let currentStep = 0;
-    const counterTimer = setInterval(() => {
-      currentStep++;
-      setStats({
-        years: Math.min(Math.round((targetStats.years / steps) * currentStep), targetStats.years),
-        projectsCount: Math.min(Math.round((targetStats.projectsCount / steps) * currentStep), targetStats.projectsCount),
-        dealers: Math.min(Math.round((targetStats.dealers / steps) * currentStep), targetStats.dealers),
-        designs: Math.min(Math.round((targetStats.designs / steps) * currentStep), targetStats.designs),
-        states: Math.min(Math.round((targetStats.states / steps) * currentStep), targetStats.states),
-      });
-      if (currentStep >= steps) {
-        clearInterval(counterTimer);
-      }
-    }, interval);
-
-    return () => clearInterval(counterTimer);
-  }, []);
 
   // Slider Mouse Move Handler
   const handleSliderMove = (clientX: number) => {
@@ -901,50 +912,200 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* TESTIMONIALS */}
-      <section className="pt-10 pb-20 bg-dark-black border-b border-white/5">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <span className="text-primary-gold text-xs tracking-[0.35em] uppercase font-semibold">What Clients Say</span>
-          <h2 className="font-display text-3xl md:text-5xl font-bold mt-2 mb-16">Trusted By Thousands</h2>
+      {/* TESTIMONIALS SECTION */}
+      <section className="py-24 bg-[#FAF9F5] border-b border-neutral-100 overflow-hidden relative">
+        {/* Inline styles for custom fadeUp animation */}
+        <style dangerouslySetInnerHTML={{__html: `
+          @keyframes fadeUp {
+            from {
+              opacity: 0;
+              transform: translateY(24px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+        `}} />
+        
+        {/* Subtle premium background texture lines */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.01)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none" />
 
-          {testimonials.length > 0 && (
-            <div className="bg-charcoal border border-white/10 p-10 md:p-16 relative luxury-card">
-              <div className="absolute top-6 left-8 text-7xl text-primary-gold/10 font-serif pointer-events-none">“</div>
-              <div className="flex flex-col items-center">
-                <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-primary-gold mb-6">
+        {/* Flanking Luxury Images */}
+        <div className="absolute left-0 top-0 w-44 h-80 xl:block hidden pointer-events-none overflow-hidden">
+          <Image
+            src="https://images.unsplash.com/photo-1618221381711-42ca8ab6e908?auto=format&fit=crop&w=300&h=600&q=80"
+            alt="Luxury Interior Flank"
+            width={176}
+            height={320}
+            className="w-full h-full object-cover opacity-95"
+            priority
+          />
+        </div>
+        <div className="absolute right-0 top-0 w-44 h-80 xl:block hidden pointer-events-none overflow-hidden">
+          <Image
+            src="https://images.unsplash.com/photo-1620626011761-996317b8d101?auto=format&fit=crop&w=300&h=600&q=80"
+            alt="Luxury Bathroom Flank"
+            width={176}
+            height={320}
+            className="w-full h-full object-cover opacity-95"
+            priority
+          />
+        </div>
+        
+        <div className="max-w-4xl mx-auto px-6 text-center mb-20 relative z-10">
+          <span className="text-primary-gold text-xs tracking-[0.35em] uppercase font-bold">What Clients Say</span>
+          <h2 className="font-display text-3xl md:text-5xl font-extrabold text-neutral-900 mt-2 mb-6 leading-tight">
+            Trusted By Homeowners, <br className="hidden md:block" />Architects & Builders
+          </h2>
+          <p className="text-neutral-500 text-sm md:text-base font-light max-w-2xl mx-auto leading-relaxed">
+            Discover why homeowners, interior designers, architects, and builders choose Sangli Ceramica for premium tiles, sanitaryware, bath fittings, and design solutions.
+          </p>
+        </div>
+
+        {/* Testimonial Cards Grid */}
+        <div className="flex flex-wrap justify-center gap-8 max-w-7xl mx-auto px-6 md:px-12 relative z-10">
+          {[
+            {
+              name: "Rahul Patil",
+              role: "Homeowner",
+              review: "We purchased tiles for our entire home renovation from Sangli Ceramica. The collection was premium, prices were reasonable, and the quality exceeded our expectations.",
+              avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&h=150&q=80"
+            },
+            {
+              name: "Sneha Deshmukh",
+              role: "Interior Designer",
+              review: "The showroom offers an impressive variety of tiles and sanitaryware. Their team helped us select designs that perfectly matched our project.",
+              avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&h=150&q=80"
+            },
+            {
+              name: "Amit Kulkarni",
+              role: "Builder",
+              review: "Professional service from selection to delivery. Everything was managed efficiently and delivered on schedule.",
+              avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&h=150&q=80"
+            },
+            {
+              name: "Priya Shah",
+              role: "Homeowner",
+              review: "We compared several suppliers before choosing Sangli Ceramica. The quality, pricing, and service were exceptional.",
+              avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=150&h=150&q=80"
+            },
+            {
+              name: "Ar. Ketan Joshi",
+              role: "Architect",
+              review: "The premium sanitaryware and tile collection helped us create luxury spaces for our clients.",
+              avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&h=150&q=80"
+            }
+          ].map((item, index) => (
+            <div
+              key={index}
+              className="w-full md:w-[calc(50%-16px)] lg:w-[calc(33.33%-22px)] max-w-sm bg-white p-8 pt-12 rounded-xl border border-neutral-100 flex flex-col justify-between relative shadow-[0_10px_35px_-5px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_45px_-10px_rgba(0,0,0,0.08)] hover:-translate-y-2 hover:scale-[1.01] transition-all duration-500 group"
+              style={{
+                animation: 'fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both',
+                animationDelay: `${index * 100}ms`
+              }}
+            >
+              {/* Top Quote */}
+              <div className="absolute top-6 right-8 text-5xl text-neutral-100 font-serif pointer-events-none transition-colors group-hover:text-primary-gold/20 select-none">”</div>
+              
+              <div className="flex flex-col items-center text-center">
+                {/* Avatar */}
+                <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-neutral-100 group-hover:border-primary-gold mb-5 relative transition-all duration-500 shadow-sm">
                   <Image
-                    src={testimonials[testimonialIndex]?.image_url || 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=80'}
-                    alt={testimonials[testimonialIndex]?.name || 'Testimonial'}
-                    fill className="w-full h-full object-cover"
+                    src={item.avatar}
+                    alt={item.name}
+                    width={64}
+                    height={64}
+                    className="w-full h-full object-cover"
                   />
                 </div>
+
+                {/* Rating */}
                 <div className="flex gap-1 mb-4">
-                  {[...Array(testimonials[testimonialIndex]?.rating)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-primary-gold text-primary-gold" />
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-3.5 h-3.5 fill-primary-gold text-primary-gold" />
                   ))}
                 </div>
-                <p className="font-medium text-white text-lg md:text-xl leading-relaxed mb-8">
-                  {testimonials[testimonialIndex]?.comment}
+
+                {/* Review */}
+                <p className="text-neutral-600 text-sm font-light leading-relaxed mb-6">
+                  &ldquo;{item.review}&rdquo;
                 </p>
-                <h4 className="font-display text-lg font-bold text-white">{testimonials[testimonialIndex]?.name}</h4>
-                <p className="text-white/80 text-xs uppercase tracking-widest mt-1 font-semibold">
-                  {testimonials[testimonialIndex]?.role}
+
+                {/* Divider Line */}
+                <div className="w-8 h-[1px] bg-primary-gold/45 group-hover:w-16 transition-all duration-500 mb-4" />
+
+                {/* Name & Role */}
+                <h4 className="font-display text-base font-bold text-neutral-900 leading-none">{item.name}</h4>
+                <p className="text-primary-gold/80 text-[10px] uppercase tracking-widest font-bold mt-2">
+                  {item.role}
                 </p>
               </div>
             </div>
-          )}
+          ))}
+        </div>
+      </section>
 
-          {/* Dots Indicator */}
-          <div className="flex justify-center gap-3 mt-8">
-            {testimonials.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => setTestimonialIndex(idx)}
-                className={`w-2.5 h-2.5 rounded-full transition-colors ${
-                  idx === testimonialIndex ? 'bg-primary-gold' : 'bg-white/20'
+      {/* TRUST STATS SECTION */}
+      <section ref={statsRef} className="py-16 bg-[#0B0B0B] border-y border-white/5 relative z-30 overflow-hidden">
+        {/* Dark Marble Texture Background Effect */}
+        <div className="absolute inset-0 opacity-10 mix-blend-overlay pointer-events-none">
+          <Image
+            src="https://images.unsplash.com/photo-1618220179428-22790b461013?auto=format&fit=crop&w=1200&q=80"
+            alt="Dark Marble Texture"
+            fill
+            className="object-cover"
+          />
+        </div>
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(212,175,55,0.05),transparent_70%)] pointer-events-none" />
+        
+        <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 relative z-10">
+          {[
+            { value: "5000+", label: "Happy Customers", icon: <Users className="w-6 h-6 text-primary-gold" /> },
+            { value: "1000+", label: "Completed Projects", icon: <Building className="w-6 h-6 text-primary-gold" /> },
+            { value: "200+", label: "Premium Tile Designs", icon: <Grid3X3 className="w-6 h-6 text-primary-gold" /> },
+            { value: "100+", label: "Sanitaryware Solutions", icon: <Bath className="w-6 h-6 text-primary-gold" /> },
+            { value: "10+", label: "Years Experience", icon: <Clock className="w-6 h-6 text-primary-gold" /> }
+          ].map((stat, i) => (
+            <div
+              key={i}
+              className={`flex flex-col items-center text-center p-4 relative ${
+                i < 4 ? 'lg:border-r lg:border-white/5' : ''
+              }`}
+            >
+              <div className="mb-4 p-3 bg-white/5 rounded-full border border-white/10">{stat.icon}</div>
+              <h3 className="font-display text-3xl md:text-4xl font-extrabold text-white tracking-tight">
+                <AnimatedCounter value={stat.value} startTrigger={statsVisible} />
+              </h3>
+              <p className="text-white/40 text-xs font-light tracking-wider uppercase mt-2">{stat.label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* BENEFITS SECTION */}
+      <section className="py-10 bg-white border-b border-neutral-100 relative z-30">
+        <div className="max-w-7xl mx-auto px-6 md:px-12">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+            {[
+              { label: "Premium Quality Products", icon: <BadgeCheck className="w-5 h-5 text-primary-gold" /> },
+              { label: "Authorized Brand Partners", icon: <Award className="w-5 h-5 text-primary-gold" /> },
+              { label: "Competitive Pricing", icon: <Tag className="w-5 h-5 text-primary-gold" /> },
+              { label: "Expert Design Assistance", icon: <Palette className="w-5 h-5 text-primary-gold" /> },
+              { label: "Reliable Delivery Service", icon: <Truck className="w-5 h-5 text-primary-gold" /> },
+              { label: "Trusted Across Sangli & Nearby Cities", icon: <CheckCircle2 className="w-5 h-5 text-primary-gold" /> }
+            ].map((benefit, i) => (
+              <div
+                key={i}
+                className={`flex flex-col items-center text-center p-3 relative ${
+                  i < 5 ? 'lg:border-r lg:border-neutral-100' : ''
                 }`}
-                aria-label={`Go to slide ${idx + 1}`}
-              />
+              >
+                <div className="mb-2.5">{benefit.icon}</div>
+                <h4 className="text-[10px] md:text-[11px] font-bold uppercase tracking-wider text-neutral-800 leading-snug">
+                  {benefit.label}
+                </h4>
+              </div>
             ))}
           </div>
         </div>
@@ -996,29 +1157,49 @@ export default function HomePage() {
       </section>
 
       {/* CTA SECTION */}
-      <section className="bg-gold-gradient py-20 text-dark-black text-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.05)_1px,transparent_1px)] bg-[size:30px_30px]" />
-        <div className="max-w-4xl mx-auto px-6 relative z-10 flex flex-col items-center">
-          <span className="text-[10px] uppercase tracking-[0.4em] font-semibold text-dark-black/60 mb-3">Get in Touch</span>
-          <h2 className="font-display text-4xl md:text-6xl font-bold mb-6 leading-tight">
-            Ready To Transform <br />Your Space?
-          </h2>
-          <p className="text-dark-black/75 text-sm md:text-base font-medium max-w-lg mb-10 leading-relaxed">
-            Our design experts are here to help you select, calculate and layout the perfect premium tiles for your dream project.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center w-full max-w-md">
-            <button
-              onClick={() => triggerQuote()}
-              className="px-8 py-3.5 bg-dark-black text-white font-semibold text-xs uppercase tracking-widest hover:bg-charcoal transition-all duration-300 shadow-xl"
-            >
-              Request Quote
-            </button>
-            <a
-              href="tel:+919284632524"
-              className="px-8 py-3.5 border border-dark-black/20 text-dark-black hover:bg-dark-black hover:text-white font-semibold text-xs uppercase tracking-widest transition-all duration-300"
-            >
-              Contact Expert
-            </a>
+      <section className="py-20 bg-[#0A0A0A] border-t border-white/5 relative overflow-hidden z-30">
+        <div className="max-w-7xl mx-auto px-6 md:px-12">
+          <div className="grid grid-cols-1 lg:grid-cols-12 bg-[#121212] border border-white/5 rounded-2xl overflow-hidden shadow-2xl relative">
+            
+            {/* Left Content */}
+            <div className="lg:col-span-7 p-8 md:p-16 flex flex-col justify-center items-start relative z-10">
+              <h2 className="font-display text-3xl md:text-5xl font-extrabold text-white leading-tight mb-4">
+                Building Your <br />Dream Space Starts Here
+              </h2>
+              {/* Gold Accent Line */}
+              <div className="w-12 h-[2px] bg-primary-gold mb-6" />
+              <p className="text-white/60 text-sm md:text-base font-light mb-10 max-w-lg leading-relaxed">
+                Explore premium tiles, sanitaryware, bath fittings, and interior solutions designed to transform every space.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                <Link
+                  href="/dealer-network"
+                  className="px-8 py-4 bg-gold-gradient text-dark-black font-bold text-xs uppercase tracking-widest hover:bg-gold-gradient-hover hover:scale-[1.02] transition-all duration-300 shadow-lg text-center"
+                >
+                  Visit Our Showroom
+                </Link>
+                <button
+                  onClick={() => triggerQuote()}
+                  className="px-8 py-4 border border-white/10 hover:border-white/20 text-white font-bold text-xs uppercase tracking-widest hover:bg-white/5 transition-all duration-300"
+                >
+                  Get Free Consultation
+                </button>
+              </div>
+            </div>
+
+            {/* Right Image */}
+            <div className="lg:col-span-5 relative h-80 lg:h-auto min-h-[350px] overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-r from-[#121212] via-transparent to-transparent z-10 lg:block hidden pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-transparent to-transparent z-10 lg:hidden block pointer-events-none" />
+              <Image
+                src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=800&q=80"
+                alt="Luxury Showroom Concept"
+                fill
+                sizes="(max-width: 1024px) 100vw, 40vw"
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+              />
+            </div>
+            
           </div>
         </div>
       </section>
