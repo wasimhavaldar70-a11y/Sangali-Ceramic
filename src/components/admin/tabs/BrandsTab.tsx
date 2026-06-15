@@ -127,17 +127,6 @@ export function BrandsTab({ brands, refreshData, showToast }: BrandsTabProps) {
               {isUploading && <p className="text-[10px] text-primary-gold mt-1 animate-pulse">Uploading to Storage...</p>}
             </div>
 
-            <div>
-              <label className="block text-xs uppercase tracking-widest text-white/60 mb-2">Logo Image URL (Or Upload Above)</label>
-              <input 
-                type="text" 
-                value={editingBrand.logo_url || ''}
-                onChange={e => setEditingBrand({...editingBrand, logo_url: e.target.value})}
-                placeholder="e.g. https://images.unsplash.com/... or /custom-logo.png"
-                className="w-full bg-dark-black border border-white/10 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-primary-gold transition-colors"
-              />
-            </div>
-
             {/* Logo Preview */}
             <div className="w-full h-32 bg-dark-black border border-white/5 rounded-lg flex items-center justify-center overflow-hidden">
               {editingBrand.logo_url ? (
@@ -145,8 +134,7 @@ export function BrandsTab({ brands, refreshData, showToast }: BrandsTabProps) {
                 <img src={editingBrand.logo_url} alt="Logo Preview" className="max-w-[80%] max-h-[80%] object-contain" />
               ) : (
                 <div className="flex flex-col items-center justify-center text-white/20 select-none">
-                  <span className="font-serif italic text-lg font-bold">{editingBrand.name || 'Brand Logo'}</span>
-                  <span className="text-[9px] uppercase tracking-widest mt-1">Default SVG Fallback will be used</span>
+                  <span className="text-[9px] uppercase tracking-widest mt-1">No Image Uploaded</span>
                 </div>
               )}
             </div>
@@ -200,7 +188,7 @@ export function BrandsTab({ brands, refreshData, showToast }: BrandsTabProps) {
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={brand.logo_url} alt={brand.name} className="max-w-full max-h-full object-contain" />
                 ) : (
-                  <span className="text-sm font-semibold tracking-wider text-white/80">{brand.name} (Default SVG)</span>
+                  <span className="text-sm font-semibold tracking-wider text-white/80">No Image</span>
                 )}
               </div>
               <div className="flex-1">
@@ -209,7 +197,7 @@ export function BrandsTab({ brands, refreshData, showToast }: BrandsTabProps) {
                 </div>
                 <h3 className="text-xl font-display font-bold text-white mb-1">{brand.name}</h3>
                 <p className="text-white/50 text-xs">
-                  {brand.logo_url ? `Custom Logo Source: ${brand.logo_url}` : 'Using inline stylized branding fallback'}
+                  {brand.logo_url ? `Logo Uploaded` : 'No Image Uploaded'}
                 </p>
               </div>
               <div className="flex flex-row md:flex-col gap-2 shrink-0">

@@ -10,26 +10,6 @@ import {
 } from 'lucide-react';
 import { dbService, Product, Collection, Project, Testimonial, Catalogue, ProductDivision, BrandLogo, HeroSlide } from '@/lib/db';
 
-const getBrandLogoElement = (brandName: string, logoUrl?: string) => {
-  if (logoUrl) {
-    return (
-      <div className="relative w-full h-full flex items-center justify-center">
-        <Image 
-          src={logoUrl} 
-          alt={brandName} 
-          fill className="object-contain px-2 select-none filter brightness-0 invert opacity-75 hover:opacity-100 transition-all duration-300"
-        />
-      </div>
-    );
-  }
-
-  // Fallback to stylized text if logo URL is missing
-  return (
-    <div className="flex items-center justify-center text-white font-serif font-black italic text-lg select-none w-full h-full">
-      {brandName}
-    </div>
-  );
-};
 
 const isVideoUrl = (url?: string) => {
   if (!url) return false;
@@ -407,7 +387,15 @@ export default function HomePage() {
                 key={`brand-loop1-${brand.id}-${i}`}
                 className="inline-flex items-center justify-center w-52 h-20 bg-[#121212] hover:bg-[#1A1A1A] border border-white/5 rounded-none px-5 py-3.5 hover:border-primary-gold/45 hover:shadow-lg transition-all duration-300 transform hover:scale-[1.03] relative"
               >
-                {getBrandLogoElement(brand.name, brand.logo_url)}
+                {brand.logo_url && (
+                  <div className="relative w-full h-full flex items-center justify-center">
+                    <Image 
+                      src={brand.logo_url} 
+                      alt={brand.name} 
+                      fill className="object-contain px-2 select-none filter brightness-0 invert opacity-75 hover:opacity-100 transition-all duration-300"
+                    />
+                  </div>
+                )}
               </div>
             ))}
             {/* Second identical loop of logos for infinite scrolling seamless transition */}
@@ -416,7 +404,15 @@ export default function HomePage() {
                 key={`brand-loop2-${brand.id}-${i}`}
                 className="inline-flex items-center justify-center w-52 h-20 bg-[#121212] hover:bg-[#1A1A1A] border border-white/5 rounded-none px-5 py-3.5 hover:border-primary-gold/45 hover:shadow-lg transition-all duration-300 transform hover:scale-[1.03] relative"
               >
-                {getBrandLogoElement(brand.name, brand.logo_url)}
+                {brand.logo_url && (
+                  <div className="relative w-full h-full flex items-center justify-center">
+                    <Image 
+                      src={brand.logo_url} 
+                      alt={brand.name} 
+                      fill className="object-contain px-2 select-none filter brightness-0 invert opacity-75 hover:opacity-100 transition-all duration-300"
+                    />
+                  </div>
+                )}
               </div>
             ))}
           </div>

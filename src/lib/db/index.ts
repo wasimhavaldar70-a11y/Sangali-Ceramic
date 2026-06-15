@@ -388,6 +388,23 @@ export const dbService = {
     return data || [];
   },
 
+  async saveCatalogue(catalogue: Partial<Catalogue>): Promise<Catalogue | null> {
+    const supabase = createClient();
+    const { data, error } = await supabase.from('catalogues').upsert(catalogue).select().single();
+    if (error) {
+      console.error(error);
+      return null;
+    }
+    return data;
+  },
+
+  async deleteCatalogue(id: string): Promise<boolean> {
+    const supabase = createClient();
+    const { error } = await supabase.from('catalogues').delete().eq('id', id);
+    if (error) console.error(error);
+    return !error;
+  },
+
   // Leads
   async getLeads(): Promise<Lead[]> {
     const supabase = createClient();

@@ -1,19 +1,20 @@
-import { LayoutDashboard, ShoppingBag, MapPin, FolderOpen, Users, ShieldAlert, Database, Layers, Award, Image as ImageIcon, MessageSquare } from 'lucide-react';
-import { Product, Dealer, Project, Lead, Testimonial } from '@/lib/db';
+import { LayoutDashboard, ShoppingBag, MapPin, FolderOpen, Users, ShieldAlert, Database, Layers, Award, Image as ImageIcon, MessageSquare, FileText } from 'lucide-react';
+import { Product, Dealer, Project, Lead, Testimonial, Catalogue } from '@/lib/db';
 
 interface AdminSidebarProps {
-  activeTab: 'analytics' | 'products' | 'dealers' | 'projects' | 'leads' | 'divisions' | 'division-categories' | 'profile' | 'brands' | 'hero-slides' | 'testimonials';
-  setActiveTab: (tab: 'analytics' | 'products' | 'dealers' | 'projects' | 'leads' | 'divisions' | 'division-categories' | 'profile' | 'brands' | 'hero-slides' | 'testimonials') => void;
+  activeTab: 'analytics' | 'products' | 'dealers' | 'projects' | 'leads' | 'divisions' | 'division-categories' | 'profile' | 'brands' | 'hero-slides' | 'testimonials' | 'catalogues';
+  setActiveTab: (tab: 'analytics' | 'products' | 'dealers' | 'projects' | 'leads' | 'divisions' | 'division-categories' | 'profile' | 'brands' | 'hero-slides' | 'testimonials' | 'catalogues') => void;
   products: Product[];
   dealers: Dealer[];
   projects: Project[];
   newLeads: number;
   onBulkImport: () => void;
   testimonials: Testimonial[];
+  catalogues: Catalogue[];
 }
 
 export function AdminSidebar({ 
-  activeTab, setActiveTab, products, dealers, projects, newLeads, onBulkImport, testimonials 
+  activeTab, setActiveTab, products, dealers, projects, newLeads, onBulkImport, testimonials, catalogues 
 }: AdminSidebarProps) {
   
   const getTabClass = (tabName: string) => {
@@ -60,6 +61,9 @@ export function AdminSidebar({
       </button>
       <button onClick={() => setActiveTab('testimonials')} className={getTabClass('testimonials')}>
         <span className="flex items-center gap-3"><MessageSquare className="w-4 h-4" /> Testimonials ({testimonials.length})</span>
+      </button>
+      <button onClick={() => setActiveTab('catalogues')} className={getTabClass('catalogues')}>
+        <span className="flex items-center gap-3"><FileText className="w-4 h-4" /> Catalogues ({catalogues.length})</span>
       </button>
 
       <div className="pt-4 border-t border-white/5 mt-4 flex flex-col gap-2">
