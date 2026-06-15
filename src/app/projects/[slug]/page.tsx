@@ -34,9 +34,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
     notFound();
   }
 
-  // Fetch all products (for mapping product_ids)
-  const allProducts = await dbService.getProducts();
-  const usedProducts = allProducts.filter(p => project.product_ids?.includes(p.id));
+  const usedProducts: import('@/lib/db').Product[] = []; // Currently not supported in Project model
 
   return <ProjectClient project={project} usedProducts={usedProducts} />;
 }

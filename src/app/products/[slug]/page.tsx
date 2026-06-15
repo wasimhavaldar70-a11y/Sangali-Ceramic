@@ -11,12 +11,12 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
   return {
     title: `${product.name} | Sangli Ceramica`,
-    description: product.meta_description || product.description || `Buy ${product.name} premium luxury tiles from Sangli Ceramica.`,
+    description: `Buy ${product.name} premium luxury tiles from Sangli Ceramica.`,
     openGraph: {
       title: product.name,
-      description: product.meta_description || product.description || `Premium luxury ${product.finish} tiles.`,
-      images: [product.images[0]],
-      url: `https://sangliceramica.com/products/${product.slug}`
+      description: `Premium luxury ${product.finish || 'finish'} tiles.`,
+      images: product.images?.[0] ? [product.images[0]] : [],
+      url: `https://sangliceramica.com/products/${product.id}`
     }
   };
 }
@@ -41,8 +41,8 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: product.name,
-    image: product.images,
-    description: product.description,
+    image: product.images || [],
+    description: `Buy ${product.name} premium luxury tiles from Sangli Ceramica.`,
     sku: product.sku,
     brand: {
       '@type': 'Brand',
@@ -50,7 +50,7 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
     },
     offers: {
       '@type': 'Offer',
-      url: `https://sangliceramica.com/products/${product.slug}`,
+      url: `https://sangliceramica.com/products/${product.id}`,
       priceCurrency: 'INR',
       price: product.price,
       availability: 'https://schema.org/InStock'

@@ -81,8 +81,10 @@ export function ProductsTab({ products, divisions = [], divisionCategories = [],
       collection_id: undefined,
       division_category_id: pDivisionCategoryId || undefined,
       images: pImages,
+      image: pImages[0] || '',
+      stock: editingProduct?.stock || 0,
       status: 'active',
-      tech_specs: editingProduct?.tech_specs || { water_absorption: '< 0.05%', hardness: '6 Mohs', thickness: '9.5 mm' }
+
     };
 
     try {

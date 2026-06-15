@@ -81,8 +81,8 @@ function ProductsContent() {
         if (value === 'adhesive') return prod.sku.includes('GB');
       }
       if (type === 'application') {
-        // Map space keywords in description
-        const desc = (prod.description || '').toLowerCase();
+        // Map space keywords in name
+        const desc = (prod.name || '').toLowerCase();
         if (value === 'bathroom') return desc.includes('bathroom') || desc.includes('washroom') || prod.finish === 'Matte';
         if (value === 'kitchen') return desc.includes('kitchen') || prod.name.toLowerCase().includes('beige');
         if (value === 'living') return desc.includes('living') || desc.includes('hall') || prod.category_id === 'cat-marble';
@@ -209,7 +209,7 @@ function ProductsContent() {
               >
                 {/* Image */}
                 <div className="relative h-64 w-full overflow-hidden bg-dark-black">
-                  {prod.images[0] && (
+                  {prod.images?.[0] && (
                     <Image
                       src={prod.images[0]}
                       alt={prod.name}
@@ -275,7 +275,7 @@ function ProductsContent() {
 
             {/* Left Image */}
             <div className="relative h-64 md:h-[360px] w-full bg-dark-black overflow-hidden border border-white/5">
-              {quickViewProduct.images[0] && (
+              {quickViewProduct.images?.[0] && (
                 <Image
                   src={quickViewProduct.images[0]}
                   alt={quickViewProduct.name}
@@ -292,7 +292,7 @@ function ProductsContent() {
                   {quickViewProduct.name}
                 </h3>
                 <p className="text-white/80 text-xs md:text-sm font-normal leading-relaxed mb-6">
-                  {quickViewProduct.description}
+                  Premium luxury vitrified floor slab tiles, ideal for elite architectures.
                 </p>
 
                 <div className="space-y-3 mb-6">
@@ -306,7 +306,7 @@ function ProductsContent() {
                   </div>
                   <div className="flex justify-between border-b border-white/15 pb-2 text-xs">
                     <span className="text-white/45 uppercase tracking-wider">Water Absorption</span>
-                    <span className="font-bold">{quickViewProduct.tech_specs?.water_absorption || '< 0.05%'}</span>
+                    <span className="font-bold">{'< 0.05%'}</span>
                   </div>
                 </div>
 

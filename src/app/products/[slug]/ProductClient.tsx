@@ -156,7 +156,7 @@ export default function ProductClient({ initialProduct, relatedProducts }: { ini
                   style={{
                     transform: `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
                     transformStyle: 'preserve-3d',
-                    backgroundImage: `url(${product.images[0]})`,
+                    backgroundImage: `url(${product.images?.[0] || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80'})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     boxShadow: '0 30px 60px rgba(0,0,0,0.8), inset 0 0 20px rgba(255,255,255,0.05)'
@@ -172,7 +172,7 @@ export default function ProductClient({ initialProduct, relatedProducts }: { ini
             ) : (
               // Standard high res image view
               <Image
-                src={product.images[activeImage]}
+                src={product.images?.[activeImage] || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80'}
                 alt={product.name}
                 fill className="w-full h-full object-cover"
               />
@@ -212,7 +212,7 @@ export default function ProductClient({ initialProduct, relatedProducts }: { ini
           {/* Thumbnail list (Only active in Gallery mode) */}
           {!view360 && (
             <div className="flex gap-4">
-              {product.images.map((img, idx) => (
+              {(product.images || []).map((img, idx) => (
                 <button
                   key={idx}
                   onClick={() => setActiveImage(idx)}
@@ -239,7 +239,7 @@ export default function ProductClient({ initialProduct, relatedProducts }: { ini
             </div>
 
             <p className="text-white/70 text-sm font-light leading-relaxed mb-8">
-              {product.description || 'Premium luxury vitrified floor slab tiles, ideal for elite architectures.'}
+              {'Premium luxury vitrified floor slab tiles, ideal for elite architectures.'}
             </p>
 
             {/* Attributes */}
@@ -289,15 +289,15 @@ export default function ProductClient({ initialProduct, relatedProducts }: { ini
             <div className="space-y-4">
               <div className="flex justify-between border-b border-white/5 pb-2">
                 <span className="text-white/50">Water Absorption</span>
-                <span className="font-medium">{product.tech_specs?.water_absorption || '< 0.05%'}</span>
+                <span className="font-medium">{'< 0.05%'}</span>
               </div>
               <div className="flex justify-between border-b border-white/5 pb-2">
                 <span className="text-white/50">Scratch Hardness (Mohs Scale)</span>
-                <span className="font-medium">{product.tech_specs?.hardness || '6 Mohs'}</span>
+                <span className="font-medium">{'6 Mohs'}</span>
               </div>
               <div className="flex justify-between border-b border-white/5 pb-2">
                 <span className="text-white/50">Thickness</span>
-                <span className="font-medium">{product.tech_specs?.thickness || '9.5 mm'}</span>
+                <span className="font-medium">{'9.5 mm'}</span>
               </div>
             </div>
             <div className="space-y-4">
@@ -323,7 +323,7 @@ export default function ProductClient({ initialProduct, relatedProducts }: { ini
         <div className="grid grid-cols-1 lg:grid-cols-2 border border-white/5">
           {/* visual callout */}
           <div className="bg-charcoal p-12 flex flex-col justify-center border-b lg:border-b-0 lg:border-r border-white/5 relative">
-            <div className="absolute inset-0 opacity-10 bg-cover bg-center" style={{ backgroundImage: `url(${product.images[0]})` }} />
+            <div className="absolute inset-0 opacity-10 bg-cover bg-center" style={{ backgroundImage: `url(${product.images?.[0] || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80'})` }} />
             <div className="relative z-10">
               <span className="text-primary-gold text-[10px] tracking-widest uppercase font-semibold">Special Assistance</span>
               <h3 className="font-display text-3xl font-bold mt-2 mb-4 text-white">Order Sample Slabs</h3>
@@ -440,7 +440,7 @@ export default function ProductClient({ initialProduct, relatedProducts }: { ini
               >
                 <div className="relative h-60 w-full overflow-hidden bg-dark-black">
                   <Image
-                    src={prod.images[0]}
+                    src={prod.images?.[0] || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80'}
                     alt={prod.name}
                     fill className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />

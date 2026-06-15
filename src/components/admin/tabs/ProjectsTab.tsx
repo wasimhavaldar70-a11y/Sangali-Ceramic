@@ -41,8 +41,8 @@ export function ProjectsTab({ projects, products, refreshData, showToast }: Proj
       setYear(proj.year || new Date().getFullYear());
       setImage(proj.image || '');
       setDescription(proj.description || '');
-      setGalleryImages(proj.gallery_images || []);
-      setProductIds(proj.product_ids || []);
+      setGalleryImages([]);
+      setProductIds([]);
     } else {
       setEditingProject(null);
       setTitle('');
@@ -71,8 +71,6 @@ export function ProjectsTab({ projects, products, refreshData, showToast }: Proj
       year,
       image,
       description,
-      gallery_images: galleryImages,
-      product_ids: productIds
     };
     
     try {
@@ -374,7 +372,7 @@ export function ProjectsTab({ projects, products, refreshData, showToast }: Proj
                           className="accent-primary-gold"
                         />
                         <div className="flex items-center gap-2 overflow-hidden">
-                          {prod.images[0] && (
+                          {prod.images?.[0] && (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img src={prod.images[0]} alt="" className="w-6 h-6 object-cover rounded shrink-0" />
                           )}

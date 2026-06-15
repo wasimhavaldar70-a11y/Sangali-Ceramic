@@ -8,7 +8,7 @@ import {
   Shield, Droplet, Flame, Settings, Zap, Truck, MessageSquare, Phone, MapPin, Check,
   Users, Building, Grid3X3, Bath, Clock, Award, Tag, Palette, CheckCircle2, BadgeCheck
 } from 'lucide-react';
-import { dbService, Product, Collection, Project, Testimonial, Catalogue, ProductDivision, BrandLogo, HeroSlide, DEFAULT_TESTIMONIALS, DEFAULT_BRANDS } from '@/lib/db';
+import { dbService, Product, Collection, Project, Testimonial, Catalogue, ProductDivision, BrandLogo, HeroSlide } from '@/lib/db';
 
 const getBrandLogoElement = (brandName: string, logoUrl?: string) => {
   if (logoUrl) {
@@ -69,10 +69,10 @@ export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [collections, setCollections] = useState<Collection[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
-  const [testimonials, setTestimonials] = useState<Testimonial[]>(DEFAULT_TESTIMONIALS);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [catalogues, setCatalogues] = useState<Catalogue[]>([]);
   const [divisions, setDivisions] = useState<ProductDivision[]>([]);
-  const [brands, setBrands] = useState<BrandLogo[]>(DEFAULT_BRANDS);
+  const [brands, setBrands] = useState<BrandLogo[]>([]);
 
   // UI Filtering/Sorting States
   const [activeCategory, setActiveCategory] = useState('All');
@@ -82,29 +82,7 @@ export default function HomePage() {
 
   // Hero Slider
   const [heroIndex, setHeroIndex] = useState(0);
-  const [heroImages, setHeroImages] = useState<HeroSlide[]>([
-    {
-      id: 'slide-1',
-      url: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1920&q=90',
-      title: 'Grand Marble Luxury',
-      subtitle: 'Calacatta Glazed Vitrified Slabs',
-      display_order: 1
-    },
-    {
-      id: 'slide-2',
-      url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1920&q=90',
-      title: 'Warm Architectural Woods',
-      subtitle: 'Natural Woodgrain Planks Collection',
-      display_order: 2
-    },
-    {
-      id: 'slide-3',
-      url: 'https://images.unsplash.com/photo-1600573472591-ee6b68d14c68?auto=format&fit=crop&w=1920&q=90',
-      title: 'Rustic Raw Stone',
-      subtitle: 'Contemporary Slate & Stone Textures',
-      display_order: 3
-    }
-  ]);
+  const [heroImages, setHeroImages] = useState<HeroSlide[]>([]);
 
   // AI Visualizer before/after divider position
   const [sliderPos, setSliderPos] = useState(50);
@@ -172,6 +150,7 @@ export default function HomePage() {
 
   // Auto slide hero
   useEffect(() => {
+    if (heroImages.length === 0) return;
     const timer = setInterval(() => {
       setHeroIndex((prev) => (prev + 1) % heroImages.length);
     }, 6000);
@@ -621,7 +600,7 @@ export default function HomePage() {
                   {/* Image wrapper */}
                   <div className="relative h-72 w-full overflow-hidden bg-dark-black">
                     <Image
-                      src={prod.images[0]}
+                      src={prod.images?.[0] || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80'}
                       alt={prod.name}
                       fill className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
@@ -1009,7 +988,7 @@ export default function HomePage() {
             {/* Left Image */}
             <div className="relative h-80 md:h-[400px] w-full bg-dark-black overflow-hidden border border-white/5">
               <Image
-                src={quickViewProduct.images[0]}
+                src={quickViewProduct.images?.[0] || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80'}
                 alt={quickViewProduct.name}
                 fill className="w-full h-full object-cover"
               />
@@ -1022,10 +1001,7 @@ export default function HomePage() {
                 <h3 className="font-display text-2xl md:text-3xl font-bold text-gold-gradient mt-1 mb-4">
                   {quickViewProduct.name}
                 </h3>
-                <p className="text-white text-sm font-normal leading-relaxed mb-6">
-                  {quickViewProduct.description}
-                </p>
-
+                
                 <div className="space-y-3 mb-6">
                   <div className="flex justify-between border-b border-white/15 pb-2 text-xs">
                     <span className="text-white/60 uppercase tracking-wider">Available Size</span>
@@ -1034,10 +1010,6 @@ export default function HomePage() {
                   <div className="flex justify-between border-b border-white/15 pb-2 text-xs">
                     <span className="text-white/60 uppercase tracking-wider">Surface Finish</span>
                     <span className="font-bold">{quickViewProduct.finish}</span>
-                  </div>
-                  <div className="flex justify-between border-b border-white/15 pb-2 text-xs">
-                    <span className="text-white/60 uppercase tracking-wider">Water Absorption</span>
-                    <span className="font-bold">{quickViewProduct.tech_specs?.water_absorption || '< 0.05%'}</span>
                   </div>
                 </div>
 

@@ -42,11 +42,11 @@ export function LeadsTab({ leads, refreshData, showToast }: { leads: Lead[], ref
     setIsDeleting(id);
     try {
       const result = await dbService.deleteLead(id);
-      if (result.success) {
+      if (result) {
         showToast('Enquiry deleted successfully.');
         refreshData();
       } else {
-        showToast(`Failed to delete enquiry: ${result.error || 'Unknown database error'}. Check your Supabase RLS policies.`, 'error');
+        showToast(`Failed to delete enquiry. Check your Supabase RLS policies.`, 'error');
       }
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : String(err);

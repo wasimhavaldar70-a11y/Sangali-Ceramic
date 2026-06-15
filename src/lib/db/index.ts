@@ -1,6 +1,19 @@
-import { createClient } from '@/lib/db/client';
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 
-// Types
+// Define the environment variables explicitly to ensure Next.js exposes them
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+
+// Create a single supabase client for interacting with your database
+export const createClient = () => {
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.warn('Supabase credentials missing. Ensure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are set.');
+  }
+  return createSupabaseClient(supabaseUrl, supabaseAnonKey);
+};
+
+// --- TYPES ---
+
 export interface Category {
   id: string;
   name: string;
@@ -27,21 +40,13 @@ export interface Product {
   category_id?: string;
   collection_id?: string;
   division_category_id?: string;
-  images: string[];
-  description?: string;
-  tech_specs?: {
-    water_absorption?: string;
-    hardness?: string;
-    thickness?: string;
-    modulus_of_rupture?: string;
-    abrasion_resistance?: string;
-  };
-  status: 'active' | 'draft';
-  created_at?: string;
-  meta_title?: string;
-  meta_description?: string;
-  applications?: string[];
+  image: string;
+  images?: string[];
+  stock: number;
   is_featured?: boolean;
+  status: 'active' | 'draft' | 'out_of_stock';
+  features?: string[];
+  specifications?: Record<string, string>;
 }
 
 export interface Project {
@@ -55,8 +60,7 @@ export interface Project {
   year?: number;
   is_featured?: boolean;
   status?: string;
-  gallery_images?: string[];
-  product_ids?: string[];
+  gallery?: string[];
 }
 
 export interface Testimonial {
@@ -99,7 +103,6 @@ export interface Lead {
   created_at: string;
   assigned_to?: string;
   notes?: string;
-  last_contacted_at?: string;
 }
 
 export interface ProductDivision {
@@ -141,405 +144,99 @@ export interface HeroSlide {
   created_at?: string;
 }
 
-// --- SEEDS FOR MOCK FALLBACK ---
-
-const DEFAULT_CATEGORIES: Category[] = [
-  { id: 'cat-tiles', name: 'Premium Tiles', slug: 'tiles', description: 'Curated vitrified slabs and ceramic collections.' },
-  { id: 'cat-bath', name: 'Luxury Bathroom Products', slug: 'bath-fittings', description: 'Authorized premium sanitaryware & bath fittings.' },
-  { id: 'cat-doors', name: 'Tata Pravesh Doors', slug: 'doors', description: 'Elegant and durable steel doors and windows.' }
-];
-
-const DEFAULT_COLLECTIONS: Collection[] = [
-  { id: 'col-marble', name: 'Marble Collection', slug: 'marble-collection', description: 'Mirror-polished luxury marble vitrified slabs.' },
-  { id: 'col-wooden', name: 'Wooden Collection', slug: 'wooden-collection', description: 'Tactile woodgrain plank tiles.' },
-  { id: 'col-stone', name: 'Stone Collection', slug: 'stone-collection', description: 'Rustic structured slate & stone textures.' },
-  { id: 'col-glossy', name: 'Glossy Collection', slug: 'glossy-collection', description: 'High-reflectivity polished surfaces.' },
-  { id: 'col-matte', name: 'Matte Collection', slug: 'matte-collection', description: 'Minimalist contemporary matte finishes.' },
-  { id: 'col-large', name: 'Large Format Slabs', slug: 'large-format-slabs', description: 'Grand vitrified architectural slabs.' }
-];
-
-const DEFAULT_PROJECTS: Project[] = [
-  {
-    id: 'proj-1',
-    title: 'The Grand Heritage Villa',
-    slug: 'the-grand-heritage-villa',
-    category: 'Villas',
-    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80',
-    description: 'Luxury travertine floors and custom marble wall panels styled for a modern classical aesthetic.',
-    location: 'Pune, Maharashtra',
-    year: 2025,
-    is_featured: true,
-    status: 'published'
-  },
-  {
-    id: 'proj-2',
-    title: 'Skyline Penthouse Suites',
-    slug: 'skyline-penthouse-suites',
-    category: 'Apartments',
-    image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80',
-    description: 'Large-format glazed vitrified slabs with seamless edge profiles across kitchen and living spaces.',
-    location: 'Mumbai, Maharashtra',
-    year: 2024,
-    is_featured: true,
-    status: 'published'
-  },
-  {
-    id: 'proj-3',
-    title: 'Opal Wellness Resort',
-    slug: 'opal-wellness-resort',
-    category: 'Hotels',
-    image: 'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=800&q=80',
-    description: 'Premium anti-skid wooden textured tile decks and complete luxury bath fittings from Jaquar wellness systems.',
-    location: 'Calangute, Goa',
-    year: 2025,
-    is_featured: true,
-    status: 'published'
-  }
-];
-
-export const DEFAULT_TESTIMONIALS: Testimonial[] = [
-  {
-    id: 'test-1',
-    name: 'Rahul Patil',
-    role: 'Homeowner',
-    rating: 5,
-    comment: 'We purchased tiles for our entire home renovation from Sangli Ceramica. The collection was premium, prices were reasonable, and the quality exceeded our expectations.',
-    image_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&h=150&q=80'
-  },
-  {
-    id: 'test-2',
-    name: 'Sneha Deshmukh',
-    role: 'Interior Designer',
-    rating: 5,
-    comment: 'The showroom offers an impressive variety of tiles and sanitaryware. Their team helped us select designs that perfectly matched our project.',
-    image_url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&h=150&q=80'
-  },
-  {
-    id: 'test-3',
-    name: 'Amit Kulkarni',
-    role: 'Builder',
-    rating: 5,
-    comment: 'Professional service from selection to delivery. Everything was managed efficiently and delivered on schedule.',
-    image_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&h=150&q=80'
-  },
-  {
-    id: 'test-4',
-    name: 'Priya Shah',
-    role: 'Homeowner',
-    rating: 5,
-    comment: 'We compared several suppliers before choosing Sangli Ceramica. The quality, pricing, and service were exceptional.',
-    image_url: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=150&h=150&q=80'
-  },
-  {
-    id: 'test-5',
-    name: 'Ar. Ketan Joshi',
-    role: 'Architect',
-    rating: 5,
-    comment: 'The premium sanitaryware and tile collection helped us create luxury spaces for our clients.',
-    image_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&h=150&q=80'
-  }
-];
-
-const DEFAULT_DEALERS: Dealer[] = [
-  { id: 'deal-1', name: 'Sangli Ceramica Gallery Pune', state: 'Maharashtra', city: 'Pune', address: 'Ishanya Mall, Yerawada', phone: '+91 92846 32524', email: 'pune@sangliceramica.com', coords: { lat: 18.552, lng: 73.882 } },
-  { id: 'deal-2', name: 'Luxe Tiles Mansion', state: 'Maharashtra', city: 'Mumbai', address: 'S.V. Road, Santacruz West', phone: '+91 92846 32524', email: 'mumbai@sangliceramica.com', coords: { lat: 19.082, lng: 72.839 } },
-  { id: 'deal-3', name: 'Architectural Surfaces', state: 'Karnataka', city: 'Bangalore', address: 'Indiranagar 100ft Road', phone: '+91 92846 32524', email: 'blr@sangliceramica.com', coords: { lat: 12.971, lng: 77.594 } },
-  { id: 'deal-4', name: 'Royal Stone & Tile', state: 'Delhi', city: 'Delhi', address: 'Kirti Nagar Industrial Area', phone: '+91 92846 32524', email: 'delhi@sangliceramica.com', coords: { lat: 28.613, lng: 77.209 } },
-  { id: 'deal-5', name: 'Elite Tiles & Sanitary', state: 'Tamil Nadu', city: 'Chennai', address: 'Nungambakkam High Road', phone: '+91 92846 32524', email: 'chennai@sangliceramica.com', coords: { lat: 13.082, lng: 80.270 } },
-  { id: 'deal-6', name: 'Vitrified Hub Ahmedabad', state: 'Gujarat', city: 'Ahmedabad', address: 'S.G. Highway', phone: '+91 92846 32524', email: 'ahmedabad@sangliceramica.com', coords: { lat: 23.022, lng: 72.571 } }
-];
-
-const DEFAULT_CATALOGUES: Catalogue[] = [
-  { id: 'cat-1', title: 'Grandeur Vitrified Floor Collection', pdf_url: '#', thumbnail_url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=400&q=80', file_size: '12.4 MB' },
-  { id: 'cat-2', title: 'Luxury Bathroom & Wall Concepts', pdf_url: '#', thumbnail_url: 'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?auto=format&fit=crop&w=400&q=80', file_size: '8.2 MB' },
-  { id: 'cat-3', title: 'Earthy Wood & Stone Plank Series', pdf_url: '#', thumbnail_url: 'https://images.unsplash.com/photo-1581858726788-75bc0f6a952d?auto=format&fit=crop&w=400&q=80', file_size: '15.1 MB' },
-  { id: 'cat-4', title: 'Heavy-Duty Exterior & Balcony Tiles', pdf_url: '#', thumbnail_url: 'https://images.unsplash.com/photo-1531971589569-0d9370cbe1e5?auto=format&fit=crop&w=400&q=80', file_size: '6.7 MB' }
-];
-
-const DEFAULT_DIVISIONS: ProductDivision[] = [
-  {
-    id: 'div-tiles',
-    badge_text: 'Core Collection',
-    title: 'Premium Tiles',
-    heading: 'Find The Perfect Tile For Every Space',
-    description: 'Discover our curated vitrified slabs, marble textures, and designer ceramic collections crafted for modern spaces and elite architectures.',
-    link_text: 'Explore Tiles',
-    link_url: '/tiles',
-    image_url: '/premium-tiles.jpg',
-    display_order: 1
-  },
-  {
-    id: 'div-bath',
-    badge_text: 'Authorized Seller',
-    title: 'Luxury Bathroom Products',
-    heading: 'Authorized Seller of Jaquar Group',
-    description: 'Upgrade your spaces with luxury bath fittings, sanitaryware, wellness systems, designer showers, and sleek solutions from the premium Jaquar Group.',
-    link_text: 'Explore Bath',
-    link_url: '/bath-fittings',
-    image_url: 'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=800&q=80',
-    display_order: 2
-  },
-  {
-    id: 'div-doors',
-    badge_text: 'Official Distributor',
-    title: 'Tata Pravesh Doors',
-    heading: 'Distributor in Western Maharashtra & Goa',
-    description: 'Official distributor of Tata Pravesh doors in Western Maharashtra and Goa. Experience the unyielding strength of steel combined with the elegant wooden finish.',
-    link_text: 'Explore Tata Doors',
-    link_url: '/doors',
-    image_url: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80',
-    display_order: 3
-  }
-];
-
-const DEFAULT_DIVISION_CATEGORIES: DivisionCategory[] = [
-  // Tiles categories
-  { id: 'dc-living', page_slug: 'tiles', name: 'Living Room', image_url: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=400&q=80', display_order: 1 },
-  { id: 'dc-bath', page_slug: 'tiles', name: 'Bathroom', image_url: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=400&q=80', display_order: 2 },
-  { id: 'dc-kitchen', page_slug: 'tiles', name: 'Kitchen', image_url: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=400&q=80', display_order: 3 },
-  { id: 'dc-outdoor', page_slug: 'tiles', name: 'Outdoor', image_url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=400&q=80', display_order: 4 },
-  { id: 'dc-commercial', page_slug: 'tiles', name: 'Commercial', image_url: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=400&q=80', display_order: 5 },
-  { id: 'dc-parking', page_slug: 'tiles', name: 'Parking', image_url: 'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?auto=format&fit=crop&w=400&q=80', display_order: 6 },
-  // Bath fittings categories
-  { id: 'dc-faucets', page_slug: 'bath-fittings', name: 'Faucets & Taps', image_url: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=400&q=80', display_order: 1 },
-  { id: 'dc-sanitary', page_slug: 'bath-fittings', name: 'Sanitaryware', image_url: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=400&q=80', display_order: 2 },
-  { id: 'dc-tubs', page_slug: 'bath-fittings', name: 'Wellness & Tubs', image_url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=400&q=80', display_order: 3 },
-  { id: 'dc-showers', page_slug: 'bath-fittings', name: 'Shower Systems', image_url: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=400&q=80', display_order: 4 },
-  { id: 'dc-heaters', page_slug: 'bath-fittings', name: 'Water Heaters', image_url: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=400&q=80', display_order: 5 },
-  { id: 'dc-accessories', page_slug: 'bath-fittings', name: 'Bath Accessories', image_url: 'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?auto=format&fit=crop&w=400&q=80', display_order: 6 },
-  // Doors categories
-  { id: 'dc-maindoors', page_slug: 'doors', name: 'Main Entry Doors', image_url: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=400&q=80', display_order: 1 },
-  { id: 'dc-beddoors', page_slug: 'doors', name: 'Bedroom Doors', image_url: 'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?auto=format&fit=crop&w=400&q=80', display_order: 2 },
-  { id: 'dc-bathdoors', page_slug: 'doors', name: 'Toilet & Bath Doors', image_url: 'https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=400&q=80', display_order: 3 },
-  { id: 'dc-steeldoors', page_slug: 'doors', name: 'Safety Steel Doors', image_url: 'https://images.unsplash.com/photo-1558036117-15d82a90b9b1?auto=format&fit=crop&w=400&q=80', display_order: 4 },
-  { id: 'dc-windows', page_slug: 'doors', name: 'Steel Windows', image_url: 'https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=400&q=80', display_order: 5 },
-  { id: 'dc-doubledoors', page_slug: 'doors', name: 'Double Leaf Doors', image_url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=400&q=80', display_order: 6 }
-];
-
-export const DEFAULT_BRANDS: BrandLogo[] = [
-  { id: 'b-1', name: 'Jaquar', logo_url: 'https://logo.clearbit.com/jaquar.com', display_order: 1 },
-  { id: 'b-2', name: 'Artize', logo_url: 'https://logo.clearbit.com/artize.com', display_order: 2 },
-  { id: 'b-3', name: 'Fenesta', logo_url: 'https://logo.clearbit.com/fenesta.com', display_order: 3 },
-  { id: 'b-4', name: 'Johnson', logo_url: 'https://logo.clearbit.com/hrjohnsonindia.com', display_order: 4 },
-  { id: 'b-5', name: 'Nitco', logo_url: 'https://logo.clearbit.com/nitco.in', display_order: 5 },
-  { id: 'b-6', name: 'Oasis', logo_url: 'https://logo.clearbit.com/oasistiles.in', display_order: 6 },
-  { id: 'b-7', name: 'Essco', logo_url: 'https://logo.clearbit.com/esscobathware.com', display_order: 7 },
-  { id: 'b-8', name: 'Tata Pravesh', logo_url: 'https://logo.clearbit.com/tatapravesh.com', display_order: 8 },
-  { id: 'b-9', name: 'RAK Ceramics', logo_url: 'https://logo.clearbit.com/rakceramics.com', display_order: 9 },
-  { id: 'b-10', name: 'Franke', logo_url: 'https://logo.clearbit.com/franke.com', display_order: 10 },
-  { id: 'b-11', name: 'Carysil', logo_url: 'https://logo.clearbit.com/carysil.com', display_order: 11 },
-  { id: 'b-12', name: 'Antiek', logo_url: 'https://logo.clearbit.com/antiek.com', display_order: 12 },
-  { id: 'b-13', name: 'Nirali BG', logo_url: 'https://logo.clearbit.com/niralibg.com', display_order: 13 },
-  { id: 'b-14', name: 'Ardex Endura', logo_url: 'https://logo.clearbit.com/ardexendura.com', display_order: 14 }
-];
-
-const DEFAULT_HERO_SLIDES: HeroSlide[] = [
-  {
-    id: 'slide-1',
-    url: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1920&q=90',
-    title: 'Grand Marble Luxury',
-    subtitle: 'Calacatta Glazed Vitrified Slabs',
-    display_order: 1
-  },
-  {
-    id: 'slide-2',
-    url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1920&q=90',
-    title: 'Warm Architectural Woods',
-    subtitle: 'Natural Woodgrain Planks Collection',
-    display_order: 2
-  },
-  {
-    id: 'slide-3',
-    url: 'https://images.unsplash.com/photo-1600573472591-ee6b68d14c68?auto=format&fit=crop&w=1920&q=90',
-    title: 'Rustic Raw Stone',
-    subtitle: 'Contemporary Slate & Stone Textures',
-    display_order: 3
-  }
-];
-
-const DEFAULT_PRODUCTS: Product[] = [
-  {
-    id: 'prod-calacatta',
-    name: 'Calacatta White',
-    slug: 'calacatta-white',
-    sku: 'SLAB-CAL-WHT',
-    size: '800x1600 mm',
-    finish: 'Glossy',
-    price: 1299,
-    category_id: 'cat-tiles',
-    collection_id: 'col-marble',
-    division_category_id: 'dc-living',
-    images: ['https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=800&q=80'],
-    description: 'Classic Italian marble design with gold and grey veins.',
-    status: 'active',
-    is_featured: true,
-    tech_specs: { water_absorption: '< 0.05%', hardness: '6 Mohs', thickness: '9 mm' }
-  },
-  {
-    id: 'prod-royalbeige',
-    name: 'Royal Beige Matte',
-    slug: 'royal-beige-matte',
-    sku: 'SLAB-ROY-BGE',
-    size: '800x1600 mm',
-    finish: 'Matte',
-    price: 1150,
-    category_id: 'cat-tiles',
-    collection_id: 'col-matte',
-    division_category_id: 'dc-living',
-    images: ['https://images.unsplash.com/photo-1617806118233-18e1db207f62?auto=format&fit=crop&w=800&q=80'],
-    description: 'Understated beige texture for minimalist spaces.',
-    status: 'active',
-    is_featured: true,
-    tech_specs: { water_absorption: '< 0.05%', hardness: '6.5 Mohs', thickness: '9 mm' }
-  },
-  {
-    id: 'prod-carraragrey',
-    name: 'Carrara Grey Polished',
-    slug: 'carrara-grey-polished',
-    sku: 'SLAB-CAR-GRY',
-    size: '600x1200 mm',
-    finish: 'Glossy',
-    price: 980,
-    category_id: 'cat-tiles',
-    collection_id: 'col-glossy',
-    division_category_id: 'dc-bathroom',
-    images: ['https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=800&q=80'],
-    description: 'Graceful grey marble veins on polished surface.',
-    status: 'active',
-    is_featured: true,
-    tech_specs: { water_absorption: '< 0.08%', hardness: '5.5 Mohs', thickness: '8.5 mm' }
-  },
-  {
-    id: 'prod-woodenbrown',
-    name: 'Wooden Brown Plank',
-    slug: 'wooden-brown-plank',
-    sku: 'TILE-WD-BRN',
-    size: '200x1200 mm',
-    finish: 'Satin',
-    price: 850,
-    category_id: 'cat-tiles',
-    collection_id: 'col-wooden',
-    division_category_id: 'dc-outdoor',
-    images: ['https://images.unsplash.com/photo-1581858726788-75bc0f6a952d?auto=format&fit=crop&w=800&q=80'],
-    description: 'Realistic wooden grain texture with tactile finish.',
-    status: 'active',
-    is_featured: true,
-    tech_specs: { water_absorption: '< 0.1%', hardness: '7 Mohs', thickness: '10 mm' }
-  },
-  {
-    id: 'prod-jaq-alive',
-    name: 'Jaquar Alive Basin Mixer',
-    slug: 'jaquar-alive-basin-mixer',
-    sku: 'JAQ-ALV-BM01',
-    size: 'Standard',
-    finish: 'Chrome',
-    price: 5490,
-    category_id: 'cat-bath',
-    division_category_id: 'dc-faucets',
-    images: ['https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=800&q=80'],
-    description: 'Jaquar Alive single lever basin mixer with premium chrome plating.',
-    status: 'active',
-    is_featured: true,
-    tech_specs: { thickness: 'N/A' }
-  },
-  {
-    id: 'prod-tata-single',
-    name: 'Tata Pravesh Single Leaf Entry Door',
-    slug: 'tata-pravesh-single-leaf-entry-door',
-    sku: 'TATA-PRV-SLD01',
-    size: '3.5 x 7 ft',
-    finish: 'Woodgrain Embossed',
-    price: 18500,
-    category_id: 'cat-doors',
-    division_category_id: 'dc-maindoors',
-    images: ['https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80'],
-    description: 'Premium safety steel door combining wood aesthetics and high-grade security.',
-    status: 'active',
-    is_featured: true
-  }
-];
-
-// --- DATABASE SERVICE SINGLETON ---
-
-const isMock = !process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-// Local storage init helper
-const getOrSetLocal = <T>(key: string, defaults: T[]): T[] => {
-  if (typeof window === 'undefined') {
-    return defaults;
-  }
-  const data = window.localStorage.getItem(key);
-  if (!data) {
-    window.localStorage.setItem(key, JSON.stringify(defaults));
-    return defaults;
-  }
-  try {
-    return JSON.parse(data);
-  } catch {
-    return defaults;
-  }
-};
-
-const saveLocal = <T>(key: string, data: T[]): void => {
-  if (typeof window !== 'undefined') {
-    window.localStorage.setItem(key, JSON.stringify(data));
-  }
-};
+// --- DB SERVICE ---
 
 export const dbService = {
-  // Authentication (Uses Supabase SSR)
-  async getUser() {
+  // Auth
+  async getCurrentUser() {
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
     return user;
   },
-  
+
   async logout() {
     const supabase = createClient();
     await supabase.auth.signOut();
   },
 
-  // Storage
+  // Storage / Files
   async uploadFile(bucket: string, file: File, path: string): Promise<string | null> {
-    if (isMock) {
-      return new Promise<string | null>((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result as string);
-        reader.onerror = () => resolve(null);
-        reader.readAsDataURL(file);
-      });
-    }
-
     const supabase = createClient();
     const { data, error } = await supabase.storage.from(bucket).upload(path, file, {
       upsert: true
     });
-    
+
     if (error) {
       console.error('Upload Error:', error);
       return null;
     }
-    
+
     const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(data.path);
     return urlData.publicUrl;
   },
 
+  async uploadVideo(file: File): Promise<string | null> {
+    const ext = file.name.split('.').pop();
+    const path = `video_${Date.now()}.${ext}`;
+    return this.uploadFile('videos', file, path);
+  },
+
+  async uploadHeroSlide(file: File): Promise<string | null> {
+    const ext = file.name.split('.').pop();
+    const path = `slide_${Date.now()}.${ext}`;
+    return this.uploadFile('products', file, path);
+  },
+
+  async uploadBrandLogo(file: File): Promise<string | null> {
+    const ext = file.name.split('.').pop();
+    const path = `brand_${Date.now()}.${ext}`;
+    return this.uploadFile('products', file, path);
+  },
+
+  async deleteFile(url: string, bucket = 'products'): Promise<boolean> {
+    const supabase = createClient();
+    try {
+      const urlParts = url.split('/');
+      const fileName = urlParts[urlParts.length - 1];
+      const { error } = await supabase.storage.from(bucket).remove([fileName]);
+      if (error) {
+        console.error('Failed to delete file from storage:', error);
+        return false;
+      }
+      return true;
+    } catch (e) {
+      console.error('Error parsing file URL for deletion:', e);
+      return false;
+    }
+  },
+
   // Categories
   async getCategories(): Promise<Category[]> {
-    if (isMock) {
-      return getOrSetLocal('mock_categories', DEFAULT_CATEGORIES);
-    }
     const supabase = createClient();
     const { data, error } = await supabase.from('categories').select('*');
     if (error) console.error(error);
     return data || [];
   },
 
+  async saveCategory(category: Partial<Category>): Promise<Category | null> {
+    const supabase = createClient();
+    const { data, error } = await supabase.from('categories').upsert(category).select().single();
+    if (error) {
+      console.error(error);
+      return null;
+    }
+    return data;
+  },
+
+  async deleteCategory(id: string): Promise<boolean> {
+    const supabase = createClient();
+    const { error } = await supabase.from('categories').delete().eq('id', id);
+    if (error) console.error(error);
+    return !error;
+  },
+
   // Collections
   async getCollections(): Promise<Collection[]> {
-    if (isMock) {
-      return getOrSetLocal('mock_collections', DEFAULT_COLLECTIONS);
-    }
     const supabase = createClient();
     const { data, error } = await supabase.from('collections').select('*');
     if (error) console.error(error);
@@ -548,23 +245,9 @@ export const dbService = {
 
   // Products
   async getProducts(searchQuery?: string, divisionCategoryId?: string, categoryId?: string): Promise<Product[]> {
-    if (isMock) {
-      let list = getOrSetLocal('mock_products', DEFAULT_PRODUCTS);
-      if (searchQuery) {
-        const query = searchQuery.toLowerCase();
-        list = list.filter(p => p.name.toLowerCase().includes(query) || p.sku.toLowerCase().includes(query));
-      }
-      if (divisionCategoryId) {
-        list = list.filter(p => p.division_category_id === divisionCategoryId);
-      }
-      if (categoryId) {
-        list = list.filter(p => p.category_id === categoryId);
-      }
-      return list;
-    }
-
     const supabase = createClient();
     let query = supabase.from('products').select('*');
+    
     if (searchQuery) {
       query = query.or(`name.ilike.%${searchQuery}%,sku.ilike.%${searchQuery}%`);
     }
@@ -574,50 +257,26 @@ export const dbService = {
     if (categoryId) {
       query = query.eq('category_id', categoryId);
     }
+    
     const { data, error } = await query;
     if (error) console.error(error);
     return data || [];
   },
 
-  async getProductById(id: string): Promise<Product | undefined> {
-    if (isMock) {
-      const list = getOrSetLocal('mock_products', DEFAULT_PRODUCTS);
-      return list.find(p => p.id === id || p.slug === id);
-    }
-
+  async getProductById(id: string): Promise<Product | null> {
     const supabase = createClient();
-    const { data, error } = await supabase.from('products')
-      .select('*')
-      .or(`id.eq.${id},slug.eq.${id}`)
-      .single();
-    if (error) console.error(error);
-    return data || undefined;
+    // Assuming slug is stored in id for products or we use id as slug
+    // We should check what the field is. Looking at the error it was passed `slug`
+    const { data, error } = await supabase.from('products').select('*').eq('id', id).single();
+    if (error) {
+      console.error(error);
+      return null;
+    }
+    return data;
   },
 
   async saveProduct(product: Partial<Product>): Promise<Product | null> {
-    if (isMock) {
-      const list = getOrSetLocal('mock_products', DEFAULT_PRODUCTS);
-      const toSave = { ...product } as Product;
-      if (!toSave.id || toSave.id.startsWith('prod-')) {
-        toSave.id = 'prod-' + Date.now();
-      }
-      if (!toSave.slug) {
-        toSave.slug = toSave.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-      }
-      const index = list.findIndex(p => p.id === toSave.id);
-      if (index >= 0) {
-        list[index] = { ...list[index], ...toSave };
-      } else {
-        list.push(toSave);
-      }
-      saveLocal('mock_products', list);
-      return toSave;
-    }
-
     const supabase = createClient();
-    if (product.id && product.id.startsWith('prod-')) {
-      delete product.id;
-    }
     const { data, error } = await supabase.from('products').upsert(product).select().single();
     if (error) {
       console.error(error);
@@ -627,19 +286,6 @@ export const dbService = {
   },
 
   async deleteProduct(id: string): Promise<boolean> {
-    if (isMock) {
-      const list = getOrSetLocal('mock_products', DEFAULT_PRODUCTS);
-      const filtered = list.filter(p => p.id !== id);
-      saveLocal('mock_products', filtered);
-      return true;
-    }
-
-    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-    if (!isUuid) {
-      console.warn('Cannot delete fallback mock data from Supabase. Ensure database is properly seeded.');
-      return false;
-    }
-
     const supabase = createClient();
     const { error } = await supabase.from('products').delete().eq('id', id);
     if (error) console.error(error);
@@ -648,78 +294,33 @@ export const dbService = {
 
   // Projects
   async getProjects(): Promise<Project[]> {
-    if (isMock) {
-      return getOrSetLocal('mock_projects', DEFAULT_PROJECTS);
-    }
     const supabase = createClient();
     const { data, error } = await supabase.from('projects').select('*');
-    if (error) {
-      console.error('Error fetching projects:', error);
-      return [];
-    }
+    if (error) console.error('Error fetching projects:', error);
     return data || [];
   },
 
   async getProjectBySlug(slug: string): Promise<Project | null> {
-    if (isMock) {
-      const list = getOrSetLocal('mock_projects', DEFAULT_PROJECTS);
-      return list.find(p => p.slug === slug) || null;
-    }
     const supabase = createClient();
     const { data, error } = await supabase.from('projects').select('*').eq('slug', slug).single();
     if (error) {
       console.error('Error fetching project by slug:', error);
       return null;
     }
-    return data as Project;
+    return data;
   },
 
   async saveProject(project: Partial<Project>): Promise<Project | null> {
-    if (isMock) {
-      const list = getOrSetLocal('mock_projects', DEFAULT_PROJECTS);
-      const toSave = { ...project } as Project;
-      if (!toSave.id || toSave.id.startsWith('proj-')) {
-        toSave.id = 'proj-' + Date.now();
-      }
-      if (!toSave.slug) {
-        toSave.slug = toSave.title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-      }
-      const index = list.findIndex(p => p.id === toSave.id);
-      if (index >= 0) {
-        list[index] = { ...list[index], ...toSave };
-      } else {
-        list.push(toSave);
-      }
-      saveLocal('mock_projects', list);
-      return toSave;
-    }
-
     const supabase = createClient();
-    if (project.id) {
-      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(project.id);
-      if (!isUuid) {
-        delete project.id;
-      }
-    }
     const { data, error } = await supabase.from('projects').upsert(project).select().single();
     if (error) {
-      console.error(error);
+      console.error('Error saving project:', error);
       return null;
     }
     return data;
   },
 
   async deleteProject(id: string): Promise<boolean> {
-    if (isMock) {
-      const list = getOrSetLocal('mock_projects', DEFAULT_PROJECTS);
-      const filtered = list.filter(p => p.id !== id);
-      saveLocal('mock_projects', filtered);
-      return true;
-    }
-
-    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-    if (!isUuid) return false;
-
     const supabase = createClient();
     const { error } = await supabase.from('projects').delete().eq('id', id);
     if (error) console.error(error);
@@ -728,82 +329,15 @@ export const dbService = {
 
   // Testimonials
   async getTestimonials(): Promise<Testimonial[]> {
-    if (isMock) {
-      return getOrSetLocal('mock_testimonials', DEFAULT_TESTIMONIALS);
-    }
     const supabase = createClient();
-    const { data, error } = await supabase.from('testimonials').select('*').order('created_at', { ascending: true });
-    if (error) console.error(error);
-    if (data && data.length > 0) {
-      return data;
-    }
-
-    // Auto-seed table if it exists but is empty
-    if (data && data.length === 0) {
-      try {
-        const testimonialsToInsert = DEFAULT_TESTIMONIALS.map(({ name, role, rating, comment, image_url }) => ({
-          name,
-          role,
-          rating,
-          comment,
-          image_url
-        }));
-        const { data: seededData, error: seedError } = await supabase
-          .from('testimonials')
-          .insert(testimonialsToInsert)
-          .select()
-          .order('created_at', { ascending: true });
-        
-        if (!seedError && seededData) {
-          return seededData;
-        }
-      } catch (e) {
-        console.error('Failed to auto-seed testimonials:', e);
-      }
-    }
-
-    return DEFAULT_TESTIMONIALS;
+    const { data, error } = await supabase.from('testimonials').select('*');
+    if (error) console.error('Error fetching testimonials:', error);
+    return data || [];
   },
 
   async saveTestimonial(testimonial: Partial<Testimonial>): Promise<Testimonial | null> {
-    if (isMock) {
-      const list = getOrSetLocal('mock_testimonials', DEFAULT_TESTIMONIALS);
-      const toSave = { ...testimonial } as Testimonial;
-      if (!toSave.id || toSave.id.startsWith('test-')) {
-        toSave.id = 'test-' + Date.now();
-      }
-      const index = list.findIndex(t => t.id === toSave.id);
-      if (index >= 0) {
-        list[index] = { ...list[index], ...toSave };
-      } else {
-        list.push(toSave);
-      }
-      saveLocal('mock_testimonials', list);
-      return toSave;
-    }
     const supabase = createClient();
-    let query;
-    if (testimonial.id) {
-      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(testimonial.id);
-      if (!isUuid) {
-        delete testimonial.id;
-      }
-    }
-    if (testimonial.id) {
-      query = supabase
-        .from('testimonials')
-        .update(testimonial)
-        .eq('id', testimonial.id)
-        .select()
-        .single();
-    } else {
-      query = supabase
-        .from('testimonials')
-        .insert(testimonial)
-        .select()
-        .single();
-    }
-    const { data, error } = await query;
+    const { data, error } = await supabase.from('testimonials').upsert(testimonial).select().single();
     if (error) {
       console.error('Failed to save testimonial:', error);
       throw error;
@@ -812,16 +346,6 @@ export const dbService = {
   },
 
   async deleteTestimonial(id: string): Promise<{ success: boolean; error?: string }> {
-    if (isMock) {
-      const list = getOrSetLocal('mock_testimonials', DEFAULT_TESTIMONIALS);
-      const index = list.findIndex(t => t.id === id);
-      if (index >= 0) {
-        list.splice(index, 1);
-        saveLocal('mock_testimonials', list);
-        return { success: true };
-      }
-      return { success: false, error: 'Not found' };
-    }
     const supabase = createClient();
     const { error } = await supabase.from('testimonials').delete().eq('id', id);
     if (error) {
@@ -833,9 +357,6 @@ export const dbService = {
 
   // Dealers
   async getDealers(): Promise<Dealer[]> {
-    if (isMock) {
-      return getOrSetLocal('mock_dealers', DEFAULT_DEALERS);
-    }
     const supabase = createClient();
     const { data, error } = await supabase.from('dealers').select('*');
     if (error) console.error(error);
@@ -843,24 +364,7 @@ export const dbService = {
   },
 
   async saveDealer(dealer: Partial<Dealer>): Promise<Dealer | null> {
-    if (isMock) {
-      const list = getOrSetLocal('mock_dealers', DEFAULT_DEALERS);
-      const toSave = { ...dealer } as Dealer;
-      if (!toSave.id || toSave.id.startsWith('deal-')) {
-        toSave.id = 'deal-' + Date.now();
-      }
-      const index = list.findIndex(d => d.id === toSave.id);
-      if (index >= 0) {
-        list[index] = { ...list[index], ...toSave };
-      } else {
-        list.push(toSave);
-      }
-      saveLocal('mock_dealers', list);
-      return toSave;
-    }
-
     const supabase = createClient();
-    if (dealer.id && dealer.id.startsWith('deal-')) delete dealer.id;
     const { data, error } = await supabase.from('dealers').upsert(dealer).select().single();
     if (error) {
       console.error(error);
@@ -870,19 +374,6 @@ export const dbService = {
   },
 
   async deleteDealer(id: string): Promise<boolean> {
-    if (isMock) {
-      const list = getOrSetLocal('mock_dealers', DEFAULT_DEALERS);
-      const filtered = list.filter(d => d.id !== id);
-      saveLocal('mock_dealers', filtered);
-      return true;
-    }
-
-    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-    if (!isUuid) {
-      console.warn('Cannot delete fallback mock data from Supabase. Ensure database is properly seeded.');
-      return false;
-    }
-
     const supabase = createClient();
     const { error } = await supabase.from('dealers').delete().eq('id', id);
     if (error) console.error(error);
@@ -891,9 +382,6 @@ export const dbService = {
 
   // Catalogues
   async getCatalogues(): Promise<Catalogue[]> {
-    if (isMock) {
-      return getOrSetLocal('mock_catalogues', DEFAULT_CATALOGUES);
-    }
     const supabase = createClient();
     const { data, error } = await supabase.from('catalogues').select('*');
     if (error) console.error(error);
@@ -902,9 +390,6 @@ export const dbService = {
 
   // Leads
   async getLeads(): Promise<Lead[]> {
-    if (isMock) {
-      return getOrSetLocal<Lead>('mock_leads', []);
-    }
     const supabase = createClient();
     const { data, error } = await supabase.from('leads').select('*').order('created_at', { ascending: false });
     if (error) console.error(error);
@@ -912,18 +397,6 @@ export const dbService = {
   },
 
   async insertLead(lead: Omit<Lead, 'id' | 'created_at'>): Promise<Lead | null> {
-    if (isMock) {
-      const list = getOrSetLocal<Lead>('mock_leads', []);
-      const newLead: Lead = {
-        ...lead,
-        id: 'lead-' + Date.now(),
-        created_at: new Date().toISOString()
-      };
-      list.unshift(newLead);
-      saveLocal('mock_leads', list);
-      return newLead;
-    }
-
     const supabase = createClient();
     const { data, error } = await supabase.from('leads').insert(lead).select().single();
     if (error) {
@@ -933,83 +406,42 @@ export const dbService = {
     return data;
   },
 
-  async updateLeadStatus(id: string, status: Lead['status'], notes?: string): Promise<boolean> {
-    if (isMock) {
-      const list = getOrSetLocal<Lead>('mock_leads', []);
-      const index = list.findIndex(l => l.id === id);
-      if (index >= 0) {
-        list[index].status = status;
-        if (notes !== undefined) list[index].notes = notes;
-        saveLocal('mock_leads', list);
-        return true;
-      }
-      return false;
+  async saveLead(lead: Partial<Lead>): Promise<Lead | null> {
+    const supabase = createClient();
+    const { data, error } = await supabase.from('leads').upsert(lead).select().single();
+    if (error) {
+      console.error(error);
+      return null;
     }
+    return data;
+  },
 
+  async updateLeadStatus(id: string, status: Lead['status'], notes?: string): Promise<boolean> {
     const supabase = createClient();
     const updatePayload: Record<string, unknown> = { status };
     if (notes !== undefined) updatePayload.notes = notes;
-    
     const { error } = await supabase.from('leads').update(updatePayload).eq('id', id);
     if (error) console.error(error);
     return !error;
   },
 
-  async deleteLead(id: string): Promise<{ success: boolean; error?: string }> {
-    if (isMock) {
-      const list = getOrSetLocal<Lead>('mock_leads', []);
-      const filtered = list.filter(l => l.id !== id);
-      saveLocal('mock_leads', filtered);
-      return { success: true };
-    }
-
-    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-    if (!isUuid) {
-      console.warn('Cannot delete fallback mock data from Supabase. Ensure database is properly seeded.');
-      return { success: false, error: 'Cannot delete default fallback data.' };
-    }
-
+  async deleteLead(id: string): Promise<boolean> {
     const supabase = createClient();
     const { error } = await supabase.from('leads').delete().eq('id', id);
-    if (error) {
-      console.error(error);
-      return { success: false, error: error.message };
-    }
-    return { success: true };
+    if (error) console.error(error);
+    return !error;
   },
 
   // Product Divisions
   async getDivisions(): Promise<ProductDivision[]> {
-    if (isMock) {
-      return getOrSetLocal('mock_product_divisions', DEFAULT_DIVISIONS);
-    }
     const supabase = createClient();
     const { data, error } = await supabase.from('product_divisions').select('*').order('display_order', { ascending: true });
-    if (!error && data && data.length > 0) {
-      return data;
-    }
-    return DEFAULT_DIVISIONS;
+    if (error) console.error('Error fetching divisions:', error);
+    return data || [];
   },
 
   async saveDivision(division: Partial<ProductDivision>): Promise<ProductDivision | null> {
-    if (isMock) {
-      const list = getOrSetLocal('mock_product_divisions', DEFAULT_DIVISIONS);
-      const toSave = { ...division } as ProductDivision;
-      if (!toSave.id || toSave.id.startsWith('div-')) {
-        toSave.id = 'div-' + Date.now();
-      }
-      const index = list.findIndex(d => d.id === toSave.id);
-      if (index >= 0) {
-        list[index] = { ...list[index], ...toSave };
-      } else {
-        list.push(toSave);
-      }
-      saveLocal('mock_product_divisions', list);
-      return toSave;
-    }
-
     const supabase = createClient();
-    if (division.id && division.id.startsWith('div-')) delete division.id;
     const { data, error } = await supabase.from('product_divisions').upsert(division).select().single();
     if (error) {
       console.error(error);
@@ -1019,19 +451,6 @@ export const dbService = {
   },
 
   async deleteDivision(id: string): Promise<boolean> {
-    if (isMock) {
-      const list = getOrSetLocal('mock_product_divisions', DEFAULT_DIVISIONS);
-      const filtered = list.filter(d => d.id !== id);
-      saveLocal('mock_product_divisions', filtered);
-      return true;
-    }
-
-    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-    if (!isUuid) {
-      console.warn('Cannot delete fallback mock data from Supabase. Ensure database is properly seeded.');
-      return false;
-    }
-
     const supabase = createClient();
     const { error } = await supabase.from('product_divisions').delete().eq('id', id);
     if (error) console.error(error);
@@ -1040,55 +459,28 @@ export const dbService = {
 
   // Division Categories
   async getDivisionCategories(pageSlug?: string): Promise<DivisionCategory[]> {
-    if (isMock) {
-      const list = getOrSetLocal('mock_division_categories', DEFAULT_DIVISION_CATEGORIES);
-      if (pageSlug) {
-        return list.filter(dc => dc.page_slug === pageSlug);
-      }
-      return list;
-    }
-
     const supabase = createClient();
     let query = supabase.from('division_categories').select('*').order('display_order', { ascending: true });
     if (pageSlug) {
       query = query.eq('page_slug', pageSlug);
     }
     const { data, error } = await query;
-    if (error) console.error(error);
+    if (error) console.error('Error fetching division categories:', error);
     return data || [];
   },
 
-  async getDivisionCategoryById(id: string): Promise<DivisionCategory | undefined> {
-    if (isMock) {
-      const list = getOrSetLocal('mock_division_categories', DEFAULT_DIVISION_CATEGORIES);
-      return list.find(dc => dc.id === id);
-    }
-
+  async getDivisionCategoryById(id: string): Promise<DivisionCategory | null> {
     const supabase = createClient();
     const { data, error } = await supabase.from('division_categories').select('*').eq('id', id).single();
-    if (error) console.error(error);
-    return data || undefined;
+    if (error) {
+      console.error('Error fetching division category by id:', error);
+      return null;
+    }
+    return data;
   },
 
   async saveDivisionCategory(category: Partial<DivisionCategory>): Promise<DivisionCategory | null> {
-    if (isMock) {
-      const list = getOrSetLocal('mock_division_categories', DEFAULT_DIVISION_CATEGORIES);
-      const toSave = { ...category } as DivisionCategory;
-      if (!toSave.id || toSave.id.startsWith('dc-') || toSave.id.startsWith('cat-')) {
-        toSave.id = 'dc-' + Date.now();
-      }
-      const index = list.findIndex(dc => dc.id === toSave.id);
-      if (index >= 0) {
-        list[index] = { ...list[index], ...toSave };
-      } else {
-        list.push(toSave);
-      }
-      saveLocal('mock_division_categories', list);
-      return toSave;
-    }
-
     const supabase = createClient();
-    if (category.id && (category.id.startsWith('dc-') || category.id.startsWith('cat-'))) delete category.id;
     const { data, error } = await supabase.from('division_categories').upsert(category).select().single();
     if (error) {
       console.error(error);
@@ -1098,19 +490,6 @@ export const dbService = {
   },
 
   async deleteDivisionCategory(id: string): Promise<boolean> {
-    if (isMock) {
-      const list = getOrSetLocal('mock_division_categories', DEFAULT_DIVISION_CATEGORIES);
-      const filtered = list.filter(dc => dc.id !== id);
-      saveLocal('mock_division_categories', filtered);
-      return true;
-    }
-
-    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-    if (!isUuid) {
-      console.warn('Cannot delete fallback mock data from Supabase. Ensure database is properly seeded.');
-      return false;
-    }
-
     const supabase = createClient();
     const { error } = await supabase.from('division_categories').delete().eq('id', id);
     if (error) console.error(error);
@@ -1119,201 +498,55 @@ export const dbService = {
 
   // Brand Logos
   async getBrands(): Promise<BrandLogo[]> {
-    if (isMock) {
-      return getOrSetLocal('mock_brand_logos', DEFAULT_BRANDS);
-    }
     const supabase = createClient();
     const { data, error } = await supabase.from('brand_logos').select('*').order('display_order', { ascending: true });
-    if (error) console.error(error);
-    if (data && data.length > 0) {
-      return data;
-    }
-    
-    // Auto-seed table if it exists but is empty
-    if (data && data.length === 0) {
-      try {
-        const brandsToInsert = DEFAULT_BRANDS.map(({ name, logo_url, display_order }) => ({
-          name,
-          logo_url,
-          display_order
-        }));
-        const { data: seededData, error: seedError } = await supabase
-          .from('brand_logos')
-          .insert(brandsToInsert)
-          .select()
-          .order('display_order', { ascending: true });
-        
-        if (!seedError && seededData) {
-          return seededData;
-        }
-      } catch (e) {
-        console.error('Failed to auto-seed brand logos:', e);
-      }
-    }
-    
-    return DEFAULT_BRANDS;
+    if (error) console.error('Error fetching brand logos:', error);
+    return data || [];
   },
 
   async saveBrand(brand: Partial<BrandLogo>): Promise<BrandLogo | null> {
-    if (isMock) {
-      const list = getOrSetLocal('mock_brand_logos', DEFAULT_BRANDS);
-      const toSave = { ...brand } as BrandLogo;
-      if (!toSave.id) {
-        toSave.id = 'b-' + Date.now();
-      }
-      const index = list.findIndex(b => b.id === toSave.id);
-      if (index >= 0) {
-        list[index] = { ...list[index], ...toSave };
-      } else {
-        list.push(toSave);
-      }
-      saveLocal('mock_brand_logos', list);
-      return toSave;
-    }
-
     const supabase = createClient();
-    if (brand.id) {
-      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(brand.id);
-      if (!isUuid) {
-        delete brand.id;
-      }
-    }
-
-    let query;
-    if (brand.id) {
-      query = supabase
-        .from('brand_logos')
-        .update(brand)
-        .eq('id', brand.id)
-        .select()
-        .single();
-    } else {
-      query = supabase
-        .from('brand_logos')
-        .insert(brand)
-        .select()
-        .single();
-    }
-
-    const { data, error } = await query;
+    const { data, error } = await supabase.from('brand_logos').upsert(brand).select().single();
     if (error) {
-      console.error('Failed to save brand logo:', error);
+      console.error(error);
       return null;
     }
     return data;
   },
 
-  async deleteBrand(id: string): Promise<boolean> {
-    if (isMock) {
-      const list = getOrSetLocal('mock_brand_logos', DEFAULT_BRANDS);
-      const filtered = list.filter(b => b.id !== id);
-      saveLocal('mock_brand_logos', filtered);
-      return true;
-    }
-
-    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-    if (!isUuid) {
-      console.warn('Cannot delete fallback mock data from Supabase. Ensure database is properly seeded.');
-      return false;
-    }
-
+  async deleteBrand(id: string): Promise<{ success: boolean; error?: string }> {
     const supabase = createClient();
     const { error } = await supabase.from('brand_logos').delete().eq('id', id);
-    if (error) console.error(error);
-    return !error;
+    if (error) {
+      console.error('Failed to delete brand:', error);
+      return { success: false, error: error.message };
+    }
+    return { success: true };
   },
 
   // Hero Slides
   async getHeroSlides(): Promise<HeroSlide[]> {
-    if (isMock) {
-      return getOrSetLocal('mock_hero_slides', DEFAULT_HERO_SLIDES);
-    }
     const supabase = createClient();
     const { data, error } = await supabase.from('hero_slides').select('*').order('display_order', { ascending: true });
-    if (error) {
-      console.error('Error fetching hero slides:', error);
-      return DEFAULT_HERO_SLIDES;
-    }
-    if (data && data.length > 0) {
-      return data;
-    }
-    
-    // Auto-seed table if it exists but is empty
-    if (data && data.length === 0) {
-      try {
-        const slidesToInsert = DEFAULT_HERO_SLIDES.map(({ title, subtitle, url, display_order }) => ({
-          title,
-          subtitle,
-          url,
-          display_order
-        }));
-        const { data: seededData, error: seedError } = await supabase
-          .from('hero_slides')
-          .insert(slidesToInsert)
-          .select()
-          .order('display_order', { ascending: true });
-        
-        if (!seedError && seededData) {
-          return seededData;
-        }
-      } catch (e) {
-        console.error('Failed to auto-seed hero slides:', e);
-      }
-    }
-    
-    return DEFAULT_HERO_SLIDES;
+    if (error) console.error('Error fetching hero slides:', error);
+    return data || [];
   },
 
-  async saveHeroSlide(slide: Partial<HeroSlide>): Promise<{ success: boolean; data?: HeroSlide; error?: string }> {
-    if (isMock) {
-      const list = getOrSetLocal('mock_hero_slides', DEFAULT_HERO_SLIDES);
-      const toSave = { ...slide } as HeroSlide;
-      if (!toSave.id) {
-        toSave.id = 'slide-' + Date.now();
-      }
-      const index = list.findIndex(s => s.id === toSave.id);
-      if (index >= 0) {
-        list[index] = { ...list[index], ...toSave };
-      } else {
-        list.push(toSave);
-      }
-      saveLocal('mock_hero_slides', list);
-      return { success: true, data: toSave };
-    }
-
+  async saveHeroSlide(slide: Partial<HeroSlide>): Promise<HeroSlide | null> {
     const supabase = createClient();
-    if (slide.id) {
-      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slide.id);
-      if (!isUuid) {
-        delete slide.id;
-      }
-    }
     const { data, error } = await supabase.from('hero_slides').upsert(slide).select().single();
     if (error) {
       console.error(error);
-      return { success: false, error: error.message };
+      return null;
     }
-    return { success: true, data: data || undefined };
+    return data;
   },
 
   async deleteHeroSlide(id: string): Promise<{ success: boolean; error?: string }> {
-    if (isMock) {
-      const list = getOrSetLocal('mock_hero_slides', DEFAULT_HERO_SLIDES);
-      const filtered = list.filter(s => s.id !== id);
-      saveLocal('mock_hero_slides', filtered);
-      return { success: true };
-    }
-
-    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-    if (!isUuid) {
-      console.warn('Cannot delete fallback mock data from Supabase. Ensure database is properly seeded.');
-      return { success: false, error: 'Cannot delete default fallback data.' };
-    }
-
     const supabase = createClient();
     const { error } = await supabase.from('hero_slides').delete().eq('id', id);
     if (error) {
-      console.error(error);
+      console.error('Failed to delete hero slide:', error);
       return { success: false, error: error.message };
     }
     return { success: true };

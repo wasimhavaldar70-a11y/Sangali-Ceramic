@@ -38,12 +38,12 @@ export function HeroSlidesTab({ slides, refreshData, showToast }: HeroSlidesTabP
     setIsSaving(true);
     try {
       const result = await dbService.saveHeroSlide(editingSlide as Partial<HeroSlide>);
-      if (result.success) {
+      if (result?.id) {
         showToast('Hero slide saved successfully');
         setEditingSlide(null);
         refreshData();
       } else {
-        showToast(`Failed to save hero slide: ${result.error || 'Unknown database error'}. Check your Supabase RLS policies and table schema.`, 'error');
+        showToast(`Failed to save hero slide. Check your Supabase RLS policies and table schema.`, 'error');
       }
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : String(err);

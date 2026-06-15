@@ -8,7 +8,7 @@ import { Project, Product } from '@/lib/db';
 
 
 export default function ProjectClient({ project, usedProducts }: { project: Project, usedProducts: Product[] }) {
-  const allImages = [project.image, ...(project.gallery_images || [])].filter(Boolean);
+  const allImages = [project.image].filter(Boolean);
   const [activeImage, setActiveImage] = useState(0);
 
   return (
@@ -116,7 +116,7 @@ export default function ProjectClient({ project, usedProducts }: { project: Proj
               <div key={prod.id} className="bg-charcoal border border-white/5 group flex flex-col h-full hover:border-primary-gold/50 transition-colors duration-300">
                 <div className="relative h-64 overflow-hidden bg-dark-black flex items-center justify-center p-8">
                   <div className="absolute inset-0 bg-gradient-to-t from-dark-black/50 to-transparent z-10" />
-                  {prod.images[0] ? (
+                  {prod.images?.[0] ? (
                     <Image
                       src={prod.images[0]}
                       alt={prod.name}
