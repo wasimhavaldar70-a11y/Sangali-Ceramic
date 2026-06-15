@@ -1081,7 +1081,7 @@ export default function HomePage() {
       </section>
 
       {/* DIGITAL CATALOGUE SECTION */}
-      <section id="catalogues" className="py-24 bg-[#0F0F0F] border-b border-white/5">
+      <section id="catalogues" className="pt-24 pb-12 bg-[#0F0F0F] border-b border-white/5">
         <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
           {/* Text */}
           <div className="lg:col-span-6 flex flex-col items-start">
@@ -1126,7 +1126,7 @@ export default function HomePage() {
       </section>
 
       {/* CTA SECTION */}
-      <section className="py-20 bg-[#0A0A0A] border-t border-white/5 relative overflow-hidden z-30">
+      <section className="pt-10 pb-20 bg-[#0A0A0A] relative overflow-hidden z-30">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 bg-[#121212] border border-white/5 rounded-2xl overflow-hidden shadow-2xl relative">
             
