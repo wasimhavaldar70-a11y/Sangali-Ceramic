@@ -198,30 +198,10 @@ const DEFAULT_PROJECTS: Project[] = [
 ];
 
 const DEFAULT_TESTIMONIALS: Testimonial[] = [
-  {
-    id: 'test-1',
-    name: 'Akshay Patil',
-    role: 'Homeowner',
-    rating: 5,
-    comment: 'The Calacatta White vitrified slabs from Sangli Ceramica completely redefined my living room lounge. The mirror finish and the seamless installation look breathtaking.',
-    image_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&h=150&q=80'
-  },
-  {
-    id: 'test-2',
-    name: 'Ajay Sawant',
-    role: 'Principal Architect',
-    rating: 5,
-    comment: "As an architect, structural consistency and high durability are my top priorities. Sangli Ceramica's large-format wooden planks are mathematically perfect and look exceptionally organic.",
-    image_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&h=150&q=80'
-  },
-  {
-    id: 'test-3',
-    name: 'Rahul Yadav',
-    role: 'Luxury Villa Developer',
-    rating: 5,
-    comment: 'We used their premium stone collection and Jaquar bath systems for our recent wellness resort project. The customer support, bulk delivery speed, and material quality are unmatched in Maharashtra.',
-    image_url: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=150&h=150&q=80'
-  }
+  { id: 'test-1', name: 'Rohit Sharma', role: 'Homeowner', rating: 5, comment: 'The quality of vitrified slabs is exceptional. It completely transformed our living lounge.' },
+  { id: 'test-2', name: 'Ar. Neha Patil', role: 'Architect', rating: 5, comment: 'Perfect finish, exact dimensional consistency, and excellent premium customer support. Highly recommended!' },
+  { id: 'test-3', name: 'Luxe Spaces Studio', role: 'Interior Designer', rating: 5, comment: 'Their Jaquar bathroom display collections and Tata doors supply let us complete luxury villas in records time.' },
+  { id: 'test-4', name: 'Buildtech Developers', role: 'Commercial Builder', rating: 5, comment: 'Sangli Ceramica is our absolute partner for bulk vitrified tile shipments across Maharashtra.' }
 ];
 
 const DEFAULT_DEALERS: Dealer[] = [
@@ -704,47 +684,12 @@ export const dbService = {
   // Testimonials
   async getTestimonials(): Promise<Testimonial[]> {
     if (isMock) {
-      const cached = getOrSetLocal('mock_testimonials', DEFAULT_TESTIMONIALS);
-      if (cached.length !== DEFAULT_TESTIMONIALS.length || !cached.some(c => c.name === 'Akshay Patil')) {
-        saveLocal('mock_testimonials', DEFAULT_TESTIMONIALS);
-        return DEFAULT_TESTIMONIALS;
-      }
-      return cached;
+      return getOrSetLocal('mock_testimonials', DEFAULT_TESTIMONIALS);
     }
     const supabase = createClient();
     const { data, error } = await supabase.from('testimonials').select('*');
-    if (error) {
-      console.error(error);
-      return DEFAULT_TESTIMONIALS;
-    }
-    if (data && data.length > 0) {
-      return data;
-    }
-
-    // Auto-seed table if it exists but is empty
-    if (data && data.length === 0) {
-      try {
-        const testsToInsert = DEFAULT_TESTIMONIALS.map(({ name, role, rating, comment, image_url }) => ({
-          name,
-          role,
-          rating,
-          comment,
-          image_url
-        }));
-        const { data: seededData, error: seedError } = await supabase
-          .from('testimonials')
-          .insert(testsToInsert)
-          .select();
-        
-        if (!seedError && seededData) {
-          return seededData;
-        }
-      } catch (e) {
-        console.error('Failed to auto-seed testimonials:', e);
-      }
-    }
-
-    return DEFAULT_TESTIMONIALS;
+    if (error) console.error(error);
+    return data || [];
   },
 
   // Dealers
