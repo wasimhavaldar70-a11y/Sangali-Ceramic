@@ -54,7 +54,7 @@ export default function AdminPage() {
 
   const loadDashboardData = async () => {
     try {
-      const [prods, deals, projs, lds, divs, divCats, brnds, slides, tests] = await Promise.all([
+      const [prods, deals, projs, lds, divs, divCats, brnds, slides, tests, cats] = await Promise.all([
         dbService.getProducts(),
         dbService.getDealers(),
         dbService.getProjects(),
@@ -122,6 +122,7 @@ export default function AdminPage() {
           newLeads={newLeadsCount} 
           onBulkImport={handleBulkImport} 
           testimonials={testimonials}
+          catalogues={catalogues}
         />
 
         <div className="lg:col-span-9 bg-charcoal border border-white/5 p-6 min-h-[500px] rounded-xl shadow-2xl relative overflow-hidden backdrop-blur-md">
