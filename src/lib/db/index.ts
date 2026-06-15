@@ -547,7 +547,7 @@ export const dbService = {
   },
 
   // Products
-  async getProducts(searchQuery?: string, divisionCategoryId?: string): Promise<Product[]> {
+  async getProducts(searchQuery?: string, divisionCategoryId?: string, categoryId?: string): Promise<Product[]> {
     if (isMock) {
       let list = getOrSetLocal('mock_products', DEFAULT_PRODUCTS);
       if (searchQuery) {
@@ -556,6 +556,9 @@ export const dbService = {
       }
       if (divisionCategoryId) {
         list = list.filter(p => p.division_category_id === divisionCategoryId);
+      }
+      if (categoryId) {
+        list = list.filter(p => p.category_id === categoryId);
       }
       return list;
     }
@@ -567,6 +570,9 @@ export const dbService = {
     }
     if (divisionCategoryId) {
       query = query.eq('division_category_id', divisionCategoryId);
+    }
+    if (categoryId) {
+      query = query.eq('category_id', categoryId);
     }
     const { data, error } = await query;
     if (error) console.error(error);

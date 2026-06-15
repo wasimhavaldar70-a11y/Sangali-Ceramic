@@ -2,11 +2,13 @@ import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { dbService } from '@/lib/db';
+import { CategoryClient } from '@/app/category/[id]/CategoryClient';
 
 export const revalidate = 0;
 
 export default async function TilesPage() {
   const categories = await dbService.getDivisionCategories('tiles');
+  const products = await dbService.getProducts(undefined, undefined, 'cat-tiles');
 
   return (
     <div className="pt-32 pb-20 bg-dark-black max-w-7xl mx-auto px-6 md:px-12 min-h-screen">
@@ -43,6 +45,21 @@ export default async function TilesPage() {
         ))}
       </div>
       
+      <div className="mt-20">
+        <h2 className="text-2xl font-display font-bold text-white mb-2">All Products in Premium Tiles</h2>
+        <p className="text-white/60 text-sm mb-8">
+          Showing {products.length} {products.length === 1 ? 'product' : 'products'} for Premium Tiles
+        </p>
+        
+        {products.length === 0 ? (
+          <div className="text-center py-24 border border-white/5 bg-white/5 rounded-lg luxury-card">
+            <p className="text-white/50 text-base">No products have been added to this division yet.</p>
+          </div>
+        ) : (
+          <CategoryClient products={products} categoryName="Premium Tiles" />
+        )}
+      </div>
+
       <div className="mt-12 text-center">
         <Link href="/" className="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-white/90 hover:text-primary-gold font-semibold transition-colors">
           <ArrowRight className="w-4 h-4 rotate-180" /> Back to Home
