@@ -69,8 +69,7 @@ export function ProductsTab({ products, divisions = [], divisionCategories = [],
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    const productData: Product = {
-      id: editingProduct ? editingProduct.id : `prod-${Date.now()}`,
+    const productData: Partial<Product> = {
       name: pName,
       slug: editingProduct ? editingProduct.slug : pName.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Math.floor(Math.random() * 10000),
       sku: pSku,
@@ -84,14 +83,21 @@ export function ProductsTab({ products, divisions = [], divisionCategories = [],
       image: pImages[0] || '',
       stock: editingProduct?.stock || 0,
       status: 'active',
-
     };
 
+    if (editingProduct?.id) {
+      productData.id = editingProduct.id;
+    }
+
     try {
-      await dbService.saveProduct(productData);
-      setModalOpen(false);
-      refreshData();
-      showToast('Product saved successfully.');
+      const result = await dbService.saveProduct(productData);
+      if (result) {
+        setModalOpen(false);
+        refreshData();
+        showToast('Product saved successfully.');
+      } else {
+        showToast('Failed to save product. Check database schema/constraints.', 'error');
+      }
     } catch (err) {
       showToast('Error saving product.', 'error');
     }

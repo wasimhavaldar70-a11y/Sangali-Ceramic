@@ -63,8 +63,7 @@ export function ProjectsTab({ projects, products, refreshData, showToast }: Proj
       showToast('Please upload a featured image for the project.', 'error');
       return;
     }
-    const projData: Project = {
-      id: editingProject ? editingProject.id : `proj-${Date.now()}`,
+    const projData: Partial<Project> = {
       title,
       category: category as 'Villas' | 'Apartments' | 'Hotels' | 'Offices' | 'Restaurants',
       location,
@@ -72,6 +71,10 @@ export function ProjectsTab({ projects, products, refreshData, showToast }: Proj
       image,
       description,
     };
+    
+    if (editingProject?.id) {
+      projData.id = editingProject.id;
+    }
     
     try {
       const saved = await dbService.saveProject(projData);

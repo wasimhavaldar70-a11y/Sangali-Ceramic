@@ -144,7 +144,21 @@ export const createClient = () => {
         if (prop === 'storage') {
           return {
             from: () => ({
-              upload: () => Promise.resolve({ data: { path: 'mock-path' }, error: null }),
+              upload: (path: string, file: File) => {
+                if (typeof window !== 'undefined' && file instanceof File) {
+                  return new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                      resolve({ data: { path: reader.result as string }, error: null });
+                    };
+                    reader.onerror = () => {
+                      resolve({ data: null, error: { message: 'Failed to read file' } });
+                    };
+                    reader.readAsDataURL(file);
+                  });
+                }
+                return Promise.resolve({ data: { path: 'mock-path' }, error: null });
+              },
               remove: () => Promise.resolve({ data: null, error: null }),
               getPublicUrl: (path: string) => ({ data: { publicUrl: path } })
             })

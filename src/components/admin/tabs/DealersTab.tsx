@@ -48,8 +48,7 @@ export function DealersTab({ dealers, refreshData, showToast }: DealersTabProps)
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    const dealerData: Dealer = {
-      id: editingDealer ? editingDealer.id : `deal-${Date.now()}`,
+    const dealerData: Partial<Dealer> = {
       name: dName,
       state: dState,
       city: dCity,
@@ -59,11 +58,19 @@ export function DealersTab({ dealers, refreshData, showToast }: DealersTabProps)
       coords: editingDealer?.coords || { lat: 18.5204, lng: 73.8567 }
     };
 
+    if (editingDealer?.id) {
+      dealerData.id = editingDealer.id;
+    }
+
     try {
-      await dbService.saveDealer(dealerData);
-      setModalOpen(false);
-      refreshData();
-      showToast('Showroom saved successfully.');
+      const result = await dbService.saveDealer(dealerData);
+      if (result) {
+        setModalOpen(false);
+        refreshData();
+        showToast('Showroom saved successfully.');
+      } else {
+        showToast('Failed to save showroom. Check database schema/constraints.', 'error');
+      }
     } catch (err) {
       showToast('Error saving showroom.', 'error');
     }
