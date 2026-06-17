@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ArrowUpRight } from 'lucide-react';
-import { dbService, Product, Dealer, Lead, Project, ProductDivision, DivisionCategory, BrandLogo, HeroSlide, Testimonial, Catalogue } from '@/lib/db';
+import { dbService, Product, Dealer, Lead, Project, ProductDivision, DivisionCategory, HeroSlide, Testimonial, Catalogue } from '@/lib/db';
 
 // Components
 import { Toast } from '@/components/admin/Toast';
@@ -14,13 +14,12 @@ import { DealersTab } from '@/components/admin/tabs/DealersTab';
 import { ProjectsTab } from '@/components/admin/tabs/ProjectsTab';
 import { DivisionsTab } from '@/components/admin/tabs/DivisionsTab';
 import { DivisionCategoriesTab } from '@/components/admin/tabs/DivisionCategoriesTab';
-import { BrandsTab } from '@/components/admin/tabs/BrandsTab';
 import { HeroSlidesTab } from '@/components/admin/tabs/HeroSlidesTab';
 import { LeadsTab, ProfileTab, AnalyticsTab } from '@/components/admin/tabs/OtherTabs';
 import { TestimonialsTab } from '@/components/admin/tabs/TestimonialsTab';
 import { CataloguesTab } from '@/components/admin/tabs/CataloguesTab';
 
-type Tab = 'analytics' | 'products' | 'dealers' | 'projects' | 'leads' | 'divisions' | 'division-categories' | 'profile' | 'brands' | 'hero-slides' | 'testimonials' | 'catalogues';
+type Tab = 'analytics' | 'products' | 'dealers' | 'projects' | 'leads' | 'divisions' | 'division-categories' | 'profile' | 'hero-slides' | 'testimonials' | 'catalogues';
 
 export default function AdminPage() {
   const router = useRouter();
@@ -32,7 +31,6 @@ export default function AdminPage() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [divisions, setDivisions] = useState<ProductDivision[]>([]);
   const [divisionCategories, setDivisionCategories] = useState<DivisionCategory[]>([]);
-  const [brands, setBrands] = useState<BrandLogo[]>([]);
   const [heroSlides, setHeroSlides] = useState<HeroSlide[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [catalogues, setCatalogues] = useState<Catalogue[]>([]);
@@ -54,14 +52,13 @@ export default function AdminPage() {
 
   const loadDashboardData = async () => {
     try {
-      const [prods, deals, projs, lds, divs, divCats, brnds, slides, tests, cats] = await Promise.all([
+      const [prods, deals, projs, lds, divs, divCats, slides, tests, cats] = await Promise.all([
         dbService.getProducts(),
         dbService.getDealers(),
         dbService.getProjects(),
         dbService.getLeads(),
         dbService.getDivisions(),
         dbService.getDivisionCategories(),
-        dbService.getBrands(),
         dbService.getHeroSlides(),
         dbService.getTestimonials(),
         dbService.getCatalogues()
@@ -72,7 +69,6 @@ export default function AdminPage() {
       setLeads(lds);
       setDivisions(divs);
       setDivisionCategories(divCats);
-      setBrands(brnds);
       setHeroSlides(slides);
       setTestimonials(tests);
       setCatalogues(cats);
@@ -134,7 +130,6 @@ export default function AdminPage() {
           {activeTab === 'divisions' && <DivisionsTab divisions={divisions} refreshData={loadDashboardData} showToast={showToast} />}
           {activeTab === 'hero-slides' && <HeroSlidesTab slides={heroSlides} refreshData={loadDashboardData} showToast={showToast} />}
           {activeTab === 'division-categories' && <DivisionCategoriesTab showToast={showToast} />}
-          {activeTab === 'brands' && <BrandsTab brands={brands} refreshData={loadDashboardData} showToast={showToast} />}
           {activeTab === 'dealers' && <DealersTab dealers={dealers} refreshData={loadDashboardData} showToast={showToast} />}
           {activeTab === 'projects' && <ProjectsTab projects={projects} products={products} refreshData={loadDashboardData} showToast={showToast} />}
           {activeTab === 'leads' && <LeadsTab leads={leads} refreshData={loadDashboardData} showToast={showToast} />}

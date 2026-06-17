@@ -1,9 +1,9 @@
-import { LayoutDashboard, ShoppingBag, MapPin, FolderOpen, Users, ShieldAlert, Database, Layers, Award, Image as ImageIcon, MessageSquare, FileText } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, MapPin, FolderOpen, Users, ShieldAlert, Database, Layers, Image as ImageIcon, MessageSquare, FileText } from 'lucide-react';
 import { Product, Dealer, Project, Lead, Testimonial, Catalogue } from '@/lib/db';
 
 interface AdminSidebarProps {
-  activeTab: 'analytics' | 'products' | 'dealers' | 'projects' | 'leads' | 'divisions' | 'division-categories' | 'profile' | 'brands' | 'hero-slides' | 'testimonials' | 'catalogues';
-  setActiveTab: (tab: 'analytics' | 'products' | 'dealers' | 'projects' | 'leads' | 'divisions' | 'division-categories' | 'profile' | 'brands' | 'hero-slides' | 'testimonials' | 'catalogues') => void;
+  activeTab: 'analytics' | 'products' | 'dealers' | 'projects' | 'leads' | 'divisions' | 'division-categories' | 'profile' | 'hero-slides' | 'testimonials' | 'catalogues';
+  setActiveTab: (tab: 'analytics' | 'products' | 'dealers' | 'projects' | 'leads' | 'divisions' | 'division-categories' | 'profile' | 'hero-slides' | 'testimonials' | 'catalogues') => void;
   products: Product[];
   dealers: Dealer[];
   projects: Project[];
@@ -42,9 +42,7 @@ export function AdminSidebar({
       <button onClick={() => setActiveTab('division-categories')} className={getTabClass('division-categories')}>
         <span className="flex items-center gap-3"><Layers className="w-4 h-4" /> Page Categories</span>
       </button>
-      <button onClick={() => setActiveTab('brands')} className={getTabClass('brands')}>
-        <span className="flex items-center gap-3"><Award className="w-4 h-4" /> Partner Brands</span>
-      </button>
+
       <button onClick={() => setActiveTab('dealers')} className={getTabClass('dealers')}>
         <span className="flex items-center gap-3"><MapPin className="w-4 h-4" /> Showroom Dealers ({dealers.length})</span>
       </button>

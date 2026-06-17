@@ -8,7 +8,7 @@ import {
   Shield, Droplet, Flame, Settings, Zap, Truck, MessageSquare, Phone, MapPin, Check,
   Users, Building, Grid3X3, Bath, Clock, Award, Tag, Palette, CheckCircle2, BadgeCheck
 } from 'lucide-react';
-import { dbService, Product, Collection, Project, Testimonial, Catalogue, ProductDivision, BrandLogo, HeroSlide } from '@/lib/db';
+import { dbService, Product, Collection, Project, Testimonial, Catalogue, ProductDivision, HeroSlide } from '@/lib/db';
 
 
 const isVideoUrl = (url?: string) => {
@@ -52,7 +52,6 @@ export default function HomePage() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [catalogues, setCatalogues] = useState<Catalogue[]>([]);
   const [divisions, setDivisions] = useState<ProductDivision[]>([]);
-  const [brands, setBrands] = useState<BrandLogo[]>([]);
 
   // UI Filtering/Sorting States
   const [activeCategory, setActiveCategory] = useState('All');
@@ -103,7 +102,6 @@ export default function HomePage() {
       const tests = await dbService.getTestimonials();
       const cats = await dbService.getCatalogues();
       const divs = await dbService.getDivisions();
-      const brnds = await dbService.getBrands();
       const slides = await dbService.getHeroSlides();
 
       setProducts(prods);
@@ -112,7 +110,6 @@ export default function HomePage() {
       setTestimonials(tests);
       setCatalogues(cats);
       setDivisions(divs);
-      setBrands(brnds);
       setHeroImages(slides);
     };
     fetchData();
@@ -365,62 +362,7 @@ export default function HomePage() {
 
       </section>
 
-      {/* BRAND MARQUEE SECTION */}
-      <section className="bg-charcoal/30 border-y border-white/5 py-10 overflow-hidden relative z-30">
-        <div className="max-w-3xl mx-auto px-6 mb-8 text-center flex flex-col items-center justify-center gap-1.5">
-          <span className="text-primary-gold text-[10px] tracking-[0.3em] uppercase font-bold">
-            Authorized Partner & Elite Product Showcase
-          </span>
-          <span className="text-white text-xs mt-1 font-light opacity-85">
-            Sourced from world-renowned architectural & ceramic brands
-          </span>
-        </div>
-        
-        <div className="relative flex overflow-x-hidden w-full">
-          {/* Left fading mask overlay */}
-          <div className="absolute left-0 top-0 bottom-0 w-24 md:w-48 bg-gradient-to-r from-dark-black to-transparent z-10 pointer-events-none" />
-          
-          <div className="flex animate-marquee gap-8 whitespace-nowrap">
-            {/* First loop of logos */}
-            {brands.map((brand, i) => (
-              <div
-                key={`brand-loop1-${brand.id}-${i}`}
-                className="inline-flex items-center justify-center w-52 h-20 bg-[#121212] hover:bg-[#1A1A1A] border border-white/5 rounded-none px-5 py-3.5 hover:border-primary-gold/45 hover:shadow-lg transition-all duration-300 transform hover:scale-[1.03] relative"
-              >
-                {brand.logo_url && (
-                  <div className="relative w-full h-full flex items-center justify-center">
-                    <Image 
-                      src={brand.logo_url} 
-                      alt={brand.name} 
-                      fill className="object-contain px-2 select-none filter brightness-0 invert opacity-75 hover:opacity-100 transition-all duration-300"
-                    />
-                  </div>
-                )}
-              </div>
-            ))}
-            {/* Second identical loop of logos for infinite scrolling seamless transition */}
-            {brands.map((brand, i) => (
-              <div
-                key={`brand-loop2-${brand.id}-${i}`}
-                className="inline-flex items-center justify-center w-52 h-20 bg-[#121212] hover:bg-[#1A1A1A] border border-white/5 rounded-none px-5 py-3.5 hover:border-primary-gold/45 hover:shadow-lg transition-all duration-300 transform hover:scale-[1.03] relative"
-              >
-                {brand.logo_url && (
-                  <div className="relative w-full h-full flex items-center justify-center">
-                    <Image 
-                      src={brand.logo_url} 
-                      alt={brand.name} 
-                      fill className="object-contain px-2 select-none filter brightness-0 invert opacity-75 hover:opacity-100 transition-all duration-300"
-                    />
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
 
-          {/* Right fading mask overlay */}
-          <div className="absolute right-0 top-0 bottom-0 w-24 md:w-48 bg-gradient-to-l from-dark-black to-transparent z-10 pointer-events-none" />
-        </div>
-      </section>
 
 
 
